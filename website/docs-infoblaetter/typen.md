@@ -2,7 +2,7 @@
 title: "Typen: Daten beschreiben"
 sidebar_label: "Typen"
 slug: typen
-sidebar_position: 2
+sidebar_position: 3
 ---
 
 # TypeScript: Daten beschreiben (Typen)
@@ -24,7 +24,7 @@ flowchart LR
 Im fertigen JavaScript sind alle Typen verschwunden. Ein Typfehler bricht das Programm deshalb nicht ab, der Compiler **warnt** nur. In Java ist das anders: Dort prüft der Compiler Typen, und die Klassen gibt es zur Laufzeit noch.
 :::
 
-Die Prüfung ist so streng, wie du sie einstellst. In diesem Kurs gilt immer `"strict": true` (Voreinstellung in jedem Angular-Projekt). Wenn von „dem Compiler“ die Rede ist, ist diese strenge Einstellung gemeint.
+Warum es TypeScript überhaupt gibt, erklärt das Infoblatt [Was ist TypeScript – und warum gibt es das?](/infoblaetter/warum-typescript). Die Prüfung ist so streng, wie du sie einstellst. In diesem Kurs gilt immer `"strict": true` (Voreinstellung in jedem Angular-Projekt). Wenn von „dem Compiler“ die Rede ist, ist diese strenge Einstellung gemeint.
 
 ## 2. Typen für einfache Werte
 

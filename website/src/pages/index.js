@@ -13,6 +13,11 @@ const infoblaetter = [
     link: '/infoblaetter/einrichten',
   },
   {
+    titel: 'Was ist TypeScript – und warum gibt es das?',
+    beschreibung: 'Von JavaScript 1995 über die Probleme großer Anwendungen zu TypeScript – und was es kann und nicht kann',
+    link: '/infoblaetter/warum-typescript',
+  },
+  {
     titel: 'Typen: Daten beschreiben',
     beschreibung: 'Interface, Union-Typen, optionale Felder, ?? und ?. – und die häufigsten Compiler-Meldungen übersetzt',
     link: '/infoblaetter/typen',
