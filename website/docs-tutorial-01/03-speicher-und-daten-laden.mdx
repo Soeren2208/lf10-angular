@@ -1,0 +1,349 @@
+---
+title: "AB 03 – Speicher und Daten laden"
+sidebar_label: "03 – Speicher und Daten laden"
+slug: 03-speicher-und-daten-laden
+sidebar_position: 3
+---
+
+import loesung from '@site/src/data/loesung-ab03.json';
+
+# AB 03 – Speicher und Daten laden
+
+*Dauer: etwa eine Doppelstunde.*
+
+## Die Situation
+
+> Die Auswertungen funktionieren. Jetzt sollen die Tickets von einem **Server** kommen, und die Oberfläche soll **sofort** aktuell sein, wenn sich ein Ticket ändert: in der Liste, im Zähler, überall.
+>
+> Dein Auftrag: Baue einen **Speicher**, der die Tickets hält, Änderungen meldet und Tickets aus dem Netz laden kann.
+
+## Lernziele
+
+Nach Bearbeitung dieses Arbeitsblatts kannst du:
+
+- eine **Klasse** mit Konstruktor-Attributen und privatem Zustand schreiben
+- erklären, warum ein Speicher **neue Listen** statt Änderungen an der alten braucht
+- **Änderungen melden**, indem du Funktionen anmeldest und wieder abmeldest (Beobachter-Muster)
+- Daten mit `async` und `await` laden und Fehler abfangen
+- das Ergebnis mit einem **`Result`-Typ** darstellen, sodass der Compiler die Prüfung erzwingt
+
+## Vorbereitung
+
+Du brauchst das Projekt aus AB 01 und AB 02 mit den fertigen Funktionen in `src/ticket.ts` und `src/ticket-list.ts`.
+
+:::warning Wenn AB 01 oder AB 02 nicht fertig ist
+Übernimm die Musterlösungen aus den Arbeitsblättern in die Dateien, dann hast du dieselbe Grundlage wie alle anderen.
+:::
+
+:::info Zum Nachschlagen
+Klassen erklärt das Infoblatt [Klassen in TypeScript](/infoblaetter/klassen). Das Laden von Daten steht im Infoblatt [Daten laden: async und await](/infoblaetter/async-await). Lies sie, wenn du nicht weiterkommst.
+:::
+
+## Aufgaben
+
+### Aufgabe 1 – Ausgangslage
+
+*Etwa 5 Minuten.*
+
+<Task id="ts-ab03-a1-test">Führe die Tests aus: `npm test`. Die 22 Tests aus AB 01 und AB 02 sind grün, die 16 mit **C** sind rot. Wie viele davon gehören zu `C1`, `C2` und `C3`? Notiere sie.</Task>
+
+Diesmal arbeitest du in der Datei `src/ticket-store.ts`.
+
+### Aufgabe 2 – Der Speicher
+
+*Etwa 25 Minuten.*
+
+Der **Speicher** (`TicketStore`) hält eine Liste von Tickets und bietet vier Methoden an:
+
+| Methode | Tut |
+|---|---|
+| `all()` | liefert die aktuelle Liste |
+| `add(ticket)` | fügt ein Ticket hinzu |
+| `setStatus(id, status)` | ändert den Status eines Tickets. Gibt es die Nummer nicht, geschieht nichts. |
+| `replaceAll(tickets)` | ersetzt alle Tickets |
+
+Der Speicher darf eine Liste, die er einmal herausgegeben hat, **nie** nachträglich verändern. Bei jeder Änderung entsteht eine **neue** Liste, und das Feld verweist danach auf sie. Das kennst du aus AB 02.
+
+<Task id="ts-ab03-a2-constructor">Ersetze im Starter den Konstruktor durch einen mit **Konstruktor-Attribut**: Das Wort `private` vor dem Parameter macht aus ihm gleichzeitig ein Feld.</Task>
+
+```ts title="src/ticket-store.ts"
+export class TicketStore {
+  constructor(private tickets: readonly Ticket[] = []) {}
+
+  // …die vier Methoden
+}
+```
+
+Der Parameter hat einen **Standardwert** (`= []`): Wird der Speicher ohne Argument erzeugt, ist er leer. Der Konstruktor hat keinen Inhalt, es ist alles schon gesagt.
+
+<Task id="ts-ab03-a2-all">Schreibe `all()`: Die Methode gibt die Liste zurück. Auf das Feld greifst du in einer Klasse immer mit `this.` zu.</Task>
+
+<Task id="ts-ab03-a2-add">Schreibe `add(ticket)`. Du brauchst eine **neue** Liste mit dem Ticket am Ende. Weise sie dem Feld zu: `this.tickets = …`. Ein `push` wäre falsch, weil es die alte Liste verändert.</Task>
+
+<details>
+<summary>Tipp</summary>
+
+Mit dem Spread-Operator: `[...this.tickets, ticket]` baut eine neue Liste mit allen bisherigen Tickets und dem neuen am Ende.
+
+</details>
+
+<Task id="ts-ab03-a2-status">Schreibe `setStatus(id, status)`. Prüfe zuerst, ob es ein Ticket mit dieser Nummer gibt (`some`), sonst tust du nichts (`return`). Sonst benutzt du die Funktion `withStatus` aus AB 02. Dafür brauchst du oben in der Datei einen Import:</Task>
+
+```ts
+import { withStatus } from './ticket-list';
+```
+
+<Task id="ts-ab03-a2-replace">Schreibe `replaceAll(tickets)`. Speichere eine **Kopie** der übergebenen Liste, damit der Speicher nicht von außen verändert werden kann.</Task>
+
+<Task id="ts-ab03-a2-test">Starte `npm test`. Die fünf Tests `C1 TicketStore: Inhalt` werden grün.</Task>
+
+### Aufgabe 3 – Das Experiment: Wer erfährt von der Änderung?
+
+*Etwa 15 Minuten.*
+
+Jetzt hast du einen Speicher. Wie sieht die Anzeige aus, wenn sich etwas ändert? Öffne `explore/anzeige.ts`:
+
+```ts title="explore/anzeige.ts"
+function showTickets(tickets: readonly Ticket[]): void {
+  console.log('--- Tickets ---');
+  for (const ticket of tickets) {
+    console.log(describeTicket(ticket));
+  }
+}
+
+const store = new TicketStore(sampleTickets);
+
+showTickets(store.all());
+
+store.add({ id: 9, title: 'Beamer startet nicht', status: 'offen', priority: 2, createdAt: '2026-11-10' });
+console.log('\nEin neues Ticket wurde gespeichert. Was zeigt die Anzeige jetzt?');
+```
+
+<Task id="ts-ab03-a3-predict">Vorhersage: Das Programm zeigt zuerst die Tickets an und speichert dann ein neues. Steht das neue Ticket `#9` in der Ausgabe? Schreibe deine Vermutung auf.</Task>
+
+<Task id="ts-ab03-a3-run">Starte das Programm und prüfe:</Task>
+
+```bash
+npm run anzeige
+```
+
+Das neue Ticket fehlt. `showTickets` wurde nur **einmal** aufgerufen, und danach hat niemand der Anzeige gesagt, dass sich etwas geändert hat. Die Daten sind aktuell, die Anzeige ist alt.
+
+<Task id="ts-ab03-a3-manual">Repariere es von Hand: Rufe nach dem `store.add(...)` noch einmal `showTickets(store.all());` auf. Starte das Programm erneut.</Task>
+
+Es funktioniert, aber nur, weil **du** daran gedacht hast. Überlege:
+
+<Task id="ts-ab03-a3-think">Eine echte Anwendung hat viele Stellen, die Tickets ändern (ein Formular, ein Klick auf „erledigt“, ein Update vom Server), und mehrere Anzeigen (Liste, Zähler, Diagramm). Was geschieht, wenn eine dieser Stellen vergisst, die Anzeigen zu aktualisieren? Notiere zwei Probleme.</Task>
+
+<details>
+<summary>Auflösung</summary>
+
+Erstens zeigt irgendeine Anzeige dann veraltete Daten, und niemand merkt es, weil es keinen Fehler gibt. Zweitens müsste **jede** Stelle, die etwas ändert, **alle** Anzeigen kennen. Kommt eine neue Anzeige dazu, muss man alle Änderungsstellen anfassen.
+
+</details>
+
+Die Idee, die das Problem löst: Nicht der Änderer ruft die Anzeigen auf, sondern der **Speicher** meldet jede Änderung selbst. Wer informiert werden will, **meldet sich an**:
+
+```ts
+store.onChange(showTickets);   // „Ruf showTickets auf, wenn sich etwas ändert.“
+```
+
+<Task id="ts-ab03-a3-remove">Nimm den manuellen Aufruf wieder heraus. Du baust jetzt `onChange`.</Task>
+
+### Aufgabe 4 – Änderungen melden
+
+*Etwa 20 Minuten.*
+
+Der Speicher soll sich merken, **wer** informiert werden will. Dazu dient eine Menge von Funktionen (`Set`):
+
+```ts
+private readonly listeners = new Set<Listener>();
+```
+
+`Listener` ist der Typ einer Funktion, die die neue Liste entgegennimmt und nichts zurückgibt. Er steht schon in der Datei. Ein `Set` ist eine Menge ohne Doppelte, mit den Methoden `add`, `delete` und der Möglichkeit, sie mit `for (const x of menge)` zu durchlaufen.
+
+<Task id="ts-ab03-a4-field">Füge das Feld `listeners` am Anfang der Klasse ein.</Task>
+
+<Task id="ts-ab03-a4-notify">Schreibe die private Methode `notify()`: Sie ruft **jeden** angemeldeten Listener mit der aktuellen Liste auf.</Task>
+
+<Task id="ts-ab03-a4-onchange">Schreibe `onChange(listener)`: Die Methode merkt sich den Listener. Als Ergebnis liefert sie eine **Funktion**, die ihn wieder entfernt (`delete`).</Task>
+
+<details>
+<summary>Tipp: Eine Funktion, die eine Funktion zurückgibt</summary>
+
+```ts
+onChange(listener: Listener): () => void {
+  this.listeners.add(listener);
+  return () => {
+    this.listeners.delete(listener);
+  };
+}
+```
+
+Der Rückgabetyp `() => void` heißt: eine Funktion ohne Parameter, die nichts zurückgibt. Die zurückgegebene Funktion „erinnert sich“ an `listener`, auch nachdem `onChange` längst beendet ist. Man nennt das eine **Closure**.
+
+</details>
+
+<Task id="ts-ab03-a4-call">Rufe `this.notify()` am **Ende** von `add`, von `setStatus` (nach der Änderung, nicht bei einer unbekannten Nummer) und von `replaceAll` auf.</Task>
+
+<Task id="ts-ab03-a4-test">Starte `npm test`. Die fünf Tests `C2 TicketStore: Änderungen melden` werden grün.</Task>
+
+Jetzt der Gegentest. Er zeigt, ob das Experiment aus Aufgabe 3 gelöst ist:
+
+<Task id="ts-ab03-a4-anzeige">Melde `showTickets` in `explore/anzeige.ts` **direkt nach** dem ersten Aufruf an: `store.onChange(showTickets);`. Starte `npm run anzeige`. Das neue Ticket erscheint jetzt von selbst.</Task>
+
+<Task id="ts-ab03-a4-unsubscribe">Speichere den Rückgabewert: `const abmelden = store.onChange(showTickets);`. Rufe `abmelden();` direkt vor dem `store.add(...)` auf. Was passiert jetzt?</Task>
+
+:::info Das Beobachter-Muster
+Du hast gerade ein Muster gebaut, das in der Programmierung überall vorkommt: Ein Objekt (hier der Speicher) **meldet Änderungen**, und andere Objekte **melden sich an**, um sie zu erfahren. Wer fertig ist, meldet sich wieder ab.
+
+In Angular löst das ein fertiger Baustein. Im nächsten Tutorial lernst du **Signals** kennen, mit denen die Oberfläche von selbst aktuell bleibt. `HttpClient` und viele andere Teile von Angular liefern **Observables**, die genau so funktionieren wie dein `onChange`: Man meldet sich an (`subscribe`) und bekommt einen Weg, sich abzumelden (`unsubscribe`).
+:::
+
+### Aufgabe 5 – Daten laden
+
+*Etwa 20 Minuten.*
+
+Bisher kommen die Tickets aus dem Programm selbst. Echte Daten liegen auf einem Server, und dorthin muss man eine Anfrage schicken. Das dauert, und währenddessen darf das Programm nicht stehen bleiben. Dafür gibt es `async` und `await`.
+
+**C3** `loadTickets(url)` ruft die Adresse ab und liefert die Tickets. Bei einer Fehlerantwort wirft sie einen Fehler mit dem Text `HTTP <status>`.
+
+<Task id="ts-ab03-a5-predict">Vorhersage: Du rufst mit `fetch` eine Adresse ab, die es nicht gibt. Der Server antwortet mit **404**. Löst `fetch` dann einen Fehler aus? Notiere deine Vermutung.</Task>
+
+<details>
+<summary>Auflösung</summary>
+
+Nein. `fetch` meldet einen Fehler nur, wenn das **Netz** scheitert (kein Internet, Adresse unbekannt). Eine Antwort mit 404 oder 500 ist für `fetch` eine ganz normale Antwort. Ob sie gut war, musst du selbst prüfen, mit `response.ok`.
+
+</details>
+
+<Task id="ts-ab03-a5-load">Schreibe `loadTickets`. Die Funktion ist schon als `async` gekennzeichnet. Gehe so vor:</Task>
+
+1. Rufe die Adresse mit `await fetch(url)` ab.
+2. Ist `response.ok` falsch, wirf einen Fehler: ``throw new Error(`HTTP ${response.status}`)``.
+3. Sonst liefere den Inhalt: `(await response.json()) as Ticket[]`.
+
+<Task id="ts-ab03-a5-test1">Starte `npm test`. Die zwei Tests `loadTickets` in der Gruppe `C3` werden grün. Sie benutzen ein **vorgegebenes** `fetch` und brauchen kein Netz.</Task>
+
+:::warning Der Compiler glaubt dir
+Mit `as Ticket[]` **behauptest** du, dass die Daten die Form von Tickets haben. Der Compiler prüft das nicht, und zur Laufzeit gibt es keine Typen mehr. Liefert der Server ein Ticket ohne `title`, merkst du es erst, wenn dein Code darauf zugreift. Typen am Rand der Anwendung sind Behauptungen.
+:::
+
+Jetzt der Blick auf die Fehlerfälle. Eine Funktion, die wirft, überlässt es dem Aufrufer, ob er den Fehler behandelt. Der Compiler erzwingt es nicht. Besser: Die Funktion liefert ein Ergebnis, das **entweder** die Daten **oder** den Fehler enthält und das du **nicht ignorieren** kannst.
+
+<Task id="ts-ab03-a5-type">Ersetze `export type Result<T> = any;` durch einen **Union-Typ**:</Task>
+
+```ts
+export type Result<T> = { ok: true; data: T } | { ok: false; error: string };
+```
+
+Lies ihn so: Ein `Result<T>` ist **entweder** ein Objekt mit `ok: true` und den Daten **oder** ein Objekt mit `ok: false` und einem Fehlertext.
+
+<Task id="ts-ab03-a5-check">Starte `npm run check`. Die letzte offene Meldung (die mit `C4`) ist verschwunden. Der Compiler ist jetzt vollständig zufrieden. Lies den Kommentar über der Zeile in `src/typen.check.ts`: Was verlangt der Compiler jetzt von jedem, der ein `Result` benutzt?</Task>
+
+<details>
+<summary>Auflösung</summary>
+
+Wer ein `Result` benutzt, **muss** zuerst prüfen, ob `ok` wahr ist. Erst dann weiß der Compiler, ob es `data` oder `error` gibt. Greift man ohne Prüfung auf `data` zu, meldet er `Property 'data' does not exist on type 'Result<Ticket[]>'`.
+
+</details>
+
+**C4** `loadTicketsSafe(url)` ruft `loadTickets` auf, wirft aber **nie**, sondern liefert ein `Result`.
+
+<Task id="ts-ab03-a5-safe">Schreibe `loadTicketsSafe` mit `try` und `catch`. Im `try` liefert die Funktion `{ ok: true, data: … }`, im `catch` `{ ok: false, error: … }`.</Task>
+
+<details>
+<summary>Tipp: Der Fehlertext</summary>
+
+Der Fehler im `catch` hat den Typ `unknown`, denn in JavaScript kann man alles werfen. Prüfe, ob es ein Fehlerobjekt ist, bevor du den Text benutzt:
+
+```ts
+error instanceof Error ? error.message : String(error)
+```
+
+</details>
+
+<Task id="ts-ab03-a5-test2">Starte `npm test`. Die vier Tests `loadTicketsSafe` werden grün. Damit sind alle 38 Tests grün.</Task>
+
+<Solution daten={loesung} titel="Musterlösung für src/ticket-store.ts" />
+
+<Task id="ts-ab03-a5-live">Zusatz, mit Internet: Starte `npm run laden`. Das Programm lädt die Tickets von der Kursseite. Funktioniert es, stehen acht Tickets in der Ausgabe. Wenn nicht, steht dort eine Fehlermeldung, und das Programm stürzt nicht ab, dafür sorgt das `Result`.</Task>
+
+### Aufgabe 6 – Prüfen
+
+*Etwa 5 Minuten.*
+
+<Task id="ts-ab03-a6-all">Führe die folgenden Testfälle aus und halte die Ergebnisse fest.</Task>
+
+<TestTable
+  storageKey="ts-ab03-tests"
+  tests={[
+    {
+      id: 'TF-01',
+      beschreibung: 'Alles ist grün',
+      vorbedingung: 'Aufgaben 2 bis 5 sind erledigt',
+      schritte: ['npm run pruefen ausführen'],
+      erwartet: <>Am Ende steht <code>Typen: grün</code> und <code>Tests: grün</code>. Alle 38 Tests sind grün, der Compiler meldet nichts.</>
+    },
+    {
+      id: 'TF-02',
+      beschreibung: 'Die Anzeige aktualisiert sich selbst',
+      vorbedingung: 'store.onChange(showTickets) steht in explore/anzeige.ts',
+      schritte: ['npm run anzeige ausführen'],
+      erwartet: <>Die Ausgabe enthält <b>zwei</b> Ticketlisten. Die zweite hat neun Einträge, der letzte ist <code>#9 Beamer startet nicht [offen]</code>.</>
+    },
+    {
+      id: 'TF-03',
+      beschreibung: 'Abmelden wirkt',
+      vorbedingung: 'TF-02 ist erfüllt',
+      schritte: ['In anzeige.ts abmelden() vor store.add(...) aufrufen', 'npm run anzeige ausführen'],
+      erwartet: <>Es erscheint nur <b>eine</b> Ticketliste mit acht Einträgen.</>
+    },
+    {
+      id: 'TF-04',
+      beschreibung: 'Der Compiler erzwingt die Prüfung von ok',
+      vorbedingung: 'TF-01 ist erfüllt',
+      schritte: ['In explore/laden.ts vor dem if kurz die Zeile console.log(ergebnis.data); einfügen', 'npm run check ausführen', 'Zeile wieder entfernen'],
+      erwartet: <>Der Compiler meldet <code>Property 'data' does not exist on type 'Result&lt;Ticket[]&gt;'</code>.</>
+    }
+  ]}
+/>
+
+## Zusammenfassung
+
+:::tip Das hast du gelernt
+- Eine **Klasse** hält Zustand und Verhalten zusammen. Ein Konstruktor-Parameter mit `private` ist gleichzeitig ein Feld.
+- Ein Speicher gibt bei jeder Änderung eine **neue Liste** aus. Wer eine alte Liste hat, behält sie unverändert.
+- **Beobachter-Muster:** Der Speicher merkt sich angemeldete Funktionen und ruft sie bei jeder Änderung auf. `onChange` liefert eine Funktion zum Abmelden.
+- **`async` und `await`** laden Daten, ohne das Programm anzuhalten. Eine `async`-Funktion liefert ein `Promise`.
+- **`fetch` wirft nicht bei 404:** Die Antwort musst du mit `response.ok` selbst prüfen.
+- Ein **`Result<T>`** stellt Erfolg oder Fehler als Union-Typ dar. Der Compiler zwingt jeden, zuerst `ok` zu prüfen.
+- Typen am Rand der Anwendung (JSON vom Server) sind **Behauptungen**, die niemand prüft.
+:::
+
+## Was du jetzt kannst – und wie es weitergeht
+
+Mit diesem Arbeitsblatt ist die TypeScript-Werkstatt fertig. Du hast ein Datenmodell mit Typen beschrieben, Listen ausgewertet und geändert, einen Speicher gebaut, der Änderungen meldet, und Daten aus dem Netz geladen.
+
+Im nächsten Tutorial baust du daraus eine **Angular-Oberfläche**. Das Ticket-Modell aus AB 01 und die Funktionen aus AB 02 nimmst du mit. Das Problem aus Aufgabe 3 („Wer erfährt von der Änderung?“) löst dort ein fertiger Baustein: das **Signal**.
+
+## Selbstkontrolle
+
+1. Was bewirkt das Wort `private` vor einem Konstruktor-Parameter?
+2. Warum ersetzt `add` die Liste, statt mit `push` ein Element anzuhängen?
+3. Wozu liefert `onChange` eine Funktion zurück? Was passiert, wenn man sie aufruft?
+4. Was macht `await`, und was liefert eine Funktion, die mit `async` gekennzeichnet ist?
+5. Der Server antwortet mit 404. Warum wirft `fetch` trotzdem keinen Fehler, und was musst du tun?
+6. Was behauptest du mit `as Ticket[]`, und was prüft der Compiler dabei nicht?
+
+<details>
+<summary>Antworten</summary>
+
+1. Der Parameter wird gleichzeitig zu einem **privaten Feld** der Klasse, und der übergebene Wert wird ihm zugewiesen. Dafür braucht der Konstruktor keinen eigenen Inhalt.
+2. `push` würde die Liste verändern, die ein anderer schon in der Hand hält. Mit einer neuen Liste bleibt die alte unverändert, und jeder, der gemeldet bekommt, erhält die neue.
+3. Die zurückgegebene Funktion **meldet den Listener wieder ab**. Nach dem Aufruf bekommt er keine Änderungen mehr. So räumt man auf, wenn eine Anzeige nicht mehr gebraucht wird.
+4. `await` wartet auf ein `Promise` und liefert seinen Wert, ohne das Programm insgesamt anzuhalten. Es ist nur in einer `async`-Funktion erlaubt. Eine `async`-Funktion liefert selbst immer ein `Promise`.
+5. Für `fetch` ist eine Antwort mit Status 404 eine ganz normale Antwort. Ein Fehler tritt nur ein, wenn das Netz selbst scheitert. Du musst `response.ok` (oder `response.status`) prüfen und selbst einen Fehler werfen.
+6. Du behauptest, dass die Daten aus dem Netz die Form eines `Ticket`-Arrays haben. Der Compiler glaubt dir. Er prüft **nicht**, ob die Daten das wirklich tun, und zur Laufzeit gibt es keine Typen, die es prüfen könnten.
+
+</details>

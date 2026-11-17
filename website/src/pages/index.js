@@ -32,6 +32,16 @@ const infoblaetter = [
     beschreibung: 'Kopien mit dem Spread-Operator, readonly und warum Angular neue Objekte braucht',
     link: '/infoblaetter/unveraenderlich',
   },
+  {
+    titel: 'Klassen in TypeScript',
+    beschreibung: 'Aufbau, Konstruktor-Attribute, die Falle mit this – und was anders ist als in Java',
+    link: '/infoblaetter/klassen',
+  },
+  {
+    titel: 'Daten laden: async und await',
+    beschreibung: 'Promise, await, fetch und die Fehlerantwort, try/catch, das Result und warum Typen am Rand nur Behauptungen sind',
+    link: '/infoblaetter/async-await',
+  },
 ];
 
 const lernziele = [
