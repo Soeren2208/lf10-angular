@@ -22,3 +22,7 @@ Thumbs.db
 # Lokale Vorschau
 _serve/
 .claude/
+
+# Beim Bauen erzeugt (website/scripts)
+website/src/data/
+website/static/downloads/

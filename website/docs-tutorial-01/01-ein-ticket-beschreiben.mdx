@@ -1,0 +1,350 @@
+---
+title: "AB 01 – Ein Ticket beschreiben"
+sidebar_label: "01 – Ein Ticket beschreiben"
+slug: 01-ein-ticket-beschreiben
+sidebar_position: 1
+---
+
+import loesung from '@site/src/data/loesung-ab01.json';
+
+# AB 01 – Ein Ticket beschreiben
+
+*Dauer: etwa eine Doppelstunde.*
+
+## Die Situation
+
+> Die Support-Abteilung der **HiTec GmbH** führt ihre Tickets in einer Tabelle: Titel, Status, Priorität, wer sich kümmert. Für die neue Weboberfläche brauchen diese Daten eine feste Form.
+>
+> Dein Auftrag: Beschreibe ein Ticket in TypeScript so genau, dass der **Compiler** Fehler findet, bevor sie jemand bemerkt. Dazu schreibst du die ersten drei kleinen Funktionen.
+
+## Lernziele
+
+Nach Bearbeitung dieses Arbeitsblatts kannst du:
+
+- die Ausgabe von **Compiler** und **Tests** lesen und beide unterscheiden
+- erklären, warum ein Programm trotz **Typfehlern** läuft
+- Daten mit einem **Interface** beschreiben, mit optionalen und schreibgeschützten Feldern
+- mit einem **Union-Typ** festlegen, welche Werte erlaubt sind
+- einen **Template-String** und den Operator `??` einsetzen
+
+## So arbeitest du
+
+In diesem Tutorial hast du zwei Prüfer, die dir Rückmeldung geben. Sie prüfen Verschiedenes:
+
+| Prüfer | Befehl | Er sagt dir |
+|---|---|---|
+| **Compiler** | `npm run check` | ob die **Typen** zusammenpassen |
+| **Tests** | `npm test` | ob dein Code das **Richtige tut** |
+| beide | `npm run pruefen` | beides nacheinander, mit Zusammenfassung |
+
+Am Anfang ist alles rot. Das ist die Arbeitsliste: Jede Aufgabe macht ein Stück davon grün.
+
+:::info Zum Nachschlagen
+Den Rechner einzurichten (Node.js, WebStorm) erklärt das Infoblatt [Entwicklungsumgebung einrichten](/infoblaetter/einrichten). Wofür `interface`, `readonly` und Co. stehen, steht im Infoblatt [Typen: Daten beschreiben](/infoblaetter/typen). Du musst es nicht vorher lesen. Schlag nach, wenn dir ein Begriff fehlt.
+:::
+
+## Aufgaben
+
+### Aufgabe 1 – Das Projekt starten
+
+*Etwa 10 Minuten.*
+
+<Task id="ts-ab01-a1-zip">Lade das Starter-Projekt herunter: [typescript-werkstatt-starter.zip](pathname:///downloads/typescript-werkstatt-starter.zip). Entpacke die Datei in einen Ordner deiner Wahl.</Task>
+
+<Task id="ts-ab01-a1-open">Starte WebStorm und öffne den entpackten Ordner `typescript-werkstatt` über **File → Open**.</Task>
+
+<Task id="ts-ab01-a1-install">Öffne das Terminal in WebStorm (**Alt + F12**) und installiere die Abhängigkeiten. Das dauert etwa eine Minute.</Task>
+
+```bash
+npm install
+```
+
+<Task id="ts-ab01-a1-test">Führe die Tests aus:</Task>
+
+```bash
+npm test
+```
+
+Jede Zeile der Ausgabe ist ein Test mit seinem Namen. Alle sind rot, am Ende steht, wie viele es sind. **Notiere die Zahl.**
+
+Die Namen beginnen mit einem Buchstaben und einer Nummer, zum Beispiel `A3` oder `C2`. Der Buchstabe sagt dir, zu welchem Arbeitsblatt der Test gehört: `A` zu AB 01, `B` zu AB 02, `C` zu AB 03. Heute bearbeitest du nur die Tests mit **A**.
+
+<Task id="ts-ab01-a1-check">Lass jetzt den Compiler prüfen:</Task>
+
+```bash
+npm run check
+```
+
+Du siehst mehrere Meldungen mit dem Text `Unused '@ts-expect-error' directive`. **Notiere auch hier die Zahl.** Was diese Meldungen bedeuten, erfährst du in Aufgabe 3. Es sind keine Programmfehler, sondern unerledigte Aufgaben.
+
+### Aufgabe 2 – Fehlermeldungen vorhersagen
+
+*Etwa 15 Minuten.*
+
+Öffne die Datei `explore/fehler-01.ts`. Sie enthält vier Zeilen mit einem Typfehler (gekennzeichnet mit `(1)` bis `(4)`):
+
+```ts title="explore/fehler-01.ts"
+const anzahl: number = 'drei'; // (1)
+console.log('anzahl:', anzahl);
+
+const ticket = { id: 1, title: 'Drucker defekt' };
+console.log('titel:', ticket.titel); // (2)
+
+function verdopple(wert: number): number {
+  return wert * 2;
+}
+console.log('verdopple("4"):', verdopple('4')); // (3)
+
+type Status = 'offen' | 'erledigt';
+const status: Status = 'wartet'; // (4)
+console.log('status:', status);
+```
+
+<Task id="ts-ab01-a2-predict">Der Compiler beanstandet alle vier Zeilen. **Bevor du etwas ausführst:** Überlege, was das Programm auf der Konsole ausgäbe, wenn man es trotz der Fehler starten würde. Trage deine Vermutung für die Zeilen `(1)` bis `(4)` ein und prüfe sie.</Task>
+
+<FillInTable
+  storageKey="ts-ab01-a2-vorhersage"
+  spalteLinks="Zeile"
+  spalteRechts="Das gibt das Programm aus"
+  platzhalter="Deine Vermutung"
+  zeilen={[
+    {id: 'z1', links: <><code>(1)</code> <code>console.log('anzahl:', anzahl)</code></>, loesung: 'drei', klartext: 'anzahl: drei'},
+    {id: 'z2', links: <><code>(2)</code> <code>console.log('titel:', ticket.titel)</code></>, loesung: 'undefined', klartext: 'titel: undefined (das Feld heißt title, titel gibt es nicht)'},
+    {id: 'z3', links: <><code>(3)</code> <code>verdopple('4')</code></>, loesung: '8', klartext: '8 (JavaScript macht aus dem Text "4" bei der Multiplikation die Zahl 4)'},
+    {id: 'z4', links: <><code>(4)</code> <code>console.log('status:', status)</code></>, loesung: 'wartet', klartext: 'status: wartet'},
+  ]}
+/>
+
+<Task id="ts-ab01-a2-run-check">Lass den Compiler die Datei prüfen:</Task>
+
+```bash
+npm run fehler
+```
+
+Jede Meldung folgt demselben Muster:
+
+```text
+explore/fehler-01.ts(9,7): error TS2322: Type 'string' is not assignable to type 'number'.
+└─ Datei ─────────────┘ └ Zeile, Spalte      └ Fehlercode └ Was falsch ist
+```
+
+<Task id="ts-ab01-a2-run">Starte das Programm jetzt trotz der Fehler und vergleiche mit deiner Vermutung:</Task>
+
+```bash
+npm run fehler:laufen
+```
+
+:::info Das Wichtigste aus diesem Arbeitsblatt
+Das Programm läuft, obwohl der Compiler vier Fehler gemeldet hat. Der Grund: **Typen gibt es nur beim Schreiben.** Der Compiler prüft deinen Code *bevor* er läuft und entfernt die Typen danach. Das fertige JavaScript weiß nichts mehr von `number` oder `Status`.
+
+Ein Typfehler bricht also nichts ab. Er **warnt** nur, und zwar zu einem Zeitpunkt, an dem der Fehler noch billig ist. Deshalb sind beide Prüfer wichtig: Die Tests zeigen, ob der Code das Richtige tut, und der Compiler zeigt, ob die Typen stimmen.
+:::
+
+<Task id="ts-ab01-a2-note">Notiere in einem Satz, warum Zeile `(3)` besonders gefährlich ist.</Task>
+
+### Aufgabe 3 – Das Ticket beschreiben
+
+*Etwa 20 Minuten.*
+
+Ein Ticket besteht aus diesen Feldern:
+
+| Feld | Bedeutung | Beispiel | Pflicht? |
+|---|---|---|---|
+| `id` | Nummer des Tickets, ändert sich nie | `7` | ja, **nur lesbar** |
+| `title` | Kurzbeschreibung | `'Drucker defekt'` | ja |
+| `status` | Bearbeitungsstand | `'offen'` | ja |
+| `priority` | 1 = hoch, 2 = mittel, 3 = niedrig | `1` | ja |
+| `assignee` | Wer sich kümmert, kann noch niemand sein | `'Mara Voss'` | **nein** |
+| `createdAt` | Datum der Meldung | `'2026-11-02'` | ja |
+
+<Task id="ts-ab01-a3-open">Öffne `src/ticket.ts`. Dort steht noch `any`, der Compiler prüft also nichts. Ersetze die Zeile `export type Ticket = any;` durch ein Interface und ergänze die vier fehlenden Felder. Vorerst ist `status` ein Text (`string`) und `priority` eine Zahl (`number`).</Task>
+
+```ts title="src/ticket.ts"
+export interface Ticket {
+  readonly id: number;
+  title: string;
+  // Ergänze: status, priority, assignee (optional!) und createdAt
+}
+```
+
+<details>
+<summary>Tipp: Wie macht man ein Feld optional?</summary>
+
+Mit einem Fragezeichen hinter dem Namen: `assignee?: string;`. Dann darf das Feld fehlen. Liest du es trotzdem, ist sein Wert `undefined`. Der Compiler erinnert dich später daran, diesen Fall zu behandeln.
+
+</details>
+
+<Task id="ts-ab01-a3-check">Lass den Compiler prüfen:</Task>
+
+```bash
+npm run check
+```
+
+Statt neun Meldungen sind jetzt nur noch **vier** übrig. Öffne `src/typen.check.ts` und suche die Zeilen. In dieser Datei steht über jeder Meldung, was der Compiler dort **melden müsste**:
+
+```ts
+// @ts-expect-error A2: Als Status ist nur "offen", "in Arbeit" oder "erledigt" erlaubt
+const falscherStatus: Ticket = { ...gueltig, status: 'wartet' };
+```
+
+Die Zeile sagt: „Hier MUSS ein Fehler kommen.“ Kommt keiner, meldet der Compiler `Unused '@ts-expect-error' directive`: Dein Typ ist an dieser Stelle noch zu locker. Du siehst also genau, was deine Typen noch nicht verbieten.
+
+<Task id="ts-ab01-a3-read">Lies die vier übrigen Kommentare. Welche beginnen mit `A2`, welche mit `C4`? Die mit `A2` löst du in Aufgabe 4, die mit `C4` erst in AB 03.</Task>
+
+<details>
+<summary>Probiere: Was macht readonly?</summary>
+
+Entferne in `src/ticket.ts` kurz das Wort `readonly` vor `id` und starte `npm run check`. Es kommt eine **zusätzliche** Meldung: Der Compiler verbietet `gueltig.id = 2` nun nicht mehr, deshalb ist die Prüfung in `typen.check.ts` überflüssig. Setze `readonly` danach wieder ein.
+
+</details>
+
+### Aufgabe 4 – Erlaubte Werte festlegen
+
+*Etwa 15 Minuten.*
+
+Ein Text darf alles sein, auch `'wartet'` oder ein Tippfehler wie `'ofen'`. Für den Status gibt es aber nur drei gültige Werte. Der Compiler kann das prüfen, wenn du ihm die erlaubten Werte nennst.
+
+<Task id="ts-ab01-a4-predict">Vorhersage: Das Ticket `{ ...gueltig, status: 'wartet' }` steht in `typen.check.ts`. Meldet der Compiler dafür **im Moment** einen Fehler? Schau nach, ob deine Vermutung stimmt.</Task>
+
+<Task id="ts-ab01-a4-types">Ersetze in `src/ticket.ts` die beiden Zeilen mit `any` durch zwei **Union-Typen**: Ein Union-Typ listet die erlaubten Werte auf, getrennt durch `|` (gesprochen „oder“).</Task>
+
+```ts title="src/ticket.ts"
+export type Status = 'offen' | 'in Arbeit' | 'erledigt';
+export type Priority = 1 | 2 | 3;
+```
+
+<Task id="ts-ab01-a4-use">Benutze die neuen Typen im Interface: `status: Status;` und `priority: Priority;`.</Task>
+
+<Task id="ts-ab01-a4-check">Starte `npm run check`. Es bleibt **eine** Meldung übrig, die mit `C4`.</Task>
+
+<Task id="ts-ab01-a4-editor">Probiere den Editor aus: Tippe irgendwo in `ticket.ts` die Zeile `const s: Status = '` und warte kurz. WebStorm schlägt dir jetzt die drei erlaubten Werte vor. Lösche die Zeile wieder.</Task>
+
+:::tip Warum das hilft
+Ein Typ ist mehr als eine Prüfung: Er erzählt dem Editor, was du meinst. Mit `Status` schlägt WebStorm die drei Werte vor, und ein Tippfehler wird sofort rot unterstrichen. Das ist später in Angular sehr viel wert, zum Beispiel bei Eingaben von Komponenten.
+:::
+
+### Aufgabe 5 – Drei Funktionen schreiben
+
+*Etwa 30 Minuten.*
+
+Jetzt kommen die ersten Funktionen. Für jede gibt es Tests, die du als Arbeitsliste nutzt: Lies zuerst die Namen der Tests in der Ausgabe von `npm test`, dann schreibst du die Funktion.
+
+#### A3: `describeTicket`
+
+Die Funktion liefert eine Zeile Text für die Anzeige:
+
+| Ticket | Ergebnis |
+|---|---|
+| Nummer 7, Titel `Drucker defekt`, Status `offen` | `#7 Drucker defekt [offen]` |
+
+<Task id="ts-ab01-a5-describe">Ersetze in `src/ticket.ts` die Zeile `throw new Error('TODO A3: describeTicket');` durch deine Lösung. Prüfe mit `npm test`: Die Tests `A3 describeTicket` müssen grün werden.</Task>
+
+<details>
+<summary>Tipp: Text mit Werten zusammensetzen</summary>
+
+Mit einem **Template-String**: Er steht in Backticks, und mit `${…}` setzt du einen Wert ein, zum Beispiel `` `#${ticket.id}` ``. Mehr dazu im Infoblatt [Typen](/infoblaetter/typen).
+
+</details>
+
+#### A4: `isUrgent`
+
+Ein Ticket ist **dringend**, wenn es die Priorität 1 hat **und** noch nicht erledigt ist.
+
+<Task id="ts-ab01-a5-urgent">Schreibe `isUrgent` (Rückgabe `true` oder `false`). Prüfe mit `npm test`: Die vier Tests `A4 isUrgent` müssen grün werden.</Task>
+
+#### A5: `assigneeName`
+
+Die Funktion liefert den Namen der bearbeitenden Person. Gibt es keine, ist das Ergebnis der Text `nicht zugewiesen`.
+
+<Task id="ts-ab01-a5-assignee-or">Schreibe die Funktion zuerst mit dem Operator `||`. Er wählt den rechten Wert, wenn der linke „leer“ ist.</Task>
+
+```ts
+return ticket.assignee || 'nicht zugewiesen';
+```
+
+<Task id="ts-ab01-a5-assignee-test">Starte `npm test`. Zwei Tests werden grün, **einer bleibt rot**. Lies seinen Namen und überlege: Warum schlägt er fehl?</Task>
+
+<details>
+<summary>Auflösung: || und ?? sind nicht dasselbe</summary>
+
+Der rote Test prüft ein Ticket mit dem **leeren Namen** `''`. Der Operator `||` behandelt jeden „unechten“ Wert als fehlend: den leeren Text `''`, die Zahl `0`, `false`, `undefined` und `null`. Er ersetzt deshalb auch `''`.
+
+Der Operator `??` ersetzt dagegen nur `undefined` und `null`. Ein leerer Name ist hier ein Name und bleibt, wie er ist.
+
+</details>
+
+<Task id="ts-ab01-a5-assignee-fix">Verwende stattdessen `??` und starte `npm test` erneut. Alle drei Tests `A5 assigneeName` sind jetzt grün.</Task>
+
+<Solution daten={loesung} titel="Musterlösung für src/ticket.ts" />
+
+### Aufgabe 6 – Prüfen
+
+*Etwa 10 Minuten.*
+
+<Task id="ts-ab01-a6-all">Führe die folgenden Testfälle aus und halte die Ergebnisse fest.</Task>
+
+<TestTable
+  storageKey="ts-ab01-tests"
+  tests={[
+    {
+      id: 'TF-01',
+      beschreibung: 'Die Tests zu AB 01 sind grün',
+      vorbedingung: 'Aufgaben 3 bis 5 sind erledigt',
+      schritte: ['npm test ausführen'],
+      erwartet: <>Alle neun Tests der Gruppen <code>A3</code>, <code>A4</code> und <code>A5</code> sind grün. Die übrigen 29 Tests (Gruppen <code>B</code> und <code>C</code>) sind noch rot.</>
+    },
+    {
+      id: 'TF-02',
+      beschreibung: 'Die Typen zu AB 01 stimmen',
+      vorbedingung: 'Aufgaben 3 und 4 sind erledigt',
+      schritte: ['npm run check ausführen'],
+      erwartet: <>Es bleibt genau <b>eine</b> Meldung übrig. Sie steht in <code>src/typen.check.ts</code> bei dem Kommentar mit <code>C4</code> und gehört zu AB 03.</>
+    },
+    {
+      id: 'TF-03',
+      beschreibung: 'readonly schützt die id',
+      vorbedingung: 'TF-02 ist erfüllt',
+      schritte: ['In ticket.ts das Wort readonly vor id entfernen', 'npm run check ausführen', 'readonly wieder einsetzen'],
+      erwartet: <>Es kommt eine <b>zusätzliche</b> Meldung <code>Unused '@ts-expect-error' directive</code> bei der Zeile <code>gueltig.id = 2</code>. Nach dem Einsetzen ist sie wieder weg.</>
+    },
+    {
+      id: 'TF-04',
+      beschreibung: 'Ein Typfehler stoppt das Programm nicht',
+      vorbedingung: 'Das Projekt ist installiert',
+      schritte: ['npm run fehler:laufen ausführen'],
+      erwartet: <>Vier Zeilen Ausgabe: <code>anzahl: drei</code>, <code>titel: undefined</code>, <code>verdopple("4"): 8</code> und <code>status: wartet</code>.</>
+    }
+  ]}
+/>
+
+## Zusammenfassung
+
+:::tip Das hast du gelernt
+- Der **Compiler** (`npm run check`) prüft Typen, die **Tests** (`npm test`) prüfen Verhalten. Beides ist nötig.
+- **Typen gibt es nur beim Schreiben:** Das Programm läuft auch mit Typfehlern, weil die Typen beim Kompilieren verschwinden.
+- Ein **Interface** beschreibt die Form von Daten. Optionale Felder tragen ein `?`, unveränderliche das Wort `readonly`.
+- Ein **Union-Typ** wie `'offen' | 'in Arbeit' | 'erledigt'` erlaubt nur die genannten Werte und gibt dem Editor Vorschläge.
+- Ein **Template-String** setzt Werte mit `${…}` in einen Text ein.
+- `??` ersetzt nur `undefined` und `null`, `||` ersetzt jeden „unechten“ Wert. Für optionale Felder ist meistens `??` richtig.
+:::
+
+## Selbstkontrolle
+
+1. Was bedeutet das Fragezeichen in `assignee?: string`, und was ist der Wert, wenn das Feld fehlt?
+2. Warum läuft das Programm in Aufgabe 2 trotz der Typfehler?
+3. Was ist der Unterschied zwischen `status: string` und `status: Status` (mit dem Union-Typ)?
+4. Was liefert `'' || 'nicht zugewiesen'`, und was liefert `'' ?? 'nicht zugewiesen'`?
+5. Ein Kollege schreibt `status: any`. Was geht dadurch verloren?
+6. Wozu dient `readonly` bei `id`? Wann meldet der Compiler dann einen Fehler?
+
+<details>
+<summary>Antworten</summary>
+
+1. Das Feld darf fehlen. Fehlt es, ist sein Wert `undefined`. Der Compiler erinnert dich daran, das beim Lesen zu behandeln.
+2. Der Compiler entfernt die Typen beim Übersetzen. Was ausgeführt wird, ist reines JavaScript, und das kennt keine Typen. Typfehler sind Warnungen des Compilers, keine Laufzeitfehler.
+3. `string` erlaubt jeden Text, auch `'wartet'` und Tippfehler. Der Union-Typ erlaubt nur die drei genannten Werte. Der Compiler meldet alles andere, und der Editor schlägt die gültigen Werte vor.
+4. `'' || 'nicht zugewiesen'` liefert `'nicht zugewiesen'`, weil `''` für `||` „leer“ ist. `'' ?? 'nicht zugewiesen'` liefert `''`, weil `??` nur bei `undefined` und `null` ersetzt.
+5. Mit `any` prüft der Compiler das Feld nicht mehr. Falsche Werte und Tippfehler fallen nicht auf, und der Editor kann keine Vorschläge machen. `any` schaltet die Prüfung für diese Stelle aus.
+6. `readonly` schützt die Nummer davor, nachträglich geändert zu werden. Der Compiler meldet einen Fehler, sobald jemand zum Beispiel `ticket.id = 5` schreibt.
+
+</details>

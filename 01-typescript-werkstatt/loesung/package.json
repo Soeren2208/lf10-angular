@@ -10,6 +10,7 @@
     "check": "tsc --noEmit",
     "pruefen": "node scripts/pruefen.mjs",
     "fehler": "tsc --noEmit -p tsconfig.fehler.json",
+    "fehler:laufen": "tsx explore/fehler-01.ts",
     "anzeige": "tsx explore/anzeige.ts",
     "laden": "tsx explore/laden.ts"
   },

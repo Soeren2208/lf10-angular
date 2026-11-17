@@ -12,6 +12,11 @@ const infoblaetter = [
     beschreibung: 'Node.js, WebStorm und die PowerShell-Einstellung – Schritt für Schritt und mit Prüfung',
     link: '/infoblaetter/einrichten',
   },
+  {
+    titel: 'Typen: Daten beschreiben',
+    beschreibung: 'Interface, Union-Typen, optionale Felder, ?? und ?. – und die häufigsten Compiler-Meldungen übersetzt',
+    link: '/infoblaetter/typen',
+  },
 ];
 
 const lernziele = [

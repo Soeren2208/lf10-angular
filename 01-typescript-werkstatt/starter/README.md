@@ -32,6 +32,7 @@ Du arbeitest in den drei Dateien im Ordner `src`:
 | `npm run check` | Lässt den Compiler die Typen prüfen. |
 | `npm run pruefen` | Beide Prüfungen nacheinander mit einer Zusammenfassung. |
 | `npm run fehler` | Zeigt die Compiler-Fehler aus `explore/fehler-01.ts` (AB 01). |
+| `npm run fehler:laufen` | Startet `explore/fehler-01.ts` trotz der Fehler (AB 01). |
 | `npm run anzeige` | Startet das Experiment aus AB 03. |
 | `npm run laden` | Lädt echte Tickets aus dem Netz (Zusatz in AB 03). |
 
