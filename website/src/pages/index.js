@@ -22,6 +22,16 @@ const infoblaetter = [
     beschreibung: 'Interface, Union-Typen, optionale Felder, ?? und ?. – und die häufigsten Compiler-Meldungen übersetzt',
     link: '/infoblaetter/typen',
   },
+  {
+    titel: 'Listen auswerten: Array-Methoden',
+    beschreibung: 'Pfeilfunktionen, filter, map, find, reduce und sort – welche Methode wofür',
+    link: '/infoblaetter/array-methoden',
+  },
+  {
+    titel: 'Unveränderlich arbeiten',
+    beschreibung: 'Kopien mit dem Spread-Operator, readonly und warum Angular neue Objekte braucht',
+    link: '/infoblaetter/unveraenderlich',
+  },
 ];
 
 const lernziele = [

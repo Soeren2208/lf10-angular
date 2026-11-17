@@ -1,0 +1,382 @@
+---
+title: "AB 02 – Mit Ticketlisten arbeiten"
+sidebar_label: "02 – Mit Ticketlisten arbeiten"
+slug: 02-mit-ticketlisten-arbeiten
+sidebar_position: 2
+---
+
+import loesung from '@site/src/data/loesung-ab02.json';
+
+# AB 02 – Mit Ticketlisten arbeiten
+
+*Dauer: etwa eine Doppelstunde.*
+
+## Die Situation
+
+> Das Ticket ist beschrieben. Jetzt will die Support-Leitung **Auswertungen** sehen: Wie viele Tickets sind offen? Welche sind am dringendsten? Was ist mit Ticket 4? Und wenn jemand ein Ticket erledigt, soll die Liste sich entsprechend ändern.
+>
+> Dein Auftrag: Schreibe die Funktionen, die Ticketlisten auswerten und ändern.
+
+## Lernziele
+
+Nach Bearbeitung dieses Arbeitsblatts kannst du:
+
+- **Pfeilfunktionen** lesen und schreiben
+- mit `filter`, `map`, `find` und `reduce` Listen auswerten und für jede Frage die passende Methode wählen
+- mit einem Ergebnis `undefined` umgehen, wenn `find` nichts findet
+- erklären, warum `sort` eine Liste verändert, und eine **Kopie** davon sortieren
+- ein Objekt in einer Liste **ändern, ohne die Liste zu verändern**
+
+## Vorbereitung
+
+Du brauchst das Projekt aus AB 01 mit den fertigen Typen in `src/ticket.ts`.
+
+:::warning Wenn AB 01 nicht fertig ist
+Öffne die Musterlösung in AB 01 und übernimm sie in `src/ticket.ts`. Dann hast du dieselben Typen wie alle anderen und kannst hier weitermachen.
+:::
+
+:::info Zum Nachschlagen
+Die Array-Methoden erklärt das Infoblatt [Listen auswerten: Array-Methoden](/infoblaetter/array-methoden). Warum eine Funktion ihre Eingabe nicht verändern sollte, steht im Infoblatt [Unveränderlich arbeiten](/infoblaetter/unveraenderlich). Lies sie, wenn du nicht weiterkommst.
+:::
+
+## Aufgaben
+
+### Aufgabe 1 – Ausgangslage
+
+*Etwa 5 Minuten.*
+
+<Task id="ts-ab02-a1-data">Öffne `src/sample-data.ts`. Dort stehen acht Beispieltickets, mit denen alle Tests arbeiten. Notiere, wie viele davon den Status `offen` haben.</Task>
+
+<Task id="ts-ab02-a1-test">Führe die Tests aus: `npm test`. Die Tests `A3` bis `A5` aus AB 01 sind grün. Jetzt sind die mit **B** an der Reihe, sie sind rot.</Task>
+
+Alle Funktionen dieses Arbeitsblatts stehen in `src/ticket-list.ts`. Jede nimmt eine Liste `readonly Ticket[]` entgegen. Das heißt: Die Funktion **verspricht**, die Liste nicht zu verändern. Der Compiler wird sie daran hindern.
+
+### Aufgabe 2 – Offene Tickets: erst mit Schleife, dann mit `filter`
+
+*Etwa 15 Minuten.*
+
+**B1** `openTickets` liefert alle Tickets mit dem Status `offen`.
+
+<Task id="ts-ab02-a2-loop">Schreibe die Funktion zuerst so, wie du es aus Java kennst: mit einer Schleife und einer Ergebnisliste.</Task>
+
+```ts title="src/ticket-list.ts"
+export function openTickets(tickets: readonly Ticket[]): Ticket[] {
+  const result: Ticket[] = [];
+  for (const ticket of tickets) {
+    // Wenn das Ticket offen ist, hänge es mit result.push(ticket) an.
+  }
+  return result;
+}
+```
+
+<Task id="ts-ab02-a2-test1">Starte `npm test`. Die beiden Tests `B1 openTickets` müssen grün werden.</Task>
+
+Jetzt kommt der Umbau. Dasselbe lässt sich kürzer sagen:
+
+```ts
+export function openTickets(tickets: readonly Ticket[]): Ticket[] {
+  return tickets.filter((ticket) => ticket.status === 'offen');
+}
+```
+
+Die Methode `filter` geht jedes Element durch und behält nur die, für die die Funktion `true` liefert. Die Funktion `(ticket) => ticket.status === 'offen'` ist eine **Pfeilfunktion**: links vom Pfeil der Parameter, rechts der Rückgabewert.
+
+<Task id="ts-ab02-a2-filter">Ersetze deine Schleife durch `filter`. Starte `npm test`. Dieselben Tests sind noch grün.</Task>
+
+:::tip Dafür sind Tests da
+Du hast gerade Code umgebaut und weißt in einer Sekunde, dass er noch dasselbe tut. Ohne Tests müsstest du das von Hand prüfen. Diese Technik heißt **Refactoring**, und sie ist ohne Tests riskant.
+:::
+
+### Aufgabe 3 – Titel auflisten und ein Ticket finden
+
+*Etwa 15 Minuten.*
+
+**B2** `titles` liefert nur die Titel, in derselben Reihenfolge. Das ist ein Fall für `map`: Es macht aus **jedem** Element etwas anderes und liefert eine Liste **gleicher Länge**.
+
+<Task id="ts-ab02-a3-titles">Schreibe `titles` mit `map`. Der Test `B2 titles` wird grün.</Task>
+
+**B3** `findTicket` liefert das Ticket mit der Nummer `id`. Gibt es keins, ist das Ergebnis `undefined`. Dafür nimmst du `find`.
+
+<Task id="ts-ab02-a3-find">Schreibe `findTicket` mit `find`. Die beiden Tests `B3 findTicket` werden grün.</Task>
+
+<Task id="ts-ab02-a3-type">Fahre in WebStorm mit der Maus über `findTicket`. Der Rückgabetyp ist `Ticket | undefined`, also „ein Ticket oder nichts“.</Task>
+
+Probiere aus, was das bedeutet. Das Ergebnis von `findTicket` lässt sich nicht einfach weiterverwenden:
+
+<Task id="ts-ab02-a3-error">Schreibe ganz unten in `src/ticket-list.ts` die Zeile `findTicket([], 1).title;`. Was meldet der Compiler? Sieh es dir mit `npm run check` an und lösche die Zeile wieder.</Task>
+
+<details>
+<summary>Auflösung</summary>
+
+Der Compiler meldet `Object is possibly 'undefined'`. Das Ticket könnte ja fehlen. Mit dem optionalen Zugriff `?.` sagst du: „Nur wenn es da ist.“ `findTicket(sampleTickets, 1)?.title` ist dann `string | undefined`. Wenn du einen Ersatzwert willst, hängst du `?? '–'` an. Beides kennst du aus AB 01.
+
+</details>
+
+<Task id="ts-ab02-a3-quiz">Welche Methode passt zu welcher Frage? Trage ein und prüfe.</Task>
+
+<FillInTable
+  storageKey="ts-ab02-a3-methoden"
+  spalteLinks="Aufgabe"
+  spalteRechts="Methode"
+  platzhalter="filter, map, find, some oder reduce"
+  zeilen={[
+    {id: 'q1', links: 'Alle Tickets mit Priorität 1 behalten', loesung: 'filter'},
+    {id: 'q2', links: 'Aus jedem Ticket die Nummer herausholen (Liste aller Nummern)', loesung: 'map'},
+    {id: 'q3', links: 'Das Ticket mit der Nummer 5 suchen', loesung: 'find'},
+    {id: 'q4', links: 'Wissen, ob es mindestens ein erledigtes Ticket gibt', loesung: 'some'},
+    {id: 'q5', links: 'Alle Prioritäten zu einer Summe zusammenzählen', loesung: 'reduce'},
+  ]}
+/>
+
+### Aufgabe 4 – Tickets zählen mit `reduce`
+
+*Etwa 25 Minuten. Das ist die anspruchsvollste Aufgabe des Arbeitsblatts.*
+
+**B4** `countByStatus` liefert, wie viele Tickets es je Status gibt. Auch ein Status ohne Tickets kommt vor, mit 0:
+
+```ts
+{ offen: 4, 'in Arbeit': 2, erledigt: 2 }
+```
+
+Dafür brauchst du `reduce`: Aus der ganzen Liste wird **ein** Ergebnis, hier ein Objekt. Bevor du loslegst, ein einfacheres Beispiel. Es zählt alle Prioritäten zusammen:
+
+```ts
+tickets.reduce((summe, ticket) => summe + ticket.priority, 0);
+```
+
+`reduce` bekommt zwei Dinge: eine Funktion und einen **Startwert** (hier `0`). Die Funktion bekommt den bisherigen **Zwischenstand** (`summe`) und das nächste Element (`ticket`) und liefert den **neuen Zwischenstand**. So läuft es für die Prioritäten 3, 1 und 2:
+
+| Schritt | Zwischenstand vorher | Priorität | neuer Zwischenstand |
+|---|---|---|---|
+| Start | | | `0` (Startwert) |
+| 1 | `0` | `3` | `3` |
+| 2 | `3` | `1` | `4` |
+| 3 | `4` | `2` | `6` |
+
+<Task id="ts-ab02-a4-trace">Welche Zwischenstände entstehen, wenn du dasselbe mit den Prioritäten 2, 2, 1 und 3 durchrechnest? Schreibe sie auf.</Task>
+
+<details>
+<summary>Auflösung</summary>
+
+Start `0`, dann `2`, `4`, `5` und zum Schluss `8`. Das Ergebnis ist `8`.
+
+</details>
+
+Bei `countByStatus` ist der Zwischenstand kein Zahlenwert, sondern ein **Objekt**, das mitzählt. Es beginnt so:
+
+```ts
+{ offen: 0, 'in Arbeit': 0, erledigt: 0 }
+```
+
+und für jedes Ticket wird der Zähler seines Status um 1 erhöht.
+
+<Task id="ts-ab02-a4-write">Schreibe `countByStatus` mit `reduce`. Gehe in Schritten vor, die Tipps helfen dir.</Task>
+
+<details>
+<summary>Tipp 1: Das Gerüst</summary>
+
+```ts
+export function countByStatus(tickets: readonly Ticket[]): Record<Status, number> {
+  return tickets.reduce<Record<Status, number>>(
+    (count, ticket) => /* hier kommt der neue Zwischenstand hin */,
+    { offen: 0, 'in Arbeit': 0, erledigt: 0 },
+  );
+}
+```
+
+`Record<Status, number>` ist der Typ eines Objekts, das für **jeden** Status eine Zahl enthält. Mit `reduce<…>` sagst du dem Compiler, welchen Typ der Zwischenstand hat.
+
+</details>
+
+<details>
+<summary>Tipp 2: Der neue Zwischenstand</summary>
+
+Du brauchst ein **neues** Objekt, das so aussieht wie `count`, nur dass der Zähler für `ticket.status` um 1 größer ist. Das Spread-Objekt `{ ...count }` kopiert alle Felder, ein weiteres Feld dahinter überschreibt eins davon. Der Schlüssel steht in eckigen Klammern, weil er aus einem Wert kommt: `[ticket.status]: …`.
+
+</details>
+
+<details>
+<summary>Tipp 3: Die Zeile</summary>
+
+```ts
+(count, ticket) => ({ ...count, [ticket.status]: count[ticket.status] + 1 })
+```
+
+Die runden Klammern um das Objekt sind nötig, damit TypeScript die geschweiften Klammern als Objekt versteht und nicht als Block.
+
+</details>
+
+<Task id="ts-ab02-a4-test">Die Tests `B4 countByStatus` werden grün.</Task>
+
+### Aufgabe 5 – Sortieren und das Versprechen der Funktion
+
+*Etwa 15 Minuten.*
+
+**B5** `sortedByPriority` liefert die Tickets mit der höchsten Dringlichkeit zuerst: erst Priorität 1, dann 2, dann 3. Bei gleicher Priorität kommt das Ticket mit der kleineren Nummer zuerst. Die Eingabeliste darf sich **nicht** ändern.
+
+Die Vergleichsfunktion für `sort` steht schon da. Sie liefert eine Zahl: kleiner als 0, wenn `a` vor `b` kommt:
+
+```ts
+(a, b) => a.priority - b.priority || a.id - b.id
+```
+
+(Der zweite Teil nach `||` greift, wenn der erste 0 ist, also bei gleicher Priorität.)
+
+<Task id="ts-ab02-a5-predict">Vorhersage: Du schreibst die Funktion so. Was meldet der Compiler?</Task>
+
+```ts
+export function sortedByPriority(tickets: readonly Ticket[]): Ticket[] {
+  return tickets.sort((a, b) => a.priority - b.priority || a.id - b.id);
+}
+```
+
+<Task id="ts-ab02-a5-error">Probiere es aus und lies die Meldungen mit `npm run check`. Welche **neuen** Meldungen kommen in `ticket-list.ts` dazu, und welche ist die **wichtigste**?</Task>
+
+<details>
+<summary>Auflösung</summary>
+
+Die erste Meldung ist die wichtige: `Property 'sort' does not exist on type 'readonly Ticket[]'`. Die zwei folgenden (`Parameter 'a' implicitly has an 'any' type` und dasselbe für `b`) sind **Folgefehler**: Weil der Compiler `sort` nicht kennt, weiß er auch nichts über `a` und `b`. Das ist der Grund, warum du immer die **erste** Meldung zuerst liest.
+
+Der Compiler hält das Versprechen der Funktion: `readonly` heißt, dass die Liste nicht verändert wird. Und `sort` würde sie verändern, es ordnet die vorhandene Liste um.
+
+</details>
+
+Wie ernst das gemeint ist, siehst du, wenn du das Versprechen brichst:
+
+<Task id="ts-ab02-a5-break">Ändere den Parameter in `tickets: Ticket[]` (ohne `readonly`). Der Compiler ist zufrieden. Starte `npm test`. Welcher Test wird rot, und was steht in der Fehlermeldung?</Task>
+
+<details>
+<summary>Auflösung</summary>
+
+Der Test `B5 sortedByPriority › lässt die Eingabeliste unverändert` schlägt fehl, mit `TypeError: Cannot assign to read only property '0' of object '[object Array]'`. Der Test übergibt eine **eingefrorene** Liste: Jeder Versuch, sie zu ändern, löst einen Fehler aus. Genau das ist der Fall, in dem `sort` an der Eingabe scheitert. Hättest du keine eingefrorene Liste gehabt, wäre die Eingabe still durcheinandergeraten.
+
+</details>
+
+<Task id="ts-ab02-a5-fix">Setze `readonly` wieder ein. Sortiere stattdessen eine **Kopie**: `[...tickets]` baut eine neue Liste mit denselben Elementen, und auf der darfst du `sort` aufrufen. Die Tests `B5 sortedByPriority` werden grün.</Task>
+
+:::tip Merke
+`sort`, `reverse` und `push` verändern die Liste selbst. `filter`, `map` und `slice` bauen eine neue. Will eine Funktion ihre Eingabe in Ruhe lassen, kopiert sie vor dem Sortieren. Eine Alternative ist `toSorted`, das gleich eine sortierte Kopie liefert.
+:::
+
+### Aufgabe 6 – Den Status ändern, ohne die Liste zu verändern
+
+*Etwa 15 Minuten.*
+
+**B6** `withStatus` liefert dieselbe Liste, nur mit anderem Status bei dem Ticket mit der Nummer `id`. Die Eingabe bleibt unverändert, und die anderen Tickets sind dieselben Objekte wie vorher.
+
+<Task id="ts-ab02-a6-java">Schreibe die Funktion zuerst „wie in Java“: Ticket in der Liste suchen, den Status setzen und die Liste zurückgeben.</Task>
+
+```ts
+export function withStatus(tickets: readonly Ticket[], id: number, status: Status): Ticket[] {
+  for (const ticket of tickets) {
+    if (ticket.id === id) {
+      ticket.status = status;
+    }
+  }
+  return [...tickets];
+}
+```
+
+<Task id="ts-ab02-a6-test1">Starte `npm run check`: Der Compiler ist zufrieden. Starte dann `npm test`. Welche Tests werden rot?</Task>
+
+<details>
+<summary>Auflösung</summary>
+
+Zwei Tests schlagen fehl: `lässt die Eingabeliste und ihre Tickets unverändert` und `liefert eine neue Liste und ein neues Ticket, die anderen Tickets bleiben dieselben Objekte`. Du hast zwar eine neue **Liste** gebaut, aber das **Ticket** darin hast du verändert. Es ist dasselbe Objekt wie in der Eingabe, und die Tests frieren es ein.
+
+Der Compiler hat das nicht bemerkt: `readonly Ticket[]` schützt nur die **Liste**, nicht die Tickets darin.
+
+</details>
+
+Die Lösung: Das geänderte Ticket muss ein **neues Objekt** sein. Mit dem Spread-Operator baust du eine Kopie mit einem überschriebenen Feld:
+
+```ts
+{ ...ticket, status }   // neues Ticket, alle Felder wie ticket, nur status ist neu
+```
+
+<Task id="ts-ab02-a6-fix">Schreibe `withStatus` mit `map`: Für das Ticket mit der Nummer `id` lieferst du die Kopie mit neuem Status, für alle anderen das Ticket selbst. Die Tests `B6 withStatus` werden grün.</Task>
+
+<details>
+<summary>Tipp: Bedingung in einer Zeile</summary>
+
+Mit dem Bedingungsoperator `bedingung ? wennWahr : wennFalsch` kannst du in der Funktion von `map` zwischen den beiden Fällen wählen.
+
+</details>
+
+<Solution daten={loesung} titel="Musterlösung für src/ticket-list.ts" />
+
+:::info Warum der ganze Aufwand?
+Funktionen, die ihre Eingabe nicht verändern, sind leichter zu verstehen und zu testen: Du weißt, dass die Liste nach dem Aufruf noch dieselbe ist. Außerdem erkennst du Änderungen an einem einfachen Vergleich: Ein neues Objekt ist ein anderes Objekt (`alt !== neu`). In AB 03 und später in Angular ist genau das wichtig: Dort wird eine Änderung dadurch sichtbar, dass sich der **Verweis** ändert.
+:::
+
+### Aufgabe 7 – Prüfen
+
+*Etwa 5 Minuten.*
+
+<Task id="ts-ab02-a7-all">Führe die folgenden Testfälle aus und halte die Ergebnisse fest.</Task>
+
+<TestTable
+  storageKey="ts-ab02-tests"
+  tests={[
+    {
+      id: 'TF-01',
+      beschreibung: 'Die Tests zu AB 02 sind grün',
+      vorbedingung: 'Aufgaben 2 bis 6 sind erledigt',
+      schritte: ['npm test ausführen'],
+      erwartet: <>Alle 13 Tests der Gruppen <code>B1</code> bis <code>B6</code> sind grün, zusammen mit den neun aus AB 01 also 22. Rot sind noch die 16 Tests der Gruppe <code>C</code>.</>
+    },
+    {
+      id: 'TF-02',
+      beschreibung: 'Die Typen sind weiter in Ordnung',
+      vorbedingung: 'TF-01 ist erfüllt',
+      schritte: ['npm run check ausführen'],
+      erwartet: <>Es bleibt genau <b>eine</b> Meldung übrig, die mit <code>C4</code> (gehört zu AB 03).</>
+    },
+    {
+      id: 'TF-03',
+      beschreibung: 'Der Compiler schützt eine readonly-Liste',
+      vorbedingung: 'TF-01 ist erfüllt',
+      schritte: ['In sortedByPriority [...tickets].sort durch tickets.sort ersetzen', 'npm run check ausführen', 'Änderung rückgängig machen'],
+      erwartet: <>Der Compiler meldet <code>Property 'sort' does not exist on type 'readonly Ticket[]'</code> (und zwei Folgefehler).</>
+    },
+    {
+      id: 'TF-04',
+      beschreibung: 'Ein veränderndes withStatus fällt auf',
+      vorbedingung: 'TF-01 ist erfüllt',
+      schritte: ['withStatus kurz so umschreiben, dass ticket.status = status gesetzt wird', 'npm test ausführen', 'Änderung rückgängig machen'],
+      erwartet: <>Mindestens ein Test der Gruppe <code>B6</code> ist rot, mit einer Meldung zu <code>read only property</code>. Der Compiler sagt dazu nichts.</>
+    }
+  ]}
+/>
+
+## Zusammenfassung
+
+:::tip Das hast du gelernt
+- Eine **Pfeilfunktion** `(x) => x.feld` ist eine kurze Funktion, die du an Array-Methoden übergibst.
+- **`filter`** behält manche Elemente, **`map`** macht aus jedem etwas anderes, **`find`** liefert das erste passende (oder `undefined`), **`reduce`** macht aus allen einen Wert.
+- Das Ergebnis von `find` hat den Typ `Ticket | undefined`. Der Compiler zwingt dich, den Fall „nicht gefunden“ zu behandeln, zum Beispiel mit `?.`.
+- **`sort`** (wie `push` und `reverse`) verändert die Liste selbst. Wer eine Liste nicht verändern will, sortiert eine Kopie: `[...tickets].sort(…)`.
+- **`readonly Ticket[]`** ist das Versprechen, die Liste nicht zu verändern, und der Compiler überwacht es. Die Tickets in der Liste schützt es nicht.
+- Mit **`{ ...ticket, status }`** baust du ein neues Objekt mit einem geänderten Feld. So änderst du Daten, ohne das Original anzufassen.
+:::
+
+## Selbstkontrolle
+
+1. Was ist der Unterschied zwischen `filter` und `map`? Wie viele Elemente liefern sie jeweils?
+2. Du willst wissen, wie viele Tickets dringend sind. Welche Methoden brauchst du?
+3. Warum hat das Ergebnis von `find` den Typ `Ticket | undefined`, und wie gehst du damit um?
+4. Was ist bei `reduce` der Zwischenstand (Akkumulator), und wozu dient der Startwert?
+5. Warum schreibt man `[...tickets].sort(…)` und nicht `tickets.sort(…)`?
+6. Was bewirkt `{ ...ticket, status }`? Warum ist das besser als `ticket.status = status`?
+
+<details>
+<summary>Antworten</summary>
+
+1. `filter` behält nur die Elemente, die eine Bedingung erfüllen, und liefert gleich viele oder weniger Elemente, unverändert. `map` macht aus jedem Element etwas anderes und liefert genau so viele Elemente wie die Eingabe.
+2. Erst `filter`, um die dringenden Tickets zu behalten, dann `length` für die Anzahl: `tickets.filter(isUrgent).length`.
+3. Weil es sein kann, dass kein Ticket die gesuchte Nummer hat. Du behandelst es mit `?.` und gegebenenfalls einem Ersatzwert (`?? …`), oder du prüfst mit `if`, ob das Ergebnis da ist.
+4. Der Zwischenstand ist der Wert, den `reduce` von Element zu Element mitträgt, und die Funktion macht daraus jeweils den neuen. Der Startwert ist der Zwischenstand vor dem ersten Element. Bei einer leeren Liste ist er auch das Ergebnis.
+5. `sort` verändert die Liste, auf der es aufgerufen wird. Mit der Kopie `[...tickets]` bleibt die Eingabe unverändert, und die Funktion hält ihr `readonly`-Versprechen.
+6. Es baut ein **neues** Objekt mit allen Feldern von `ticket`, nur `status` ist anders. Das Original bleibt unverändert. Mit `ticket.status = status` würdest du das Objekt ändern, das auch an anderer Stelle benutzt wird, und könntest Änderungen nicht mehr erkennen.
+
+</details>
