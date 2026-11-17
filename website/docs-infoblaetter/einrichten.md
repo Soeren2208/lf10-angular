@@ -7,14 +7,14 @@ sidebar_position: 1
 
 # Entwicklungsumgebung einrichten
 
-Bevor es losgeht, brauchst du auf deinem Rechner zwei Programme: **Node.js** und die Entwicklungsumgebung **WebStorm**. Unter Windows kommt eine kleine Einstellung für die PowerShell dazu. Das dauert etwa eine Viertelstunde. Am Ende prüfst du, ob alles funktioniert.
+Bevor es losgeht, brauchst du auf deinem Rechner drei Programme: **Node.js**, die Entwicklungsumgebung **WebStorm** und **Git**. Git kennst du aus dem ersten Lehrjahr, du prüfst nur, ob es da ist. Unter Windows kommt eine kleine Einstellung für die PowerShell dazu. Das dauert etwa eine Viertelstunde. Am Ende prüfst du, ob alles funktioniert.
 
 | Schritt | Was | Wofür |
 |---|---|---|
 | 1 | Node.js installieren | führt TypeScript-Programme und die Angular-Werkzeuge aus |
 | 2 | WebStorm installieren | der Editor, in dem du den Code schreibst |
 | 3 | PowerShell einstellen (nur Windows) | damit Befehle wie `ng` im Terminal laufen dürfen |
-| 4 | Prüfen | Kontrolle, dass alles zusammenpasst |
+| 4 | Prüfen (Node.js, npm, Git) | Kontrolle, dass alles zusammenpasst; Git holt später das Starter-Projekt |
 
 ## 1. Node.js installieren
 
@@ -73,14 +73,17 @@ Unter macOS und Linux entfällt dieser Schritt.
 
 1. Starte WebStorm **neu**, wenn es während der Installation schon offen war.
 2. Öffne in WebStorm das Terminal (**Alt + F12**) oder ein beliebiges Terminal.
-3. Gib diese beiden Befehle ein:
+3. Gib diese drei Befehle ein:
 
    ```bash
    node -v
    npm -v
+   git --version
    ```
 
-Beide müssen eine Versionsnummer anzeigen, zum Beispiel `v26.13.1` und `11.11.0`. Die genauen Zahlen unterscheiden sich, wichtig ist, dass keine Fehlermeldung kommt.
+Alle drei müssen eine Versionsnummer anzeigen, zum Beispiel `v26.13.1`, `11.11.0` und `git version 2.50.0`. Die genauen Zahlen unterscheiden sich, wichtig ist, dass keine Fehlermeldung kommt.
+
+Falls `git` nicht erkannt wird: Installiere Git von [git-scm.com/downloads](https://git-scm.com/downloads) mit den voreingestellten Werten und starte WebStorm neu.
 
 ## Wenn etwas nicht klappt
 
@@ -89,8 +92,9 @@ Beide müssen eine Versionsnummer anzeigen, zum Beispiel `v26.13.1` und `11.11.0
 | `node` wird nicht erkannt | Das Terminal kennt die neue Installation noch nicht | WebStorm und das Terminal schließen und neu öffnen, notfalls den Rechner neu starten |
 | `Ausführung von Skripts … deaktiviert` | Die PowerShell-Einstellung fehlt | Schritt 3 durchführen und WebStorm neu starten |
 | `node -v` zeigt eine ungerade Zahl (z. B. `v25`) | Es ist eine „Current"-Version installiert | Die LTS-Version von [nodejs.org](https://nodejs.org) installieren |
+| `git` wird nicht erkannt | Git ist nicht installiert oder das Terminal kennt es noch nicht | Git von [git-scm.com/downloads](https://git-scm.com/downloads) installieren, WebStorm neu starten |
 | `node -v` zeigt eine kleinere Nummer als die LTS-Version | Eine alte Version ist installiert | Die aktuelle LTS-Version installieren, sie ersetzt die alte |
 
-## Später für das Projekt: Git
+## So kommt das Projekt auf deinen Rechner
 
-Für das Gruppenprojekt brauchst du außerdem **Git**, um den Quelltext vom GitHub-Konto deiner Gruppe zu laden. Das ist für die ersten Tutorials noch nicht nötig. Die Anleitung dazu kommt, wenn das Projekt startet.
+Die Starter-Projekte holst du mit **Git** von GitHub, so wie du es aus dem ersten Lehrjahr kennst: Du klonst ein Repository (`git clone` oder in WebStorm **Clone Repository**). Die Adresse steht im jeweiligen Arbeitsblatt. Du brauchst dafür keinen GitHub-Account, die Repositories sind öffentlich lesbar.

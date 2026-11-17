@@ -5,7 +5,7 @@ slug: 01-ein-ticket-beschreiben
 sidebar_position: 1
 ---
 
-import loesung from '@site/src/data/loesung-ab01.json';
+import solution from '@site/src/data/solution-ab01.json';
 
 # AB 01 – Ein Ticket beschreiben
 
@@ -35,7 +35,7 @@ In diesem Tutorial hast du zwei Prüfer, die dir Rückmeldung geben. Sie prüfen
 |---|---|---|
 | **Compiler** | `npm run check` | ob die **Typen** zusammenpassen |
 | **Tests** | `npm test` | ob dein Code das **Richtige tut** |
-| beide | `npm run pruefen` | beides nacheinander, mit Zusammenfassung |
+| beide | `npm run verify` | beides nacheinander, mit Zusammenfassung |
 
 Am Anfang ist alles rot. Das ist die Arbeitsliste: Jede Aufgabe macht ein Stück davon grün.
 
@@ -49,9 +49,19 @@ Den Rechner einzurichten (Node.js, WebStorm) erklärt das Infoblatt [Entwicklung
 
 *Etwa 10 Minuten.*
 
-<Task id="ts-ab01-a1-zip">Lade das Starter-Projekt herunter: [typescript-werkstatt-starter.zip](pathname:///downloads/typescript-werkstatt-starter.zip). Entpacke die Datei in einen Ordner deiner Wahl.</Task>
+<Task id="ts-ab01-a1-clone">Hole das Starter-Projekt aus GitHub, wie du es aus dem ersten Lehrjahr kennst. Starte WebStorm und wähle auf dem Startbildschirm **Clone Repository** (bei einem schon offenen Projekt: **File → New → Project from Version Control**). Trage diese Adresse ein und wähle einen Ordner auf deinem Rechner:</Task>
 
-<Task id="ts-ab01-a1-open">Starte WebStorm und öffne den entpackten Ordner `typescript-werkstatt` über **File → Open**.</Task>
+```text
+https://github.com/Soeren2208/lf10-typescript-werkstatt.git
+```
+
+Du kannst auch im Terminal klonen, in einem Ordner deiner Wahl, und das Projekt danach in WebStorm öffnen (**File → Open**):
+
+```bash
+git clone https://github.com/Soeren2208/lf10-typescript-werkstatt.git
+```
+
+<Task id="ts-ab01-a1-open">Öffne das geklonte Projekt `lf10-typescript-werkstatt` in WebStorm. Wenn du in WebStorm geklont hast, passiert das von selbst.</Task>
 
 <Task id="ts-ab01-a1-install">Öffne das Terminal in WebStorm (**Alt + F12**) und installiere die Abhängigkeiten. Das dauert etwa eine Minute.</Task>
 
@@ -81,19 +91,19 @@ Du siehst mehrere Meldungen mit dem Text `Unused '@ts-expect-error' directive`. 
 
 *Etwa 15 Minuten.*
 
-Öffne die Datei `explore/fehler-01.ts`. Sie enthält vier Zeilen mit einem Typfehler (gekennzeichnet mit `(1)` bis `(4)`):
+Öffne die Datei `explore/type-errors.ts`. Sie enthält vier Zeilen mit einem Typfehler (gekennzeichnet mit `(1)` bis `(4)`):
 
-```ts title="explore/fehler-01.ts"
-const anzahl: number = 'drei'; // (1)
-console.log('anzahl:', anzahl);
+```ts title="explore/type-errors.ts"
+const count: number = 'drei'; // (1)
+console.log('count:', count);
 
 const ticket = { id: 1, title: 'Drucker defekt' };
-console.log('titel:', ticket.titel); // (2)
+console.log('title:', ticket.tilte); // (2)
 
-function verdopple(wert: number): number {
-  return wert * 2;
+function double(value: number): number {
+  return value * 2;
 }
-console.log('verdopple("4"):', verdopple('4')); // (3)
+console.log('double("4"):', double('4')); // (3)
 
 type Status = 'offen' | 'erledigt';
 const status: Status = 'wartet'; // (4)
@@ -103,14 +113,14 @@ console.log('status:', status);
 <Task id="ts-ab01-a2-predict">Der Compiler beanstandet alle vier Zeilen. **Bevor du etwas ausführst:** Überlege, was das Programm auf der Konsole ausgäbe, wenn man es trotz der Fehler starten würde. Trage deine Vermutung für die Zeilen `(1)` bis `(4)` ein und prüfe sie.</Task>
 
 <FillInTable
-  storageKey="ts-ab01-a2-vorhersage"
+  storageKey="ts-ab01-a2-prediction"
   spalteLinks="Zeile"
   spalteRechts="Das gibt das Programm aus"
   platzhalter="Deine Vermutung"
   zeilen={[
-    {id: 'z1', links: <><code>(1)</code> <code>console.log('anzahl:', anzahl)</code></>, loesung: 'drei', klartext: 'anzahl: drei'},
-    {id: 'z2', links: <><code>(2)</code> <code>console.log('titel:', ticket.titel)</code></>, loesung: 'undefined', klartext: 'titel: undefined (das Feld heißt title, titel gibt es nicht)'},
-    {id: 'z3', links: <><code>(3)</code> <code>verdopple('4')</code></>, loesung: '8', klartext: '8 (JavaScript macht aus dem Text "4" bei der Multiplikation die Zahl 4)'},
+    {id: 'z1', links: <><code>(1)</code> <code>console.log('count:', count)</code></>, loesung: 'drei', klartext: 'count: drei'},
+    {id: 'z2', links: <><code>(2)</code> <code>console.log('title:', ticket.tilte)</code></>, loesung: 'undefined', klartext: 'title: undefined (das Feld heißt title, tilte gibt es nicht)'},
+    {id: 'z3', links: <><code>(3)</code> <code>double('4')</code></>, loesung: '8', klartext: '8 (JavaScript macht aus dem Text "4" bei der Multiplikation die Zahl 4)'},
     {id: 'z4', links: <><code>(4)</code> <code>console.log('status:', status)</code></>, loesung: 'wartet', klartext: 'status: wartet'},
   ]}
 />
@@ -118,20 +128,20 @@ console.log('status:', status);
 <Task id="ts-ab01-a2-run-check">Lass den Compiler die Datei prüfen:</Task>
 
 ```bash
-npm run fehler
+npm run errors
 ```
 
 Jede Meldung folgt demselben Muster:
 
 ```text
-explore/fehler-01.ts(9,7): error TS2322: Type 'string' is not assignable to type 'number'.
+explore/type-errors.ts(9,7): error TS2322: Type 'string' is not assignable to type 'number'.
 └─ Datei ─────────────┘ └ Zeile, Spalte      └ Fehlercode └ Was falsch ist
 ```
 
 <Task id="ts-ab01-a2-run">Starte das Programm jetzt trotz der Fehler und vergleiche mit deiner Vermutung:</Task>
 
 ```bash
-npm run fehler:laufen
+npm run errors:run
 ```
 
 :::info Das Wichtigste aus diesem Arbeitsblatt
@@ -180,11 +190,11 @@ Mit einem Fragezeichen hinter dem Namen: `assignee?: string;`. Dann darf das Fel
 npm run check
 ```
 
-Statt neun Meldungen sind jetzt nur noch **vier** übrig. Öffne `src/typen.check.ts` und suche die Zeilen. In dieser Datei steht über jeder Meldung, was der Compiler dort **melden müsste**:
+Statt neun Meldungen sind jetzt nur noch **vier** übrig. Öffne `src/types.check.ts` und suche die Zeilen. In dieser Datei steht über jeder Meldung, was der Compiler dort **melden müsste**:
 
 ```ts
 // @ts-expect-error A2: Als Status ist nur "offen", "in Arbeit" oder "erledigt" erlaubt
-const falscherStatus: Ticket = { ...gueltig, status: 'wartet' };
+const invalidStatus: Ticket = { ...valid, status: 'wartet' };
 ```
 
 Die Zeile sagt: „Hier MUSS ein Fehler kommen.“ Kommt keiner, meldet der Compiler `Unused '@ts-expect-error' directive`: Dein Typ ist an dieser Stelle noch zu locker. Du siehst also genau, was deine Typen noch nicht verbieten.
@@ -194,7 +204,7 @@ Die Zeile sagt: „Hier MUSS ein Fehler kommen.“ Kommt keiner, meldet der Comp
 <details>
 <summary>Probiere: Was macht readonly?</summary>
 
-Entferne in `src/ticket.ts` kurz das Wort `readonly` vor `id` und starte `npm run check`. Es kommt eine **zusätzliche** Meldung: Der Compiler verbietet `gueltig.id = 2` nun nicht mehr, deshalb ist die Prüfung in `typen.check.ts` überflüssig. Setze `readonly` danach wieder ein.
+Entferne in `src/ticket.ts` kurz das Wort `readonly` vor `id` und starte `npm run check`. Es kommt eine **zusätzliche** Meldung: Der Compiler verbietet `valid.id = 2` nun nicht mehr, deshalb ist die Prüfung in `types.check.ts` überflüssig. Setze `readonly` danach wieder ein.
 
 </details>
 
@@ -204,7 +214,7 @@ Entferne in `src/ticket.ts` kurz das Wort `readonly` vor `id` und starte `npm ru
 
 Ein Text darf alles sein, auch `'wartet'` oder ein Tippfehler wie `'ofen'`. Für den Status gibt es aber nur drei gültige Werte. Der Compiler kann das prüfen, wenn du ihm die erlaubten Werte nennst.
 
-<Task id="ts-ab01-a4-predict">Vorhersage: Das Ticket `{ ...gueltig, status: 'wartet' }` steht in `typen.check.ts`. Meldet der Compiler dafür **im Moment** einen Fehler? Schau nach, ob deine Vermutung stimmt.</Task>
+<Task id="ts-ab01-a4-predict">Vorhersage: Das Ticket `{ ...valid, status: 'wartet' }` steht in `types.check.ts`. Meldet der Compiler dafür **im Moment** einen Fehler? Schau nach, ob deine Vermutung stimmt.</Task>
 
 <Task id="ts-ab01-a4-types">Ersetze in `src/ticket.ts` die beiden Zeilen mit `any` durch zwei **Union-Typen**: Ein Union-Typ listet die erlaubten Werte auf, getrennt durch `|` (gesprochen „oder“).</Task>
 
@@ -275,7 +285,7 @@ Der Operator `??` ersetzt dagegen nur `undefined` und `null`. Ein leerer Name is
 
 <Task id="ts-ab01-a5-assignee-fix">Verwende stattdessen `??` und starte `npm test` erneut. Alle drei Tests `A5 assigneeName` sind jetzt grün.</Task>
 
-<Solution daten={loesung} titel="Musterlösung für src/ticket.ts" />
+<Solution daten={solution} titel="Musterlösung für src/ticket.ts" />
 
 ### Aufgabe 6 – Prüfen
 
@@ -298,21 +308,21 @@ Der Operator `??` ersetzt dagegen nur `undefined` und `null`. Ein leerer Name is
       beschreibung: 'Die Typen zu AB 01 stimmen',
       vorbedingung: 'Aufgaben 3 und 4 sind erledigt',
       schritte: ['npm run check ausführen'],
-      erwartet: <>Es bleibt genau <b>eine</b> Meldung übrig. Sie steht in <code>src/typen.check.ts</code> bei dem Kommentar mit <code>C4</code> und gehört zu AB 03.</>
+      erwartet: <>Es bleibt genau <b>eine</b> Meldung übrig. Sie steht in <code>src/types.check.ts</code> bei dem Kommentar mit <code>C4</code> und gehört zu AB 03.</>
     },
     {
       id: 'TF-03',
       beschreibung: 'readonly schützt die id',
       vorbedingung: 'TF-02 ist erfüllt',
       schritte: ['In ticket.ts das Wort readonly vor id entfernen', 'npm run check ausführen', 'readonly wieder einsetzen'],
-      erwartet: <>Es kommt eine <b>zusätzliche</b> Meldung <code>Unused '@ts-expect-error' directive</code> bei der Zeile <code>gueltig.id = 2</code>. Nach dem Einsetzen ist sie wieder weg.</>
+      erwartet: <>Es kommt eine <b>zusätzliche</b> Meldung <code>Unused '@ts-expect-error' directive</code> bei der Zeile <code>valid.id = 2</code>. Nach dem Einsetzen ist sie wieder weg.</>
     },
     {
       id: 'TF-04',
       beschreibung: 'Ein Typfehler stoppt das Programm nicht',
       vorbedingung: 'Das Projekt ist installiert',
-      schritte: ['npm run fehler:laufen ausführen'],
-      erwartet: <>Vier Zeilen Ausgabe: <code>anzahl: drei</code>, <code>titel: undefined</code>, <code>verdopple("4"): 8</code> und <code>status: wartet</code>.</>
+      schritte: ['npm run errors:run ausführen'],
+      erwartet: <>Vier Zeilen Ausgabe: <code>count: drei</code>, <code>title: undefined</code>, <code>double("4"): 8</code> und <code>status: wartet</code>.</>
     }
   ]}
 />

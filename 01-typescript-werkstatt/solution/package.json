@@ -8,11 +8,11 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check": "tsc --noEmit",
-    "pruefen": "node scripts/pruefen.mjs",
-    "fehler": "tsc --noEmit -p tsconfig.fehler.json",
-    "fehler:laufen": "tsx explore/fehler-01.ts",
-    "anzeige": "tsx explore/anzeige.ts",
-    "laden": "tsx explore/laden.ts"
+    "verify": "node scripts/verify.mjs",
+    "errors": "tsc --noEmit -p tsconfig.errors.json",
+    "errors:run": "tsx explore/type-errors.ts",
+    "display": "tsx explore/display.ts",
+    "load": "tsx explore/load.ts"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",

@@ -77,7 +77,7 @@ Mit `readonly` sagst du dem Compiler, dass eine Liste nicht verändert werden da
 
 ```ts
 function titles(tickets: readonly Ticket[]): string[] {
-  tickets.push(neu);   // Fehler: Property 'push' does not exist on type 'readonly Ticket[]'
+  tickets.push(newTicket);   // Fehler: Property 'push' does not exist on type 'readonly Ticket[]'
   return tickets.map((ticket) => ticket.title);
 }
 ```
@@ -89,11 +89,11 @@ Das Wort bezieht sich nur auf die Liste selbst. Die einzelnen Tickets darin sind
 ## 5. Wozu das alles?
 
 - **Keine Überraschungen:** Eine Funktion, die ihre Eingabe nicht ändert, ist leichter zu verstehen und zu testen.
-- **Änderungen erkennbar:** Ein neues Objekt hat eine neue Identität. Ob sich etwas geändert hat, siehst du am Vergleich `alt === neu`. Wenn sich nichts geändert hat, ist es dasselbe Objekt.
+- **Änderungen erkennbar:** Ein neues Objekt hat eine neue Identität. Ob sich etwas geändert hat, siehst du am Vergleich `before === after`. Wenn sich nichts geändert hat, ist es dasselbe Objekt.
 - **Angular:** Signals und viele andere Mechanismen in Angular erkennen Änderungen daran, dass ein **neuer Wert** gesetzt wird. Wer eine Liste an Ort und Stelle verändert, setzt keinen neuen Wert, und die Oberfläche bleibt stehen. Dazu kommst du in AB 03.
 
 | Java | TypeScript |
 |---|---|
 | `List.of(...)`, `Collections.unmodifiableList(...)` | `readonly Ticket[]` (nur im Typ, nicht zur Laufzeit) |
 | `record` mit `final`-Feldern | `readonly`-Felder im Interface |
-| neue Liste bauen mit `new ArrayList<>(alt)` | `[...alt]` |
+| neue Liste bauen mit `new ArrayList<>(original)` | `[...original]` |

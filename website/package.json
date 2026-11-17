@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "vorbereiten": "node scripts/loesung-generieren.mjs && node scripts/starter-zip.mjs",
-    "prestart": "npm run vorbereiten",
+    "generate": "node scripts/generate-solutions.mjs",
+    "prestart": "npm run generate",
     "start": "docusaurus start",
-    "prebuild": "npm run vorbereiten",
+    "prebuild": "npm run generate",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
@@ -29,8 +29,7 @@
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.10.2",
-    "@docusaurus/types": "3.10.2",
-    "fflate": "^0.8.3"
+    "@docusaurus/types": "3.10.2"
   },
   "browserslist": {
     "production": [

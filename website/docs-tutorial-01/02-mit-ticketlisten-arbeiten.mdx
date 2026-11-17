@@ -5,7 +5,7 @@ slug: 02-mit-ticketlisten-arbeiten
 sidebar_position: 2
 ---
 
-import loesung from '@site/src/data/loesung-ab02.json';
+import solution from '@site/src/data/solution-ab02.json';
 
 # AB 02 – Mit Ticketlisten arbeiten
 
@@ -141,10 +141,10 @@ Der Compiler meldet `Object is possibly 'undefined'`. Das Ticket könnte ja fehl
 Dafür brauchst du `reduce`: Aus der ganzen Liste wird **ein** Ergebnis, hier ein Objekt. Bevor du loslegst, ein einfacheres Beispiel. Es zählt alle Prioritäten zusammen:
 
 ```ts
-tickets.reduce((summe, ticket) => summe + ticket.priority, 0);
+tickets.reduce((sum, ticket) => sum + ticket.priority, 0);
 ```
 
-`reduce` bekommt zwei Dinge: eine Funktion und einen **Startwert** (hier `0`). Die Funktion bekommt den bisherigen **Zwischenstand** (`summe`) und das nächste Element (`ticket`) und liefert den **neuen Zwischenstand**. So läuft es für die Prioritäten 3, 1 und 2:
+`reduce` bekommt zwei Dinge: eine Funktion und einen **Startwert** (hier `0`). Die Funktion bekommt den bisherigen **Zwischenstand** (`sum`) und das nächste Element (`ticket`) und liefert den **neuen Zwischenstand**. So läuft es für die Prioritäten 3, 1 und 2:
 
 | Schritt | Zwischenstand vorher | Priorität | neuer Zwischenstand |
 |---|---|---|---|
@@ -299,14 +299,14 @@ Die Lösung: Das geänderte Ticket muss ein **neues Objekt** sein. Mit dem Sprea
 <details>
 <summary>Tipp: Bedingung in einer Zeile</summary>
 
-Mit dem Bedingungsoperator `bedingung ? wennWahr : wennFalsch` kannst du in der Funktion von `map` zwischen den beiden Fällen wählen.
+Mit dem Bedingungsoperator `condition ? valueIfTrue : valueIfFalse` kannst du in der Funktion von `map` zwischen den beiden Fällen wählen.
 
 </details>
 
-<Solution daten={loesung} titel="Musterlösung für src/ticket-list.ts" />
+<Solution daten={solution} titel="Musterlösung für src/ticket-list.ts" />
 
 :::info Warum der ganze Aufwand?
-Funktionen, die ihre Eingabe nicht verändern, sind leichter zu verstehen und zu testen: Du weißt, dass die Liste nach dem Aufruf noch dieselbe ist. Außerdem erkennst du Änderungen an einem einfachen Vergleich: Ein neues Objekt ist ein anderes Objekt (`alt !== neu`). In AB 03 und später in Angular ist genau das wichtig: Dort wird eine Änderung dadurch sichtbar, dass sich der **Verweis** ändert.
+Funktionen, die ihre Eingabe nicht verändern, sind leichter zu verstehen und zu testen: Du weißt, dass die Liste nach dem Aufruf noch dieselbe ist. Außerdem erkennst du Änderungen an einem einfachen Vergleich: Ein neues Objekt ist ein anderes Objekt (`before !== after`). In AB 03 und später in Angular ist genau das wichtig: Dort wird eine Änderung dadurch sichtbar, dass sich der **Verweis** ändert.
 :::
 
 ### Aufgabe 7 – Prüfen
@@ -352,7 +352,7 @@ Funktionen, die ihre Eingabe nicht verändern, sind leichter zu verstehen und zu
 ## Zusammenfassung
 
 :::tip Das hast du gelernt
-- Eine **Pfeilfunktion** `(x) => x.feld` ist eine kurze Funktion, die du an Array-Methoden übergibst.
+- Eine **Pfeilfunktion** `(x) => x.field` ist eine kurze Funktion, die du an Array-Methoden übergibst.
 - **`filter`** behält manche Elemente, **`map`** macht aus jedem etwas anderes, **`find`** liefert das erste passende (oder `undefined`), **`reduce`** macht aus allen einen Wert.
 - Das Ergebnis von `find` hat den Typ `Ticket | undefined`. Der Compiler zwingt dich, den Fall „nicht gefunden“ zu behandeln, zum Beispiel mit `?.`.
 - **`sort`** (wie `push` und `reverse`) verändert die Liste selbst. Wer eine Liste nicht verändern will, sortiert eine Kopie: `[...tickets].sort(…)`.

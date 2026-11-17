@@ -155,7 +155,7 @@ Wenn du einen Typ nicht kennst: `unknown` statt `any`.
 Zwischen **Backticks** (`` ` ``) kannst du Werte in einen Text einsetzen. Mit `${…}` steht an dieser Stelle ein beliebiger Ausdruck:
 
 ```ts
-const zeile = `#${ticket.id} ${ticket.title}`;
+const line = `#${ticket.id} ${ticket.title}`;
 // "#7 Drucker defekt"
 ```
 
@@ -189,7 +189,7 @@ Wichtig ist der **Text**. Die Tabelle übersetzt die häufigsten:
 |---|---|---|
 | `Type 'string' is not assignable to type 'number'` | Ein Text steht, wo eine Zahl erwartet wird (oder umgekehrt) | falscher Wert oder falscher Typ im Interface |
 | `Type '"wartet"' is not assignable to type 'Status'` | Der Wert gehört nicht zu den erlaubten Werten | Tippfehler oder neuer Wert fehlt im Union-Typ |
-| `Property 'titel' does not exist on type …` | Das Feld gibt es nicht | Tippfehler im Feldnamen (oft mit „Did you mean …?“) |
+| `Property 'tilte' does not exist on type …` | Das Feld gibt es nicht | Tippfehler im Feldnamen (oft mit „Did you mean …?“) |
 | `Argument of type 'string' is not assignable to parameter of type 'number'` | Beim Aufruf einer Funktion wurde der falsche Typ übergeben | falscher Parameter |
 | `Property 'title' is missing in type … but required in type 'Ticket'` | Ein Pflichtfeld fehlt | Feld vergessen |
 | `Object literal may only specify known properties` | Das Objekt hat ein Feld, das es im Typ nicht gibt | Tippfehler im Feldnamen |

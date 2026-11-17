@@ -1,6 +1,6 @@
 // AB 03 – Das Experiment: Wer erfährt von der Änderung?
 //
-// Starten: npm run anzeige
+// Starten: npm run display
 //
 // Die Funktion showTickets gibt die Liste einmal aus. Danach ändert sich der Speicher.
 // Beobachte, was auf der Konsole passiert, und löse dann die Aufgabe im Arbeitsblatt.

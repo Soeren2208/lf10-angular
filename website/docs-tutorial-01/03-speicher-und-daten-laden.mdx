@@ -5,7 +5,7 @@ slug: 03-speicher-und-daten-laden
 sidebar_position: 3
 ---
 
-import loesung from '@site/src/data/loesung-ab03.json';
+import solution from '@site/src/data/solution-ab03.json';
 
 # AB 03 – Speicher und Daten laden
 
@@ -101,9 +101,9 @@ import { withStatus } from './ticket-list';
 
 *Etwa 15 Minuten.*
 
-Jetzt hast du einen Speicher. Wie sieht die Anzeige aus, wenn sich etwas ändert? Öffne `explore/anzeige.ts`:
+Jetzt hast du einen Speicher. Wie sieht die Anzeige aus, wenn sich etwas ändert? Öffne `explore/display.ts`:
 
-```ts title="explore/anzeige.ts"
+```ts title="explore/display.ts"
 function showTickets(tickets: readonly Ticket[]): void {
   console.log('--- Tickets ---');
   for (const ticket of tickets) {
@@ -124,7 +124,7 @@ console.log('\nEin neues Ticket wurde gespeichert. Was zeigt die Anzeige jetzt?'
 <Task id="ts-ab03-a3-run">Starte das Programm und prüfe:</Task>
 
 ```bash
-npm run anzeige
+npm run display
 ```
 
 Das neue Ticket fehlt. `showTickets` wurde nur **einmal** aufgerufen, und danach hat niemand der Anzeige gesagt, dass sich etwas geändert hat. Die Daten sind aktuell, die Anzeige ist alt.
@@ -160,7 +160,7 @@ Der Speicher soll sich merken, **wer** informiert werden will. Dazu dient eine M
 private readonly listeners = new Set<Listener>();
 ```
 
-`Listener` ist der Typ einer Funktion, die die neue Liste entgegennimmt und nichts zurückgibt. Er steht schon in der Datei. Ein `Set` ist eine Menge ohne Doppelte, mit den Methoden `add`, `delete` und der Möglichkeit, sie mit `for (const x of menge)` zu durchlaufen.
+`Listener` ist der Typ einer Funktion, die die neue Liste entgegennimmt und nichts zurückgibt. Er steht schon in der Datei. Ein `Set` ist eine Menge ohne Doppelte, mit den Methoden `add`, `delete` und der Möglichkeit, sie mit `for (const x of set)` zu durchlaufen.
 
 <Task id="ts-ab03-a4-field">Füge das Feld `listeners` am Anfang der Klasse ein.</Task>
 
@@ -190,9 +190,9 @@ Der Rückgabetyp `() => void` heißt: eine Funktion ohne Parameter, die nichts z
 
 Jetzt der Gegentest. Er zeigt, ob das Experiment aus Aufgabe 3 gelöst ist:
 
-<Task id="ts-ab03-a4-anzeige">Melde `showTickets` in `explore/anzeige.ts` **direkt nach** dem ersten Aufruf an: `store.onChange(showTickets);`. Starte `npm run anzeige`. Das neue Ticket erscheint jetzt von selbst.</Task>
+<Task id="ts-ab03-a4-display">Melde `showTickets` in `explore/display.ts` **direkt nach** dem ersten Aufruf an: `store.onChange(showTickets);`. Starte `npm run display`. Das neue Ticket erscheint jetzt von selbst.</Task>
 
-<Task id="ts-ab03-a4-unsubscribe">Speichere den Rückgabewert: `const abmelden = store.onChange(showTickets);`. Rufe `abmelden();` direkt vor dem `store.add(...)` auf. Was passiert jetzt?</Task>
+<Task id="ts-ab03-a4-unsubscribe">Speichere den Rückgabewert: `const unsubscribe = store.onChange(showTickets);`. Rufe `unsubscribe();` direkt vor dem `store.add(...)` auf. Was passiert jetzt?</Task>
 
 :::info Das Beobachter-Muster
 Du hast gerade ein Muster gebaut, das in der Programmierung überall vorkommt: Ein Objekt (hier der Speicher) **meldet Änderungen**, und andere Objekte **melden sich an**, um sie zu erfahren. Wer fertig ist, meldet sich wieder ab.
@@ -239,7 +239,7 @@ export type Result<T> = { ok: true; data: T } | { ok: false; error: string };
 
 Lies ihn so: Ein `Result<T>` ist **entweder** ein Objekt mit `ok: true` und den Daten **oder** ein Objekt mit `ok: false` und einem Fehlertext.
 
-<Task id="ts-ab03-a5-check">Starte `npm run check`. Die letzte offene Meldung (die mit `C4`) ist verschwunden. Der Compiler ist jetzt vollständig zufrieden. Lies den Kommentar über der Zeile in `src/typen.check.ts`: Was verlangt der Compiler jetzt von jedem, der ein `Result` benutzt?</Task>
+<Task id="ts-ab03-a5-check">Starte `npm run check`. Die letzte offene Meldung (die mit `C4`) ist verschwunden. Der Compiler ist jetzt vollständig zufrieden. Lies den Kommentar über der Zeile in `src/types.check.ts`: Was verlangt der Compiler jetzt von jedem, der ein `Result` benutzt?</Task>
 
 <details>
 <summary>Auflösung</summary>
@@ -265,9 +265,9 @@ error instanceof Error ? error.message : String(error)
 
 <Task id="ts-ab03-a5-test2">Starte `npm test`. Die vier Tests `loadTicketsSafe` werden grün. Damit sind alle 38 Tests grün.</Task>
 
-<Solution daten={loesung} titel="Musterlösung für src/ticket-store.ts" />
+<Solution daten={solution} titel="Musterlösung für src/ticket-store.ts" />
 
-<Task id="ts-ab03-a5-live">Zusatz, mit Internet: Starte `npm run laden`. Das Programm lädt die Tickets von der Kursseite. Funktioniert es, stehen acht Tickets in der Ausgabe. Wenn nicht, steht dort eine Fehlermeldung, und das Programm stürzt nicht ab, dafür sorgt das `Result`.</Task>
+<Task id="ts-ab03-a5-live">Zusatz, mit Internet: Starte `npm run load`. Das Programm lädt die Tickets von der Kursseite. Funktioniert es, stehen acht Tickets in der Ausgabe. Wenn nicht, steht dort eine Fehlermeldung, und das Programm stürzt nicht ab, dafür sorgt das `Result`.</Task>
 
 ### Aufgabe 6 – Prüfen
 
@@ -282,28 +282,28 @@ error instanceof Error ? error.message : String(error)
       id: 'TF-01',
       beschreibung: 'Alles ist grün',
       vorbedingung: 'Aufgaben 2 bis 5 sind erledigt',
-      schritte: ['npm run pruefen ausführen'],
+      schritte: ['npm run verify ausführen'],
       erwartet: <>Am Ende steht <code>Typen: grün</code> und <code>Tests: grün</code>. Alle 38 Tests sind grün, der Compiler meldet nichts.</>
     },
     {
       id: 'TF-02',
       beschreibung: 'Die Anzeige aktualisiert sich selbst',
-      vorbedingung: 'store.onChange(showTickets) steht in explore/anzeige.ts',
-      schritte: ['npm run anzeige ausführen'],
+      vorbedingung: 'store.onChange(showTickets) steht in explore/display.ts',
+      schritte: ['npm run display ausführen'],
       erwartet: <>Die Ausgabe enthält <b>zwei</b> Ticketlisten. Die zweite hat neun Einträge, der letzte ist <code>#9 Beamer startet nicht [offen]</code>.</>
     },
     {
       id: 'TF-03',
       beschreibung: 'Abmelden wirkt',
       vorbedingung: 'TF-02 ist erfüllt',
-      schritte: ['In anzeige.ts abmelden() vor store.add(...) aufrufen', 'npm run anzeige ausführen'],
+      schritte: ['In display.ts unsubscribe() vor store.add(...) aufrufen', 'npm run display ausführen'],
       erwartet: <>Es erscheint nur <b>eine</b> Ticketliste mit acht Einträgen.</>
     },
     {
       id: 'TF-04',
       beschreibung: 'Der Compiler erzwingt die Prüfung von ok',
       vorbedingung: 'TF-01 ist erfüllt',
-      schritte: ['In explore/laden.ts vor dem if kurz die Zeile console.log(ergebnis.data); einfügen', 'npm run check ausführen', 'Zeile wieder entfernen'],
+      schritte: ['In explore/load.ts vor dem if kurz die Zeile console.log(result.data); einfügen', 'npm run check ausführen', 'Zeile wieder entfernen'],
       erwartet: <>Der Compiler meldet <code>Property 'data' does not exist on type 'Result&lt;Ticket[]&gt;'</code>.</>
     }
   ]}

@@ -90,15 +90,15 @@ type Result<T> = { ok: true; data: T } | { ok: false; error: string };
 Weil das Feld `ok` bei den beiden Möglichkeiten verschieden ist, kann der Compiler anhand einer Prüfung erkennen, welche vorliegt (*Narrowing*):
 
 ```ts
-const ergebnis = await loadTicketsSafe(url);
+const result = await loadTicketsSafe(url);
 
-if (ergebnis.ok) {
-  console.log(ergebnis.data.length);   // hier gibt es data
+if (result.ok) {
+  console.log(result.data.length);   // hier gibt es data
 } else {
-  console.log(ergebnis.error);         // hier gibt es error
+  console.log(result.error);         // hier gibt es error
 }
 
-ergebnis.data;   // Fehler: Property 'data' does not exist on type 'Result<Ticket[]>'
+result.data;   // Fehler: Property 'data' does not exist on type 'Result<Ticket[]>'
 ```
 
 Wer das Ergebnis benutzt, **muss** zuerst `ok` prüfen, sonst lässt der Compiler es nicht zu. Genau diese Form (laden, Fehler, Erfolg) brauchst du in der Oberfläche später immer wieder.

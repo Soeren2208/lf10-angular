@@ -29,7 +29,7 @@ Aus den kleinen Skripten wurden **komplette Anwendungen** im Browser (Webmail, K
 
 | Problem | Beispiel |
 |---|---|
-| **Fehler erst beim Ausführen** | Ein Tippfehler wie `ticket.titel` meldet nichts, das Ergebnis ist einfach `undefined`. Den Fehler bemerkt erst der Nutzer. |
+| **Fehler erst beim Ausführen** | Ein Tippfehler wie `ticket.tilte` meldet nichts, das Ergebnis ist einfach `undefined`. Den Fehler bemerkt erst der Nutzer. |
 | **Schwer zu ändern** | Du benennst ein Feld um. Wo wird es überall benutzt? Kein Werkzeug kann es sicher sagen. |
 | **Editor kann wenig helfen** | Ohne bekannte Typen gibt es keine verlässlichen Vorschläge und keine Warnungen. |
 | **Code schwer zu lesen** | Welche Felder hat dieses Objekt? Was darf ich dieser Funktion übergeben? Man muss raten oder den ganzen Code lesen. |

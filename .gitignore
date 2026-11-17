@@ -1,4 +1,4 @@
-# Abhängigkeiten und Bauergebnisse
+# AbhÃ¤ngigkeiten und Bauergebnisse
 node_modules/
 build/
 .docusaurus/
@@ -8,7 +8,7 @@ dist/
 # Log-Dateien
 *.log
 
-# Alte Word-Arbeitsblätter bleiben lokal
+# Alte Word-ArbeitsblÃ¤tter bleiben lokal
 *.docx
 *.doc
 
@@ -25,4 +25,3 @@ _serve/
 
 # Beim Bauen erzeugt (website/scripts)
 website/src/data/
-website/static/downloads/

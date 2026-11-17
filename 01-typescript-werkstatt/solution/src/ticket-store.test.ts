@@ -4,7 +4,7 @@ import { sampleTickets } from './sample-data';
 import { loadTickets, loadTicketsSafe, TicketStore } from './ticket-store';
 import type { Ticket } from './ticket';
 
-const neuesTicket: Ticket = { id: 9, title: 'Beamer startet nicht', status: 'offen', priority: 2, createdAt: '2026-11-10' };
+const newTicket: Ticket = { id: 9, title: 'Beamer startet nicht', status: 'offen', priority: 2, createdAt: '2026-11-10' };
 
 describe('C1 TicketStore: Inhalt', () => {
   it('ist ohne Angabe leer', () => {
@@ -17,12 +17,12 @@ describe('C1 TicketStore: Inhalt', () => {
 
   it('add hängt ein Ticket an, ohne die Liste von vorher zu verändern', () => {
     const store = new TicketStore(sampleTickets);
-    const vorher = store.all();
-    store.add(neuesTicket);
+    const before = store.all();
+    store.add(newTicket);
     expect(store.all()).toHaveLength(9);
-    expect(store.all().at(-1)).toEqual(neuesTicket);
-    expect(vorher).toHaveLength(8);
-    expect(store.all()).not.toBe(vorher);
+    expect(store.all().at(-1)).toEqual(newTicket);
+    expect(before).toHaveLength(8);
+    expect(store.all()).not.toBe(before);
   });
 
   it('setStatus ändert den Status des Tickets', () => {
@@ -33,8 +33,8 @@ describe('C1 TicketStore: Inhalt', () => {
 
   it('replaceAll ersetzt alle Tickets', () => {
     const store = new TicketStore(sampleTickets);
-    store.replaceAll([neuesTicket]);
-    expect(store.all()).toEqual([neuesTicket]);
+    store.replaceAll([newTicket]);
+    expect(store.all()).toEqual([newTicket]);
   });
 });
 
@@ -44,7 +44,7 @@ describe('C2 TicketStore: Änderungen melden', () => {
     const listener = vi.fn();
     store.onChange(listener);
     expect(listener).not.toHaveBeenCalled();
-    store.add(neuesTicket);
+    store.add(newTicket);
     expect(listener).toHaveBeenCalledTimes(1);
     expect(listener).toHaveBeenCalledWith(store.all());
   });
@@ -69,22 +69,22 @@ describe('C2 TicketStore: Änderungen melden', () => {
 
   it('meldet an alle angemeldeten Funktionen', () => {
     const store = new TicketStore();
-    const erste = vi.fn();
-    const zweite = vi.fn();
-    store.onChange(erste);
-    store.onChange(zweite);
-    store.add(neuesTicket);
-    expect(erste).toHaveBeenCalledTimes(1);
-    expect(zweite).toHaveBeenCalledTimes(1);
+    const first = vi.fn();
+    const second = vi.fn();
+    store.onChange(first);
+    store.onChange(second);
+    store.add(newTicket);
+    expect(first).toHaveBeenCalledTimes(1);
+    expect(second).toHaveBeenCalledTimes(1);
   });
 
   it('onChange liefert eine Funktion, die wieder abmeldet', () => {
     const store = new TicketStore();
     const listener = vi.fn();
-    const abmelden = store.onChange(listener);
-    store.add(neuesTicket);
-    abmelden();
-    store.add({ ...neuesTicket, id: 10 });
+    const unsubscribe = store.onChange(listener);
+    store.add(newTicket);
+    unsubscribe();
+    store.add({ ...newTicket, id: 10 });
     expect(listener).toHaveBeenCalledTimes(1);
   });
 });
@@ -94,27 +94,27 @@ describe('C3 Daten laden', () => {
     vi.unstubAllGlobals();
   });
 
-  const antwort = (status: number, daten: unknown) => new Response(JSON.stringify(daten), { status });
+  const jsonResponse = (status: number, body: unknown) => new Response(JSON.stringify(body), { status });
 
   it('loadTickets ruft die Adresse ab und liefert die Tickets', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(antwort(200, sampleTickets));
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(200, sampleTickets));
     vi.stubGlobal('fetch', fetchMock);
     await expect(loadTickets('https://beispiel.test/tickets.json')).resolves.toEqual(sampleTickets);
     expect(fetchMock).toHaveBeenCalledWith('https://beispiel.test/tickets.json');
   });
 
   it('loadTickets wirft bei einer Fehlerantwort den Fehler "HTTP <status>"', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(antwort(404, {})));
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse(404, {})));
     await expect(loadTickets('https://beispiel.test/fehlt.json')).rejects.toThrow('HTTP 404');
   });
 
   it('loadTicketsSafe liefert bei Erfolg ok: true mit den Tickets', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(antwort(200, sampleTickets)));
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse(200, sampleTickets)));
     await expect(loadTicketsSafe('https://beispiel.test/tickets.json')).resolves.toEqual({ ok: true, data: sampleTickets });
   });
 
   it('loadTicketsSafe liefert bei einer Fehlerantwort ok: false mit dem Fehlertext', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(antwort(500, {})));
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse(500, {})));
     await expect(loadTicketsSafe('https://beispiel.test/tickets.json')).resolves.toEqual({ ok: false, error: 'HTTP 500' });
   });
 

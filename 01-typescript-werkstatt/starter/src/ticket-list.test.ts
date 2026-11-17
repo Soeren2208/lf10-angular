@@ -2,10 +2,10 @@
 import { describe, expect, it } from 'vitest';
 import { sampleTickets } from './sample-data';
 import { countByStatus, findTicket, openTickets, sortedByPriority, titles, withStatus } from './ticket-list';
-import { deepFreeze } from './test-hilfen';
+import { deepFreeze } from './test-helpers';
 
 // Die Eingabe wird eingefroren: Wer sie ändert, bekommt einen Fehler.
-const eingefroren = () => deepFreeze(structuredClone(sampleTickets));
+const frozenSample = () => deepFreeze(structuredClone(sampleTickets));
 
 describe('B1 openTickets', () => {
   it('liefert nur Tickets mit dem Status "offen"', () => {
@@ -53,29 +53,29 @@ describe('B5 sortedByPriority', () => {
   });
 
   it('lässt die Eingabeliste unverändert', () => {
-    const liste = eingefroren();
-    expect(() => sortedByPriority(liste)).not.toThrow();
-    expect(liste.map((t) => t.id)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+    const list = frozenSample();
+    expect(() => sortedByPriority(list)).not.toThrow();
+    expect(list.map((t) => t.id)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
   });
 });
 
 describe('B6 withStatus', () => {
   it('ändert den Status des gewünschten Tickets', () => {
-    const neu = withStatus(sampleTickets, 3, 'erledigt');
-    expect(findTicket(neu, 3)?.status).toBe('erledigt');
+    const updated = withStatus(sampleTickets, 3, 'erledigt');
+    expect(findTicket(updated, 3)?.status).toBe('erledigt');
   });
 
   it('lässt die Eingabeliste und ihre Tickets unverändert', () => {
-    const liste = eingefroren();
-    expect(() => withStatus(liste, 3, 'erledigt')).not.toThrow();
-    expect(findTicket(liste, 3)?.status).toBe('offen');
+    const list = frozenSample();
+    expect(() => withStatus(list, 3, 'erledigt')).not.toThrow();
+    expect(findTicket(list, 3)?.status).toBe('offen');
   });
 
   it('liefert eine neue Liste und ein neues Ticket, die anderen Tickets bleiben dieselben Objekte', () => {
-    const neu = withStatus(sampleTickets, 3, 'erledigt');
-    expect(neu).not.toBe(sampleTickets);
-    expect(findTicket(neu, 3)).not.toBe(findTicket(sampleTickets, 3));
-    expect(findTicket(neu, 4)).toBe(findTicket(sampleTickets, 4));
+    const updated = withStatus(sampleTickets, 3, 'erledigt');
+    expect(updated).not.toBe(sampleTickets);
+    expect(findTicket(updated, 3)).not.toBe(findTicket(sampleTickets, 3));
+    expect(findTicket(updated, 4)).toBe(findTicket(sampleTickets, 4));
   });
 
   it('liefert bei einer unbekannten Nummer eine Liste mit demselben Inhalt', () => {

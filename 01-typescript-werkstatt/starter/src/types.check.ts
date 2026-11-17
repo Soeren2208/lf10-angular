@@ -11,41 +11,41 @@ import { findTicket } from './ticket-list';
 import type { Result } from './ticket-store';
 
 // A1: ein gültiges Ticket – assignee darf fehlen
-const gueltig: Ticket = { id: 1, title: 'Test', status: 'offen', priority: 1, createdAt: '2026-11-02' };
+const valid: Ticket = { id: 1, title: 'Test', status: 'offen', priority: 1, createdAt: '2026-11-02' };
 
 // @ts-expect-error A2: Als Status ist nur "offen", "in Arbeit" oder "erledigt" erlaubt
-const falscherStatus: Ticket = { ...gueltig, status: 'wartet' };
+const invalidStatus: Ticket = { ...valid, status: 'wartet' };
 
 // @ts-expect-error A2: Als Priorität ist nur 1, 2 oder 3 erlaubt
-const falschePrioritaet: Ticket = { ...gueltig, priority: 4 };
+const invalidPriority: Ticket = { ...valid, priority: 4 };
 
 // @ts-expect-error A1: Der Titel muss ein Text sein
-const falscherTitel: Ticket = { ...gueltig, title: 42 };
+const invalidTitle: Ticket = { ...valid, title: 42 };
 
 // @ts-expect-error A1: Ohne Titel ist es kein Ticket
-const ohneTitel: Ticket = { id: 2, status: 'offen', priority: 1, createdAt: '2026-11-02' };
+const withoutTitle: Ticket = { id: 2, status: 'offen', priority: 1, createdAt: '2026-11-02' };
 
 // @ts-expect-error A1: Es gibt kein Feld "prio" (Tippfehler werden erkannt)
-const tippfehler: Ticket = { ...gueltig, prio: 1 };
+const typo: Ticket = { ...valid, prio: 1 };
 
 // @ts-expect-error A2: Ein Status ist keine beliebige Zahl
-const statusAlsZahl: Status = 3;
+const statusAsNumber: Status = 3;
 
 // @ts-expect-error A1: Die Nummer eines Tickets darf nachträglich nicht geändert werden (readonly)
-gueltig.id = 2;
+valid.id = 2;
 
 // @ts-expect-error B3: findTicket kann undefined liefern, deshalb darf man nicht einfach .title lesen
-const titel = findTicket(sampleTickets, 1).title;
+const title = findTicket(sampleTickets, 1).title;
 
 // C4: Erst wenn "ok" geprüft ist, weiß der Compiler, ob es data oder error gibt
-export function ausgabe(ergebnis: Result<Ticket[]>): string {
-  if (ergebnis.ok) {
-    return `${ergebnis.data.length} Tickets`;
+export function render(result: Result<Ticket[]>): string {
+  if (result.ok) {
+    return `${result.data.length} Tickets`;
   }
-  return ergebnis.error;
+  return result.error;
 }
 
 // @ts-expect-error C4: Ohne Prüfung von "ok" darf man nicht auf data zugreifen
-export const ohnePruefung = (ergebnis: Result<Ticket[]>) => ergebnis.data;
+export const withoutCheck = (result: Result<Ticket[]>) => result.data;
 
-export { falscherStatus, falschePrioritaet, falscherTitel, ohneTitel, tippfehler, statusAlsZahl, titel };
+export { invalidStatus, invalidPriority, invalidTitle, withoutTitle, typo, statusAsNumber, title };

@@ -4,13 +4,13 @@ import { sampleTickets } from './sample-data';
 import { assigneeName, describeTicket, isUrgent } from './ticket';
 import type { Ticket } from './ticket';
 
-const ticket = (aenderung: Partial<Ticket> = {}): Ticket => ({
+const ticket = (overrides: Partial<Ticket> = {}): Ticket => ({
   id: 7,
   title: 'Drucker defekt',
   status: 'offen',
   priority: 2,
   createdAt: '2026-11-02',
-  ...aenderung,
+  ...overrides,
 });
 
 describe('A3 describeTicket', () => {

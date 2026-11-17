@@ -14,15 +14,15 @@ Fast jede Anwendung arbeitet mit **Listen**: Tickets, Mitarbeiter, Qualifikation
 Die Array-Methoden bekommen eine Funktion übergeben. Dafür gibt es eine kurze Schreibweise, die **Pfeilfunktion**:
 
 ```ts
-const doppelt = (zahl: number) => zahl * 2;
+const double = (n: number) => n * 2;
 ```
 
 Vor dem Pfeil `=>` stehen die Parameter, dahinter der Rückgabewert. Hast du nur einen Ausdruck, entfallen `return` und die geschweiften Klammern. Mit mehreren Anweisungen schreibst du einen Block:
 
 ```ts
-const beschreibe = (ticket: Ticket) => {
-  const nummer = ticket.id;
-  return `#${nummer} ${ticket.title}`;
+const describe = (ticket: Ticket) => {
+  const id = ticket.id;
+  return `#${id} ${ticket.title}`;
 };
 ```
 
@@ -46,19 +46,19 @@ In TypeScript vergleichst du mit `===` (strikter Vergleich). Das einfache `==` w
 Alle Beispiele benutzen diese Liste:
 
 ```ts
-const prios = [3, 1, 2];
+const priorities = [3, 1, 2];
 ```
 
 | Ich will … | Methode | Beispiel | Ergebnis |
 |---|---|---|---|
-| nur manche Elemente behalten | `filter` | `prios.filter((p) => p < 3)` | `[1, 2]` |
-| aus jedem Element etwas anderes machen | `map` | `prios.map((p) => p * 2)` | `[6, 2, 4]` |
-| das **erste** passende Element | `find` | `prios.find((p) => p > 5)` | `undefined` |
-| wissen, ob **mindestens eins** passt | `some` | `prios.some((p) => p === 1)` | `true` |
-| wissen, ob **alle** passen | `every` | `prios.every((p) => p > 0)` | `true` |
-| aus allen Elementen **einen Wert** machen | `reduce` | `prios.reduce((summe, p) => summe + p, 0)` | `6` |
-| sortieren | `sort` | `[...prios].sort((a, b) => a - b)` | `[1, 2, 3]` |
-| zählen | `length` | `prios.length` | `3` |
+| nur manche Elemente behalten | `filter` | `priorities.filter((p) => p < 3)` | `[1, 2]` |
+| aus jedem Element etwas anderes machen | `map` | `priorities.map((p) => p * 2)` | `[6, 2, 4]` |
+| das **erste** passende Element | `find` | `priorities.find((p) => p > 5)` | `undefined` |
+| wissen, ob **mindestens eins** passt | `some` | `priorities.some((p) => p === 1)` | `true` |
+| wissen, ob **alle** passen | `every` | `priorities.every((p) => p > 0)` | `true` |
+| aus allen Elementen **einen Wert** machen | `reduce` | `priorities.reduce((sum, p) => sum + p, 0)` | `6` |
+| sortieren | `sort` | `[...priorities].sort((a, b) => a - b)` | `[1, 2, 3]` |
+| zählen | `length` | `priorities.length` | `3` |
 
 Die Merkhilfe lautet: **Wie viele Elemente kommen heraus?**
 
@@ -97,7 +97,7 @@ ticket?.title ?? '–'; // mit Ersatzwert
 `reduce` geht die Liste Element für Element durch und trägt dabei einen **Zwischenstand** mit, den **Akkumulator**. Du gibst zwei Dinge an: eine Funktion, die aus dem bisherigen Zwischenstand und dem nächsten Element den **neuen Zwischenstand** macht, und den **Startwert**.
 
 ```ts
-[3, 1, 2].reduce((summe, p) => summe + p, 0);
+[3, 1, 2].reduce((sum, p) => sum + p, 0);
 ```
 
 | Schritt | Zwischenstand vorher | Element | neuer Zwischenstand |
@@ -112,8 +112,8 @@ Am Ende ist der Zwischenstand das Ergebnis: `6`. Der Zwischenstand muss keine Za
 ## 5. Sortieren
 
 ```ts
-const prios = [3, 1, 2];
-[...prios].sort((a, b) => a - b); // [1, 2, 3]
+const priorities = [3, 1, 2];
+[...priorities].sort((a, b) => a - b); // [1, 2, 3]
 ```
 
 Die Funktion vergleicht zwei Elemente und liefert:
