@@ -29,7 +29,9 @@ Auf der Seite gibt es manchmal auch eine Version mit dem Zusatz „Current". Nim
 :::
 
 :::tip Hast du Node.js schon?
-Dann öffne ein Terminal und gib `node -v` ein. Installiere trotzdem die aktuelle LTS-Version: Sie ersetzt die alte, und Angular unterstützt ältere Versionen nicht mehr.
+Gib in einem Terminal `node -v` ein. Zeigt es **nicht** die aktuelle LTS-Version (zurzeit 26), installiere sie einfach über die Schritte oben. Der Installer ersetzt die alte Version, du musst nichts deinstallieren. Starte danach das Terminal und WebStorm neu und prüfe mit `node -v` noch einmal. Angular unterstützt ältere Versionen nicht mehr.
+
+Zeigt `node -v` danach immer noch die alte Nummer, hast du Node vermutlich mit einem Versions-Manager wie `nvm` installiert. Mit `Get-Command node` (PowerShell) siehst du, woher es kommt. Frag in dem Fall deine Lehrkraft.
 :::
 
 ## 2. WebStorm installieren
