@@ -34,20 +34,46 @@ Die Prüfung ist so streng, wie du sie einstellst. In diesem Kurs gilt immer `"s
 | `number` | `7`, `3.14` | `int`, `double` (alles eine Zahlenart) |
 | `boolean` | `true`, `false` | `boolean` |
 
+Eine **Variable** ist ein Name, hinter dem ein Wert liegt. Im folgenden Beispiel ist `city` der **Name der Variablen**, `'Bremen'` ihr **Wert** und `string` ihr **Typ**:
+
 ```ts
-const title: string = 'Drucker defekt';
+const city: string = 'Bremen';
 let count: number = 3;
 ```
 
 Meistens musst du den Typ gar nicht hinschreiben. Der Compiler erkennt ihn am Wert (**Typinferenz**):
 
 ```ts
-const title = 'Drucker defekt'; // string
-let count = 3;                  // number
-count = 'drei';                 // Fehler: ein Text ist keine Zahl
+const city = 'Bremen'; // string
+let count = 3;         // number
+count = 'drei';        // Fehler: ein Text ist keine Zahl
 ```
 
-**`const` oder `let`?** Benutze `const`, wenn der Name sich nicht ändert (fast immer), und `let` nur, wenn du ihm später etwas anderes zuweist. Das alte `var` benutzt man nicht mehr.
+### `const` oder `let`?
+
+Beide legen eine Variable an. Der Unterschied: Bei einer `const`-Variablen darfst du **nach der ersten Zuweisung keinen anderen Wert mehr zuweisen**, bei `let` schon.
+
+```ts
+const city = 'Bremen';
+city = 'Hamburg';        // Fehler: einer const-Variablen kann man nichts Neues zuweisen
+
+let count = 3;
+count = count + 1;       // erlaubt: let darf neu zugewiesen werden
+```
+
+**Regel:** Schreibe immer `const`. Nimm `let` nur, wenn du der Variablen später wirklich einen anderen Wert zuweisen musst (zum Beispiel einem Zähler). Das alte `var` benutzt man nicht mehr.
+
+:::warning `const` macht den Inhalt nicht unveränderlich
+`const` schützt nur die **Zuweisung**, nicht das, was hinter dem Wert liegt. Bei einem Objekt oder einer Liste kannst du die Inhalte trotzdem ändern:
+
+```ts
+const ticket = { id: 7, title: 'Drucker defekt' };
+ticket.title = 'Monitor defekt';  // erlaubt: das Objekt selbst wird geändert
+ticket = { id: 8, title: 'WLAN' }; // Fehler: der Variablen wird ein neues Objekt zugewiesen
+```
+
+Wie du einzelne Felder vor Änderungen schützt, steht im nächsten Abschnitt (`readonly`). Wie du mit Listen arbeitest, ohne sie zu verändern, lernst du in AB 02.
+:::
 
 ## 3. Daten beschreiben: `interface`
 
@@ -69,7 +95,7 @@ const ticket: Ticket = { id: 7, title: 'Drucker defekt' };
 | `assignee?: string` | Das Feld darf fehlen. Fehlt es, ist sein Wert `undefined`. |
 | `readonly id: number` | Das Feld darf nach dem Anlegen nicht mehr geändert werden. |
 
-**Passt es, dann passt es.** TypeScript prüft die **Form** eines Objekts, nicht seinen Namen. Ein Objekt gilt als `Ticket`, wenn es alle Pflichtfelder mit den richtigen Typen hat. Du musst nirgends `implements Ticket` schreiben. Das nennt man **strukturelle Typisierung**.
+**Passt es, dann passt es.** TypeScript prüft die **Form** eines Objekts, nicht den Namen seines Typs. Ein Objekt gilt als `Ticket`, wenn es alle Pflichtfelder mit den richtigen Typen hat. Du musst nirgends `implements Ticket` schreiben. Das nennt man **strukturelle Typisierung**.
 
 Zwei Dinge fängt der Compiler dabei ab: ein fehlendes Pflichtfeld und ein unbekanntes Feld, zum Beispiel ein Tippfehler im Namen (`prio` statt `priority`).
 
@@ -168,6 +194,7 @@ Wichtig ist der **Text**. Die Tabelle übersetzt die häufigsten:
 | `Property 'title' is missing in type … but required in type 'Ticket'` | Ein Pflichtfeld fehlt | Feld vergessen |
 | `Object literal may only specify known properties` | Das Objekt hat ein Feld, das es im Typ nicht gibt | Tippfehler im Feldnamen |
 | `Cannot assign to 'id' because it is a read-only property` | Ein `readonly`-Feld wurde geändert | Zuweisung an ein geschütztes Feld |
+| `Cannot assign to 'city' because it is a constant` | Einer `const`-Variablen wurde ein neuer Wert zugewiesen | `const` statt `let` benutzt, obwohl die Variable neu belegt wird |
 | `Object is possibly 'undefined'` | Der Wert kann fehlen und wurde ohne Prüfung benutzt | `find()` oder optionales Feld, Fall „fehlt“ nicht behandelt |
 | `Type 'string \| undefined' is not assignable to type 'string'` | Ein optionaler Wert steht, wo ein Pflichtwert erwartet wird | Ersatzwert mit `??` oder Prüfung fehlt |
 | `Unused '@ts-expect-error' directive` | In den Typ-Prüfungen dieses Kurses: Der erwartete Fehler bleibt aus | dein Typ ist an dieser Stelle noch zu locker |
