@@ -7,13 +7,9 @@ sidebar_position: 0
 
 # Tutorial 01 – TypeScript-Werkstatt
 
-:::caution Entwurf
-Dieses Tutorial ist fertig geschrieben, aber noch nicht freigeschaltet.
-:::
-
 ## Die Situation
 
-> Die Support-Abteilung der **HiTec GmbH** verwaltet ihre Tickets bislang in einer Tabelle. Künftig sollen die Mitarbeitenden sie in einer Weboberfläche sehen und bearbeiten.
+> Bei der **HiTec GmbH** melden Mitarbeitende dem Support, wenn etwas nicht funktioniert: Drucker, VPN, Passwort. Jede Meldung ist ein **Support-Ticket**. Bislang verwaltet die Support-Abteilung diese Tickets in einer Excel-Tabelle. Künftig sollen die Mitarbeitenden sie in einer Weboberfläche sehen und bearbeiten.
 >
 > Dein Auftrag: Baue zuerst die **Logik und die Daten** in TypeScript – die Oberfläche folgt im nächsten Tutorial.
 

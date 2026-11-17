@@ -4,7 +4,7 @@ Unterrichtsmaterial für Fachinformatiker/-innen Anwendungsentwicklung (Schulzen
 
 | Tutorial | Thema |
 |---|---|
-| 01 TypeScript-Werkstatt | TypeScript für Angular, Support-Tickets der HiTec GmbH (in Arbeit) |
+| 01 TypeScript-Werkstatt | TypeScript für Angular, Support-Tickets der HiTec GmbH |
 
 ## Aufbau des Repositorys
 

@@ -13,9 +13,26 @@ import solution from '@site/src/data/solution-ab01.json';
 
 ## Die Situation
 
-> Die Support-Abteilung der **HiTec GmbH** führt ihre Tickets in einer Tabelle: Titel, Status, Priorität, wer sich kümmert. Für die neue Weboberfläche brauchen diese Daten eine feste Form.
+> Bei der **HiTec GmbH** melden sich Mitarbeitende beim Support, wenn etwas nicht funktioniert: Der Drucker druckt nicht, das VPN geht nicht, ein Passwort ist vergessen. Jede solche Meldung ist ein **Support-Ticket**.
 >
-> Dein Auftrag: Beschreibe ein Ticket in TypeScript so genau, dass der **Compiler** Fehler findet, bevor sie jemand bemerkt. Dazu schreibst du die ersten drei kleinen Funktionen.
+> So läuft das bisher:
+>
+> 1. Frau Albers aus dem Büro 2 ruft beim Support an: „Der Drucker druckt nicht.“
+> 2. Jonas Beck vom Support trägt eine neue Zeile in die Excel-Datei `Tickets.xlsx` auf dem Netzlaufwerk ein. Die Nummer vergibt er von Hand.
+> 3. Er schätzt die Dringlichkeit und trägt eine Priorität ein.
+> 4. Wenn sich jemand um das Ticket kümmert, schreibt er den Namen dazu. Ändert sich etwas, überschreibt er die Zelle.
+>
+> | Nr | Titel | Status | Priorität | Bearbeiter |
+> |---|---|---|---|---|
+> | 3 | Drucker im Büro 2 druckt nicht | offen | 2 | |
+> | 7 | Software-Lizenz läuft ab | in arbeit | hoch | Jonas Beck |
+> | 8 | WLAN im Besprechungsraum instabil | Erledigt | 2 | Mara Voss |
+>
+> Mit der Zeit gibt es Ärger. In der Tabelle steht mal „in Arbeit“, mal „in arbeit“, mal „Erledigt“. Die Priorität ist mal eine Zahl, mal das Wort „hoch“, und die Auswertung zählt falsch. Zwei Kollegen öffnen die Datei gleichzeitig, und einer überschreibt die Änderung des anderen. Bei Ticket 5 fehlt die Nummer.
+>
+> Deshalb entsteht eine **Weboberfläche** für die Tickets. Dahinter braucht die Software für jedes Ticket eine **feste Form**, die solche Fehler gar nicht erst zulässt.
+>
+> **Dein Auftrag:** Beschreibe ein Ticket in TypeScript so genau, dass der **Compiler** Fehler findet, bevor sie jemand bemerkt. Dazu schreibst du die ersten drei kleinen Funktionen.
 
 ## Lernziele
 
