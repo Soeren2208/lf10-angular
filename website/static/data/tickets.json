@@ -1,0 +1,64 @@
+[
+  {
+    "id": 1,
+    "title": "VPN-Zugang für neue Mitarbeiterin einrichten",
+    "status": "erledigt",
+    "priority": 3,
+    "assignee": "Jonas Beck",
+    "createdAt": "2026-11-02"
+  },
+  {
+    "id": 2,
+    "title": "Server im Rack 3 meldet Temperaturwarnung",
+    "status": "in Arbeit",
+    "priority": 1,
+    "assignee": "Mara Voss",
+    "createdAt": "2026-11-03"
+  },
+  {
+    "id": 3,
+    "title": "Drucker im Büro 2 druckt nicht",
+    "status": "offen",
+    "priority": 2,
+    "createdAt": "2026-11-03"
+  },
+  {
+    "id": 4,
+    "title": "E-Mail-Postfach der Geschäftsführung läuft voll",
+    "status": "offen",
+    "priority": 1,
+    "assignee": "Jonas Beck",
+    "createdAt": "2026-11-04"
+  },
+  {
+    "id": 5,
+    "title": "Monitor an Arbeitsplatz 14 flackert",
+    "status": "offen",
+    "priority": 3,
+    "createdAt": "2026-11-05"
+  },
+  {
+    "id": 6,
+    "title": "Passwort zurücksetzen (Buchhaltung)",
+    "status": "erledigt",
+    "priority": 1,
+    "assignee": "Mara Voss",
+    "createdAt": "2026-11-05"
+  },
+  {
+    "id": 7,
+    "title": "Software-Lizenz läuft ab",
+    "status": "in Arbeit",
+    "priority": 2,
+    "assignee": "Jonas Beck",
+    "createdAt": "2026-11-06"
+  },
+  {
+    "id": 8,
+    "title": "WLAN im Besprechungsraum instabil",
+    "status": "offen",
+    "priority": 2,
+    "assignee": "Mara Voss",
+    "createdAt": "2026-11-09"
+  }
+]

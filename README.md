@@ -11,7 +11,27 @@ Unterrichtsmaterial für Fachinformatiker/-innen Anwendungsentwicklung (Schulzen
 | Ordner | Inhalt |
 |---|---|
 | `website/` | Die Webseite (Docusaurus): Arbeitsblätter, Infoblätter, Komponenten |
-| `01-typescript-werkstatt/` | Starter-Projekt mit Tests und Musterlösung (in Arbeit) |
+| `01-typescript-werkstatt/starter/` | Das Projekt, das die Schüler bekommen: Platzhalter (`TODO`), fertige Tests |
+| `01-typescript-werkstatt/loesung/` | Die Musterlösung, gegen dieselben Tests grün |
+
+## TypeScript-Werkstatt: Lösung und Starter pflegen
+
+Die **Lösung ist die Quelle**. Die Tests, die Beispieldaten und die Konfiguration stehen nur dort und werden in den Starter kopiert. Im Starter geändert werden nur `src/ticket.ts`, `src/ticket-list.ts`, `src/ticket-store.ts` und die `README.md`.
+
+```bash
+cd 01-typescript-werkstatt
+node sync-starter.mjs     # gemeinsame Dateien aus der Lösung in den Starter kopieren
+node pruefen-beide.mjs    # Lösung und Starter gegeneinander prüfen
+```
+
+`pruefen-beide.mjs` stellt sicher, dass
+
+- die gemeinsamen Dateien in beiden Projekten identisch sind,
+- in der Lösung alle Tests und die Typ-Prüfung grün sind,
+- im Starter alle Tests rot sind und alle Typ-Prüfungen offen,
+- bewusst eingebaute Fehler in der Lösung (Mutanten) von den Tests oder vom Compiler erkannt werden.
+
+Es braucht Node.js ab Version 22.12 und installiert die Abhängigkeiten selbst (`npm install`).
 
 ## Webseite lokal ansehen
 

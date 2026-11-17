@@ -1,0 +1,25 @@
+{
+  "name": "typescript-werkstatt",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TypeScript-Werkstatt: Support-Tickets der HiTec GmbH",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "tsc --noEmit",
+    "pruefen": "node scripts/pruefen.mjs",
+    "fehler": "tsc --noEmit -p tsconfig.fehler.json",
+    "anzeige": "tsx explore/anzeige.ts",
+    "laden": "tsx explore/laden.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3",
+    "vitest": "^5.1.0"
+  },
+  "engines": {
+    "node": ">=22.12"
+  }
+}
