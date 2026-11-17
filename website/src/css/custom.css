@@ -1,0 +1,65 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* Primärfarbe: kräftiges Grün-Blau (Spring-nah), #2f7d5a. */
+:root {
+  --ifm-color-primary: #2f7d5a;
+  --ifm-color-primary-dark: #27674a;
+  --ifm-color-primary-darker: #21583f;
+  --ifm-color-primary-darkest: #163a2a;
+  --ifm-color-primary-light: #37936a;
+  --ifm-color-primary-lighter: #3da275;
+  --ifm-color-primary-lightest: #4cbc8a;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* Für den Dunkelmodus eine hellere Variante derselben Farbfamilie,
+   damit Text/Icons auf dunklem Grund lesbar bleiben. */
+[data-theme='dark'] {
+  --ifm-color-primary: #45b280;
+  --ifm-color-primary-dark: #3c9c70;
+  --ifm-color-primary-darker: #378d66;
+  --ifm-color-primary-darkest: #2b7050;
+  --ifm-color-primary-light: #58be8f;
+  --ifm-color-primary-lighter: #66c499;
+  --ifm-color-primary-lightest: #84cfad;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* ===========================================================================
+   Ampelfarben fuer die Zeichnungen
+   ---------------------------------------------------------------------------
+   --ifm-color-danger, --ifm-color-success und --ifm-color-primary sind als
+   FLAECHENfarben gedacht. Als SCHRIFTfarbe auf hellem Grund liegen sie unter
+   4,5:1 und sind damit nicht mehr sicher lesbar - gemessen:
+
+       --ifm-color-danger   auf Weiss   3,68:1
+       --ifm-color-primary  auf Weiss   4,39:1
+
+   Die drei Token hier sind dieselben Farben, aber in der Abstufung, die als
+   Schrift traegt - und sie drehen mit dem Theme mit. Sie gelten NUR fuer
+   Beschriftungen in SVG-Zeichnungen; Linien, Pfeilspitzen und Flaechen
+   behalten den kraeftigen Ton, dort genuegen 3:1.
+   =========================================================================== */
+
+:root {
+  --zeichnung-rot: var(--ifm-color-danger-darkest);
+  --zeichnung-gruen: var(--ifm-color-success-darkest);
+  --zeichnung-gelb: var(--ifm-color-warning-contrast-foreground);
+  --zeichnung-akzent: var(--ifm-color-primary-dark);
+  --zeichnung-blau: var(--ifm-color-info-contrast-foreground);
+  --zeichnung-marke: var(--ifm-color-primary-darkest);
+}
+
+[data-theme='dark'] {
+  --zeichnung-rot: var(--ifm-color-danger-lightest);
+  --zeichnung-gruen: var(--ifm-color-success-lightest);
+  --zeichnung-gelb: var(--ifm-color-warning-lightest);
+  --zeichnung-akzent: var(--ifm-color-primary);
+  --zeichnung-blau: var(--ifm-color-info-contrast-foreground);
+  --zeichnung-marke: var(--ifm-color-primary-darkest);
+}

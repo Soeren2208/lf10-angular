@@ -1,0 +1,83 @@
+name: Website bauen und veröffentlichen
+
+# Läuft bei jedem Push auf main und lässt sich zusätzlich von Hand starten.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Rechte, die der Workflow für die Veröffentlichung auf GitHub Pages braucht.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Läuft immer nur eine Veröffentlichung gleichzeitig.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+# Die Fassungen der Actions bitte aktuell halten: GitHub zwingt abgekuendigte
+# Node-Laufzeiten auf die naechste Fassung, und aeltere Actions vertragen das
+# nicht. Aufgefallen am 08.09.2026 - der Build lief durch, das Hochladen des
+# Ergebnisses brach mit "FinalizeArtifact ... 403 Forbidden" ab.
+jobs:
+  bauen:
+    name: Website bauen
+    runs-on: ubuntu-latest
+    steps:
+      - name: Quelltext holen
+        uses: actions/checkout@v7
+
+      - name: Node einrichten
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+
+      - name: Abhängigkeiten installieren
+        working-directory: website
+        run: npm ci
+
+      # Welche Tutorials gebaut werden, steuert die Repository-Variable
+      # TUTORIALS (Settings -> Secrets and variables -> Actions -> Variables),
+      # z.B. "tutorial-01,tutorial-02". Sie steht bewusst NICHT im Quelltext:
+      # so laesst sich freischalten, ohne etwas zu committen, und zwei
+      # Lehrkraefte mit eigenem Repository kommen sich nicht ins Gehege.
+      #
+      # Ein nicht genanntes Tutorial wird gar nicht erst gebaut - seine
+      # Adresse liefert dann einen 404. Ist die Variable leer, bricht der
+      # Build ab, statt versehentlich alles zu veroeffentlichen.
+      - name: Bauen
+        working-directory: website
+        env:
+          TUTORIALS: ${{ vars.TUTORIALS }}
+        run: npm run build
+
+      - name: Freigeschaltete Tutorials anzeigen
+        working-directory: website
+        run: |
+          echo "Angefordert (Variable TUTORIALS): ${{ vars.TUTORIALS }}"
+          echo "Im Ergebnis enthalten:"
+          ls -d build/tutorial-* 2>/dev/null | sed 's|build/|  |' || echo "  (keins)"
+
+      - name: Pages einrichten
+        uses: actions/configure-pages@v6
+
+      - name: Ergebnis hochladen
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: website/build
+
+  veroeffentlichen:
+    name: Veröffentlichen
+    needs: bauen
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Auf GitHub Pages veröffentlichen
+        id: deployment
+        uses: actions/deploy-pages@v5

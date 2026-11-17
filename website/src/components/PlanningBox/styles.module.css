@@ -1,0 +1,35 @@
+.box {
+  background: var(--ifm-color-warning-contrast-background);
+  border: 1px solid var(--ifm-color-warning-dark);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.box :global(table) {
+  margin: 0;
+  background: transparent;
+  display: table;
+  width: 100%;
+}
+
+.box :global(tr:nth-child(2n)) {
+  background: transparent;
+}
+
+.box :global(thead tr) {
+  border-bottom: 2px solid var(--ifm-color-warning-dark);
+}
+
+.box :global(th),
+.box :global(td) {
+  border-color: var(--ifm-color-warning-dark);
+}
+
+.box :global(td:first-child),
+.box :global(th:first-child) {
+  white-space: nowrap;
+  font-family: var(--ifm-font-family-monospace);
+  color: var(--ifm-color-warning-contrast-foreground);
+  font-weight: 700;
+}

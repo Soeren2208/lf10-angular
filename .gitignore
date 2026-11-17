@@ -1,0 +1,24 @@
+# Abhängigkeiten und Bauergebnisse
+node_modules/
+build/
+.docusaurus/
+.cache-loader/
+dist/
+
+# Log-Dateien
+*.log
+
+# Alte Word-Arbeitsblätter bleiben lokal
+*.docx
+*.doc
+
+# Betriebssystem und Entwicklungsumgebung
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+
+# Lokale Vorschau
+_serve/
+.claude/

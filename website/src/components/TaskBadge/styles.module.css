@@ -1,0 +1,18 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: var(--ifm-color-warning-contrast-background);
+  border: 1px solid var(--ifm-color-warning-dark);
+  color: var(--ifm-color-warning-contrast-foreground);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.35rem 0.8rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.badge::before {
+  content: '▸';
+  font-size: 0.75rem;
+}
