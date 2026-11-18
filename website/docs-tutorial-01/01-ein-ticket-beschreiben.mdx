@@ -86,6 +86,17 @@ git clone https://github.com/Soeren2208/lf10-typescript-werkstatt.git
 npm install
 ```
 
+:::note Eine Warnung nach `npm install`?
+Bei neueren npm-Versionen erscheint eventuell diese Warnung:
+
+```text
+npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+```
+
+Sie ist **harmlos**. Neuere npm-Versionen führen die Installationsskripte von Paketen aus Sicherheitsgründen nicht mehr automatisch aus und weisen nur darauf hin. Das Projekt läuft trotzdem, du musst nichts tun.
+:::
+
 <Task id="ts-ab01-a1-test">Führe die Tests aus:</Task>
 
 ```bash
