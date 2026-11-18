@@ -65,6 +65,26 @@
   line-height: 1;
 }
 
+/* Die Start-Kachel (Einrichten) hebt sich von den Tutorials ab. */
+.cardStart {
+  border-style: dashed;
+  border-color: var(--ifm-color-primary);
+}
+
+.cardMarke {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ifm-color-primary);
+  line-height: 2rem;
+}
+
+.hinweis {
+  margin-top: 1.25rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
 .cardTitel {
   font-size: 1.05rem;
   font-weight: 600;

@@ -5,57 +5,12 @@ import Heading from '@theme/Heading';
 import styles from './index.module.css';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
-// Die Infoblätter sind immer erreichbar.
-const infoblaetter = [
-  {
-    titel: 'Entwicklungsumgebung einrichten',
-    beschreibung: 'Node.js, WebStorm und die PowerShell-Einstellung – Schritt für Schritt und mit Prüfung',
-    link: '/infoblaetter/einrichten',
-  },
-  {
-    titel: 'Was ist TypeScript – und warum gibt es das?',
-    beschreibung: 'Von JavaScript 1995 über die Probleme großer Anwendungen zu TypeScript – und was es kann und nicht kann',
-    link: '/infoblaetter/warum-typescript',
-  },
-  {
-    titel: 'Typen: Daten beschreiben',
-    beschreibung: 'Interface, Union-Typen, optionale Felder, ?? und ?. – und die häufigsten Compiler-Meldungen übersetzt',
-    link: '/infoblaetter/typen',
-  },
-  {
-    titel: 'Listen auswerten: Array-Methoden',
-    beschreibung: 'Pfeilfunktionen, filter, map, find, reduce und sort – welche Methode wofür',
-    link: '/infoblaetter/array-methoden',
-  },
-  {
-    titel: 'Unveränderlich arbeiten',
-    beschreibung: 'Kopien mit dem Spread-Operator, readonly und warum Angular neue Objekte braucht',
-    link: '/infoblaetter/unveraenderlich',
-  },
-  {
-    titel: 'Klassen in TypeScript',
-    beschreibung: 'Aufbau, Konstruktor-Attribute, die Falle mit this – und was anders ist als in Java',
-    link: '/infoblaetter/klassen',
-  },
-  {
-    titel: 'Daten laden: async und await',
-    beschreibung: 'Promise, await, fetch und die Fehlerantwort, try/catch, das Result und warum Typen am Rand nur Behauptungen sind',
-    link: '/infoblaetter/async-await',
-  },
-];
-
-const lernziele = [
-  'Daten mit Interfaces, Union-Typen und optionalen Feldern beschreiben',
-  'Mit Array-Methoden (filter, map, find, reduce) Listen auswerten',
-  'Listen unveränderlich ändern und erklären, warum das wichtig ist',
-  'Eine Klasse mit Konstruktor-Attributen und einen asynchronen Datenabruf schreiben',
-  'Compiler-Fehlermeldungen lesen und für die Fehlersuche nutzen',
-];
-
-function TutorialCard({nummer, titel, stichworte, link}) {
+function TutorialCard({nummer, titel, stichworte, link, start = false}) {
   return (
-    <Link to={link} className={styles.card}>
-      <span className={styles.cardNummer}>{nummer}</span>
+    <Link
+      to={link}
+      className={start ? `${styles.card} ${styles.cardStart}` : styles.card}>
+      <span className={start ? styles.cardMarke : styles.cardNummer}>{nummer}</span>
       <span className={styles.cardTitel}>{titel}</span>
       <span className={styles.cardStichworte}>{stichworte}</span>
     </Link>
@@ -86,72 +41,59 @@ export default function Home() {
         <section className={styles.section}>
           <Heading as="h2">Worum es geht</Heading>
           <p>
-            Hier entsteht Schritt für Schritt das Wissen, das du für das
-            Frontend-Projekt brauchst: zuerst TypeScript, dann die Arbeit mit
-            Angular, Signals und Formularen. Die Tutorials bauen aufeinander
-            auf und werden der Reihe nach bearbeitet.
+            Hier lernst du Angular kennen, ein Framework für Weboberflächen. Du
+            lernst es in drei bis vier aufeinander aufbauenden Schritten. Jeder
+            Schritt ist ein Tutorial aus mehreren Arbeitsblättern, die du der
+            Reihe nach bearbeitest. Den Anfang macht TypeScript, die Sprache, in
+            der Angular-Anwendungen geschrieben werden.
           </p>
+        </section>
+
+        <section className={styles.section}>
+          <Heading as="h2">So fängst du an</Heading>
           <p>
-            Die Infoblätter liefern den fachlichen Hintergrund und lassen sich
-            jederzeit nachschlagen. Fang dort an, wenn du deinen Rechner noch
-            einrichten musst.
+            Richte zuerst deinen Rechner ein. Danach arbeitest du die Tutorials
+            der Reihe nach ab. Jedes enthält Aufgaben, die du abhaken kannst – die
+            Haken bleiben in deinem Browser erhalten, solange du dasselbe Gerät
+            benutzt.
           </p>
-        </section>
-
-        <section className={styles.section}>
-          <Heading as="h2">Lernziele</Heading>
-          <ul className={styles.linkListe}>
-            {lernziele.map((z) => (
-              <li key={z}>{z}</li>
+          <div className={styles.cardGrid}>
+            <TutorialCard
+              start
+              nummer="Start"
+              titel="Entwicklungsumgebung einrichten"
+              stichworte="Node.js · WebStorm · Git"
+              link="/vorbereitung/einrichten"
+            />
+            {freigegeben.map((t) => (
+              <TutorialCard
+                key={t.id}
+                nummer={t.nummer}
+                titel={t.titel}
+                stichworte={t.stichworte}
+                link={`/${t.id}/`}
+              />
             ))}
-          </ul>
-        </section>
-
-        <section className={styles.section}>
-          <Heading as="h2">Tutorials</Heading>
-          {freigegeben.length > 0 ? (
-            <>
-              <p>
-                Arbeite die Tutorials der Reihe nach ab. Jedes enthält
-                Aufgaben, die du abhaken kannst – die Haken bleiben in deinem
-                Browser erhalten, solange du dasselbe Gerät benutzt.
-              </p>
-              <div className={styles.cardGrid}>
-                {freigegeben.map((t) => (
-                  <TutorialCard
-                    key={t.id}
-                    nummer={t.nummer}
-                    titel={t.titel}
-                    stichworte={t.stichworte}
-                    link={`/${t.id}/`}
-                  />
-                ))}
-              </div>
-            </>
-          ) : (
-            <p>
-              <em>
-                Die Tutorials werden im Laufe des Schuljahres freigeschaltet.
-                Richte bis dahin deinen Rechner ein.
-              </em>
-            </p>
-          )}
+          </div>
+          <p className={styles.hinweis}>
+            <em>Weitere Tutorials folgen.</em>
+          </p>
         </section>
 
         <section className={styles.section}>
           <Heading as="h2">Infoblätter</Heading>
-          <p>Nachschlagematerial – unabhängig davon, an welchem Tutorial du gerade arbeitest:</p>
-          <ul className={styles.linkListe}>
-            {infoblaetter.map((item) => (
-              <li key={item.titel}>
-                <Link to={item.link}>
-                  <strong>{item.titel}</strong>
-                </Link>
-                {' – '}
-                {item.beschreibung}
-              </li>
-            ))}
-          </ul>
+          <p>
+            Infoblätter erklären, was hinter einer Aufgabe steckt: Begriffe,
+            Hintergründe und Vergleiche mit Java. Du musst sie nicht vorher
+            lesen. Im Arbeitsblatt steht an der passenden Stelle ein Link, wenn
+            dir etwas fehlt. Alle Infoblätter findest du im Menü oben unter
+            „Infoblätter“.
+          </p>
+          <p>
+            <Link className="button button--secondary" to="/infoblaetter/">
+              Zu den Infoblättern
+            </Link>
+          </p>
         </section>
 
         <section id="impressum" className={styles.section}>

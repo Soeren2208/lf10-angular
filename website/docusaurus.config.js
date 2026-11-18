@@ -91,6 +91,18 @@ const config = {
   ],
 
   plugins: [
+    // Die Vorbereitung (Rechner einrichten) ist immer erreichbar. Sie ist kein
+    // Infoblatt, sondern die Voraussetzung für alle Tutorials.
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'vorbereitung',
+        path: 'docs-vorbereitung',
+        routeBasePath: 'vorbereitung',
+        sidebarPath: './sidebars.js',
+        beforeDefaultRemarkPlugins: [verweisPlugin],
+      },
+    ],
     // Die Infoblätter sind immer erreichbar — sie sind Nachschlagematerial.
     [
       '@docusaurus/plugin-content-docs',
@@ -133,6 +145,13 @@ const config = {
           src: 'img/logo.svg',
         },
         items: [
+          {
+            type: 'doc',
+            docId: 'einrichten',
+            docsPluginId: 'vorbereitung',
+            position: 'left',
+            label: 'Einrichten',
+          },
           ...freigegeben.map((t) => ({
             type: 'docSidebar',
             sidebarId: 'sidebar',
@@ -160,13 +179,17 @@ const config = {
           {
             title: 'Lernsituation',
             items: [
+              {
+                label: 'Einrichten',
+                to: '/vorbereitung/einrichten',
+              },
               ...freigegeben.map((t) => ({
                 label: `${t.nummer} ${t.titel}`,
                 to: `/${t.id}/`,
               })),
               {
                 label: 'Infoblätter',
-                to: '/infoblaetter/einrichten',
+                to: '/infoblaetter/',
               },
             ],
           },

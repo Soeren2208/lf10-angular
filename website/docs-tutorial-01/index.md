@@ -31,5 +31,5 @@ Du arbeitest mit einem Starter-Projekt, in dem fertige Tests auf dich warten. Am
 - Compilerfehler lesen und als Hilfe nutzen
 
 :::tip Vorbereitung
-Richte vorher deinen Rechner ein: [Entwicklungsumgebung einrichten](/infoblaetter/einrichten).
+Richte vorher deinen Rechner ein: [Entwicklungsumgebung einrichten](/vorbereitung/einrichten).
 :::

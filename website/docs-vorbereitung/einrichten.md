@@ -2,7 +2,7 @@
 title: "Entwicklungsumgebung einrichten"
 sidebar_label: "Einrichten"
 slug: einrichten
-sidebar_position: 1
+displayed_sidebar: null
 ---
 
 # Entwicklungsumgebung einrichten
