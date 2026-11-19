@@ -331,6 +331,8 @@ export function describeTicket(ticket: Ticket): string {
 
 Ein Ticket ist **dringend**, wenn es die Priorität 1 hat **und** noch nicht erledigt ist.
 
+Zum Vergleichen schreibst du in TypeScript `===` (gleich) und `!==` (ungleich), nicht `==` und `!=` wie in Java. Das einfache `==` wandelt die Werte vorher um (`'4' == 4` ist in JavaScript wahr) und wird deshalb nicht benutzt. „Und“ schreibst du wie in Java `&&`.
+
 <Task id="ts-ab01-a5-urgent">Schreibe `isUrgent` (Rückgabe `true` oder `false`). Prüfe mit `npm test`: Die vier Tests `A4 isUrgent` müssen grün werden.</Task>
 
 #### A5: `assigneeName`
