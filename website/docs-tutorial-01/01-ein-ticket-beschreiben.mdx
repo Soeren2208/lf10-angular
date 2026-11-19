@@ -195,7 +195,28 @@ Ein Ticket besteht aus diesen Feldern:
 | `assignee` | Wer sich kümmert, kann noch niemand sein | `'Mara Voss'` | **nein** |
 | `createdAt` | Datum der Meldung | `'2026-11-02'` | ja |
 
-<Task id="ts-ab01-a3-open">Öffne `src/ticket.ts`. Dort steht noch `any`, der Compiler prüft also nichts. Ersetze die Zeile `export type Ticket = any;` durch ein Interface und ergänze die vier fehlenden Felder. Vorerst ist `status` ein Text (`string`) und `priority` eine Zahl (`number`).</Task>
+**Ein Interface statt einer Klasse.** In Java hättest du für das Ticket eine Klasse geschrieben, mit Feldern, Konstruktor, Gettern und Settern, und Tickets mit `new Ticket(...)` erzeugt. In TypeScript gehst du bei Daten oft einen einfacheren Weg: Ein Ticket ist ein gewöhnliches Objekt, das du direkt hinschreibst oder als JSON vom Server bekommst:
+
+```ts
+const ticket = { id: 7, title: 'Drucker defekt', status: 'offen' };
+```
+
+Ein `interface` legt nur fest, **welche Felder** so ein Objekt haben muss und welche Typen sie haben. Es ist keine Vorlage, aus der man Objekte erzeugt: Es hat keinen Konstruktor, du benutzt kein `new`, und nach dem Kompilieren ist es verschwunden. Der Compiler prüft damit nur, ob ein Objekt passt.
+
+| Java | TypeScript |
+|---|---|
+| `class Ticket` mit Feldern, Konstruktor und Gettern | `interface Ticket` nur mit den Feldern |
+| `new Ticket(7, "Drucker defekt")` | `{ id: 7, title: 'Drucker defekt' }` |
+| Die Klasse gibt es auch zur Laufzeit | Das Interface gibt es nur beim Schreiben |
+| Ein Java-`interface` ist ein Vertrag mit Methoden, den Klassen erfüllen | Ein TypeScript-`interface` beschreibt die Form von Daten |
+
+Klassen gibt es in TypeScript auch. Du brauchst sie, wenn ein Objekt eigenes Verhalten und einen eigenen Zustand hat. Das kommt in AB 03.
+
+**Und was ist `any`?** In `src/ticket.ts` steht der Typ `Ticket` noch als Platzhalter: `export type Ticket = any;`. Mit `type Name = …` gibst du einem Typ einen Namen. `any` bedeutet „irgendetwas“: Ein Wert vom Typ `any` darf alles sein, und der Compiler prüft **nichts** daran. Du könntest `ticket.titel` oder `ticket.id = 'abc'` schreiben, und es gäbe keine Meldung. Deshalb übersetzt das Projekt am Anfang ohne Fehler, auch wenn noch kein Typ beschrieben ist.
+
+Das erklärt auch die Meldungen `Unused '@ts-expect-error' directive` aus Aufgabe 1: Die Prüfungen in `src/types.check.ts` erwarten Fehler, aber mit `any` verbietet der Compiler nichts. Du ersetzt jetzt Platzhalter für Platzhalter durch echte Typen, und die Meldungen verschwinden nach und nach. In deinen eigenen Programmen solltest du `any` möglichst nie schreiben, weil es genau die Prüfung abschaltet, wegen der es TypeScript gibt. Mehr dazu steht im Infoblatt [Typen: Daten beschreiben](/infoblaetter/typen).
+
+<Task id="ts-ab01-a3-open">Öffne `src/ticket.ts`. Ersetze die Zeile `export type Ticket = any;` durch ein **Interface**, das die Form eines Tickets beschreibt, und ergänze die vier fehlenden Felder. Vorerst ist `status` ein Text (`string`) und `priority` eine Zahl (`number`).</Task>
 
 ```ts title="src/ticket.ts"
 export interface Ticket {
