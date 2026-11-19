@@ -298,20 +298,34 @@ Jetzt kommen die ersten Funktionen. Für jede gibt es Tests, die du als Arbeitsl
 
 #### A3: `describeTicket`
 
-Die Funktion liefert eine Zeile Text für die Anzeige:
+Die Funktion bekommt ein Ticket und **gibt einen Text zurück**, eine Zeile für die Anzeige. Sie schreibt nichts auf die Konsole: Sie liefert den Text mit `return` an den Aufrufer. Was der damit macht, ist seine Sache. Im Moment sind das die Tests, später die Oberfläche.
 
 | Ticket | Ergebnis |
 |---|---|
 | Nummer 7, Titel `Drucker defekt`, Status `offen` | `#7 Drucker defekt [offen]` |
 
-<Task id="ts-ab01-a5-describe">Ersetze in `src/ticket.ts` die Zeile `throw new Error('TODO A3: describeTicket');` durch deine Lösung. Prüfe mit `npm test`: Die Tests `A3 describeTicket` müssen grün werden.</Task>
+Der Text besteht aus der Nummer mit einem `#` davor, dem Titel und dem Status in eckigen Klammern.
 
-<details>
-<summary>Tipp: Text mit Werten zusammensetzen</summary>
+**Text mit Werten zusammensetzen.** In Java hättest du die Teile mit `+` verbunden. Das geht in TypeScript auch. Lesbarer ist ein **Template-String**: Er steht in **Backticks**, und mit `${…}` setzt du an dieser Stelle einen Wert ein:
 
-Mit einem **Template-String**: Er steht in Backticks, und mit `${…}` setzt du einen Wert ein, zum Beispiel `` `#${ticket.id}` ``. Mehr dazu im Infoblatt [Typen](/infoblaetter/typen).
+```ts
+function greet(name: string): string {
+  return `Hallo ${name}!`;
+}
+// greet('Mara') liefert 'Hallo Mara!'
+```
 
-</details>
+Zwischen `${` und `}` darf auch ein Zugriff auf ein Feld stehen, zum Beispiel `${ticket.id}`. Den Backtick tippst du auf der deutschen Tastatur mit **Umschalt + ´** (die Taste rechts neben dem ß) und danach der **Leertaste**, sonst wartet die Taste auf einen Buchstaben, der darunter gesetzt wird. Mehr zu Template-Strings steht im Infoblatt [Typen](/infoblaetter/typen).
+
+So sieht der Platzhalter im Starter aus. Die `throw`-Zeile bricht das Programm mit einem Fehler ab, deshalb sind die Tests rot:
+
+```ts title="src/ticket.ts"
+export function describeTicket(ticket: Ticket): string {
+  throw new Error('TODO A3: describeTicket');
+}
+```
+
+<Task id="ts-ab01-a5-describe">Ersetze die `throw`-Zeile durch ein `return` mit einem Template-String, der das Ticket beschreibt. Prüfe mit `npm test`: Die Tests `A3 describeTicket` müssen grün werden.</Task>
 
 #### A4: `isUrgent`
 
