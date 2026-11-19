@@ -6,6 +6,9 @@
   "description": "TypeScript-Werkstatt: Support-Tickets der HiTec GmbH",
   "scripts": {
     "test": "vitest run",
+    "test:ab01": "vitest run src/ticket.test.ts",
+    "test:ab02": "vitest run src/ticket-list.test.ts",
+    "test:ab03": "vitest run src/ticket-store.test.ts",
     "test:watch": "vitest",
     "check": "tsc --noEmit",
     "verify": "node scripts/verify.mjs",

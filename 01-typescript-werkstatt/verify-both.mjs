@@ -28,10 +28,11 @@ function sh(command, cwd) {
   return { code: r.status, out: (r.stdout ?? '') + (r.stderr ?? ''), stdout: r.stdout ?? '' };
 }
 
-function runTests(cwd) {
+function runTests(cwd, script = 'test') {
   // Vitest schreibt den JSON-Bericht in eine Datei, nicht auf die Konsole.
+  // Über das npm-Skript laufen auch die Skripte pro Arbeitsblatt (test:ab01 ...).
   const reportFile = join(tmpdir(), `vitest-report-${process.pid}.json`);
-  const r = sh(`npx vitest run --reporter=json --outputFile="${reportFile}"`, cwd);
+  const r = sh(`npm run ${script} --silent -- --reporter=json --outputFile="${reportFile}"`, cwd);
   if (!existsSync(reportFile)) return { total: 0, passed: 0, failed: 0, code: r.code, out: r.out };
   const j = JSON.parse(readFileSync(reportFile, 'utf8'));
   rmSync(reportFile);
@@ -74,6 +75,22 @@ if (starterTypes.count !== starterTypes.unused) console.log(starterTypes.out);
 const starterTests = runTests(starter);
 report(starterTests.total === solutionTests.total, `Gleiche Testanzahl wie in der Lösung (${starterTests.total})`);
 report(starterTests.passed === 0, `Alle Tests rot (grün: ${starterTests.passed}, rot: ${starterTests.failed})`);
+
+console.log('\n3b. Skripte pro Arbeitsblatt (test:ab01 bis test:ab03)');
+const perWorksheet = [
+  ['test:ab01', 9],
+  ['test:ab02', 13],
+  ['test:ab03', 16],
+];
+let sumTotal = 0;
+for (const [script, count] of perWorksheet) {
+  const inSolution = runTests(solution, script);
+  const inStarter = runTests(starter, script);
+  report(inSolution.total === count && inSolution.failed === 0, `${script} in der Lösung: ${inSolution.passed} von ${inSolution.total} grün (erwartet ${count})`);
+  report(inStarter.total === count && inStarter.passed === 0, `${script} im Starter: ${inStarter.failed} von ${inStarter.total} rot (erwartet ${count})`);
+  sumTotal += inSolution.total;
+}
+report(sumTotal === solutionTests.total, `Die drei Skripte zusammen decken alle ${solutionTests.total} Tests ab (${sumTotal})`);
 
 console.log('\n4. Fehlerhafte Lösungen (Mutanten) – jede muss auffallen');
 const mutants = [

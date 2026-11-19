@@ -45,7 +45,7 @@ Klassen erklärt das Infoblatt [Klassen in TypeScript](/infoblaetter/klassen). D
 
 *Etwa 5 Minuten.*
 
-<Task id="ts-ab03-a1-test">Führe die Tests aus: `npm test`. Die 22 Tests aus AB 01 und AB 02 sind grün, die 16 mit **C** sind rot. Wie viele davon gehören zu `C1`, `C2` und `C3`? Notiere sie.</Task>
+<Task id="ts-ab03-a1-test">Führe die Tests dieses Arbeitsblatts aus: `npm run test:ab03`. Alle 16 sind rot, es sind die mit **C**. Wie viele davon gehören zu `C1`, `C2` und `C3`? Notiere sie.</Task>
 
 Diesmal arbeitest du in der Datei `src/ticket-store.ts`.
 
@@ -95,7 +95,7 @@ import { withStatus } from './ticket-list';
 
 <Task id="ts-ab03-a2-replace">Schreibe `replaceAll(tickets)`. Speichere eine **Kopie** der übergebenen Liste, damit der Speicher nicht von außen verändert werden kann.</Task>
 
-<Task id="ts-ab03-a2-test">Starte `npm test`. Die fünf Tests `C1 TicketStore: Inhalt` werden grün.</Task>
+<Task id="ts-ab03-a2-test">Starte `npm run test:ab03`. Die fünf Tests `C1 TicketStore: Inhalt` werden grün.</Task>
 
 ### Aufgabe 3 – Das Experiment: Wer erfährt von der Änderung?
 
@@ -186,7 +186,7 @@ Der Rückgabetyp `() => void` heißt: eine Funktion ohne Parameter, die nichts z
 
 <Task id="ts-ab03-a4-call">Rufe `this.notify()` am **Ende** von `add`, von `setStatus` (nach der Änderung, nicht bei einer unbekannten Nummer) und von `replaceAll` auf.</Task>
 
-<Task id="ts-ab03-a4-test">Starte `npm test`. Die fünf Tests `C2 TicketStore: Änderungen melden` werden grün.</Task>
+<Task id="ts-ab03-a4-test">Starte `npm run test:ab03`. Die fünf Tests `C2 TicketStore: Änderungen melden` werden grün.</Task>
 
 Jetzt der Gegentest. Er zeigt, ob das Experiment aus Aufgabe 3 gelöst ist:
 
@@ -223,7 +223,7 @@ Nein. `fetch` meldet einen Fehler nur, wenn das **Netz** scheitert (kein Interne
 2. Ist `response.ok` falsch, wirf einen Fehler: ``throw new Error(`HTTP ${response.status}`)``.
 3. Sonst liefere den Inhalt: `(await response.json()) as Ticket[]`.
 
-<Task id="ts-ab03-a5-test1">Starte `npm test`. Die zwei Tests `loadTickets` in der Gruppe `C3` werden grün. Sie benutzen ein **vorgegebenes** `fetch` und brauchen kein Netz.</Task>
+<Task id="ts-ab03-a5-test1">Starte `npm run test:ab03`. Die zwei Tests `loadTickets` in der Gruppe `C3` werden grün. Sie benutzen ein **vorgegebenes** `fetch` und brauchen kein Netz.</Task>
 
 :::warning Der Compiler glaubt dir
 Mit `as Ticket[]` **behauptest** du, dass die Daten die Form von Tickets haben. Der Compiler prüft das nicht, und zur Laufzeit gibt es keine Typen mehr. Liefert der Server ein Ticket ohne `title`, merkst du es erst, wenn dein Code darauf zugreift. Typen am Rand der Anwendung sind Behauptungen.
@@ -263,7 +263,9 @@ error instanceof Error ? error.message : String(error)
 
 </details>
 
-<Task id="ts-ab03-a5-test2">Starte `npm test`. Die vier Tests `loadTicketsSafe` werden grün. Damit sind alle 38 Tests grün.</Task>
+<Task id="ts-ab03-a5-test2">Starte `npm run test:ab03`. Die vier Tests `loadTicketsSafe` werden grün. Damit sind alle 16 Tests dieses Arbeitsblatts grün.</Task>
+
+<Task id="ts-ab03-a5-all">Zum Abschluss lässt du **alle** Tests auf einmal laufen: `npm test`. Alle 38 Tests aus AB 01 bis AB 03 sind grün.</Task>
 
 <Solution daten={solution} titel="Musterlösung für src/ticket-store.ts" />
 

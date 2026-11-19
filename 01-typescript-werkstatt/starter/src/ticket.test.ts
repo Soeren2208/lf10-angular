@@ -51,7 +51,7 @@ describe('A5 assigneeName', () => {
     expect(assigneeName(ticket())).toBe('nicht zugewiesen');
   });
 
-  it('ein leerer Name ist ein Name und wird nicht ersetzt (?? statt ||)', () => {
+  it('ein leerer Name ist ein Name und wird nicht ersetzt', () => {
     expect(assigneeName(ticket({ assignee: '' }))).toBe('');
   });
 });

@@ -49,7 +49,7 @@ Die Array-Methoden erklärt das Infoblatt [Listen auswerten: Array-Methoden](/in
 
 <Task id="ts-ab02-a1-data">Öffne `src/sample-data.ts`. Dort stehen acht Beispieltickets, mit denen alle Tests arbeiten. Notiere, wie viele davon den Status `offen` haben.</Task>
 
-<Task id="ts-ab02-a1-test">Führe die Tests aus: `npm test`. Die Tests `A3` bis `A5` aus AB 01 sind grün. Jetzt sind die mit **B** an der Reihe, sie sind rot.</Task>
+<Task id="ts-ab02-a1-test">Führe die Tests dieses Arbeitsblatts aus: `npm run test:ab02`. Alle 13 sind rot, es sind die mit **B**.</Task>
 
 Alle Funktionen dieses Arbeitsblatts stehen in `src/ticket-list.ts`. Jede nimmt eine Liste `readonly Ticket[]` entgegen. Das heißt: Die Funktion **verspricht**, die Liste nicht zu verändern. Der Compiler wird sie daran hindern.
 
@@ -71,7 +71,7 @@ export function openTickets(tickets: readonly Ticket[]): Ticket[] {
 }
 ```
 
-<Task id="ts-ab02-a2-test1">Starte `npm test`. Die beiden Tests `B1 openTickets` müssen grün werden.</Task>
+<Task id="ts-ab02-a2-test1">Starte `npm run test:ab02`. Die beiden Tests `B1 openTickets` müssen grün werden.</Task>
 
 Jetzt kommt der Umbau. Dasselbe lässt sich kürzer sagen:
 
@@ -83,7 +83,7 @@ export function openTickets(tickets: readonly Ticket[]): Ticket[] {
 
 Die Methode `filter` geht jedes Element durch und behält nur die, für die die Funktion `true` liefert. Die Funktion `(ticket) => ticket.status === 'offen'` ist eine **Pfeilfunktion**: links vom Pfeil der Parameter, rechts der Rückgabewert.
 
-<Task id="ts-ab02-a2-filter">Ersetze deine Schleife durch `filter`. Starte `npm test`. Dieselben Tests sind noch grün.</Task>
+<Task id="ts-ab02-a2-filter">Ersetze deine Schleife durch `filter`. Starte `npm run test:ab02`. Dieselben Tests sind noch grün.</Task>
 
 :::tip Dafür sind Tests da
 Du hast gerade Code umgebaut und weißt in einer Sekunde, dass er noch dasselbe tut. Ohne Tests müsstest du das von Hand prüfen. Diese Technik heißt **Refactoring**, und sie ist ohne Tests riskant.
@@ -245,7 +245,7 @@ Der Compiler hält das Versprechen der Funktion: `readonly` heißt, dass die Lis
 
 Wie ernst das gemeint ist, siehst du, wenn du das Versprechen brichst:
 
-<Task id="ts-ab02-a5-break">Ändere den Parameter in `tickets: Ticket[]` (ohne `readonly`). Der Compiler ist zufrieden. Starte `npm test`. Welcher Test wird rot, und was steht in der Fehlermeldung?</Task>
+<Task id="ts-ab02-a5-break">Ändere den Parameter in `tickets: Ticket[]` (ohne `readonly`). Der Compiler ist zufrieden. Starte `npm run test:ab02`. Welcher Test wird rot, und was steht in der Fehlermeldung?</Task>
 
 <details>
 <summary>Auflösung</summary>
@@ -279,7 +279,7 @@ export function withStatus(tickets: readonly Ticket[], id: number, status: Statu
 }
 ```
 
-<Task id="ts-ab02-a6-test1">Starte `npm run check`: Der Compiler ist zufrieden. Starte dann `npm test`. Welche Tests werden rot?</Task>
+<Task id="ts-ab02-a6-test1">Starte `npm run check`: Der Compiler ist zufrieden. Starte dann `npm run test:ab02`. Welche Tests werden rot?</Task>
 
 <details>
 <summary>Auflösung</summary>
@@ -324,8 +324,8 @@ Funktionen, die ihre Eingabe nicht verändern, sind leichter zu verstehen und zu
       id: 'TF-01',
       beschreibung: 'Die Tests zu AB 02 sind grün',
       vorbedingung: 'Aufgaben 2 bis 6 sind erledigt',
-      schritte: ['npm test ausführen'],
-      erwartet: <>Alle 13 Tests der Gruppen <code>B1</code> bis <code>B6</code> sind grün, zusammen mit den neun aus AB 01 also 22. Rot sind noch die 16 Tests der Gruppe <code>C</code>.</>
+      schritte: ['npm run test:ab02 ausführen'],
+      erwartet: <>Alle 13 Tests der Gruppen <code>B1</code> bis <code>B6</code> sind grün.</>
     },
     {
       id: 'TF-02',
@@ -345,7 +345,7 @@ Funktionen, die ihre Eingabe nicht verändern, sind leichter zu verstehen und zu
       id: 'TF-04',
       beschreibung: 'Ein veränderndes withStatus fällt auf',
       vorbedingung: 'TF-01 ist erfüllt',
-      schritte: ['withStatus kurz so umschreiben, dass ticket.status = status gesetzt wird', 'npm test ausführen', 'Änderung rückgängig machen'],
+      schritte: ['withStatus kurz so umschreiben, dass ticket.status = status gesetzt wird', 'npm run test:ab02 ausführen', 'Änderung rückgängig machen'],
       erwartet: <>Mindestens ein Test der Gruppe <code>B6</code> ist rot, mit einer Meldung zu <code>read only property</code>. Der Compiler sagt dazu nichts.</>
     }
   ]}

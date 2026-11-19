@@ -53,7 +53,7 @@ In diesem Tutorial hast du zwei Prüfer, die dir Rückmeldung geben. Sie prüfen
 | Prüfer | Befehl | Er sagt dir |
 |---|---|---|
 | **Compiler** | `npm run check` | ob die **Typen** zusammenpassen |
-| **Tests** | `npm test` | ob dein Code das **Richtige tut** |
+| **Tests** | `npm run test:ab01` | ob dein Code das **Richtige tut** (nur die Tests dieses Arbeitsblatts) |
 | beide | `npm run verify` | beides nacheinander, mit Zusammenfassung |
 
 Am Anfang ist alles rot. Das ist die Arbeitsliste: Jede Aufgabe macht ein Stück davon grün.
@@ -99,15 +99,15 @@ npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
 Sie ist **harmlos**. Neuere npm-Versionen führen die Installationsskripte von Paketen aus Sicherheitsgründen nicht mehr automatisch aus und weisen nur darauf hin. Das Projekt läuft trotzdem, du musst nichts tun.
 :::
 
-<Task id="ts-ab01-a1-test">Führe die Tests aus:</Task>
+<Task id="ts-ab01-a1-test">Führe die Tests dieses Arbeitsblatts aus:</Task>
 
 ```bash
-npm test
+npm run test:ab01
 ```
 
 Jede Zeile der Ausgabe ist ein Test mit seinem Namen. Alle sind rot, am Ende steht, wie viele es sind. **Notiere die Zahl.**
 
-Die Namen beginnen mit einem Buchstaben und einer Nummer, zum Beispiel `A3` oder `C2`. Der Buchstabe sagt dir, zu welchem Arbeitsblatt der Test gehört: `A` zu AB 01, `B` zu AB 02, `C` zu AB 03. Heute bearbeitest du nur die Tests mit **A**.
+Die Namen beginnen mit einem Buchstaben und einer Nummer, zum Beispiel `A3`. Der Buchstabe sagt dir, zu welchem Arbeitsblatt der Test gehört: `A` zu AB 01, `B` zu AB 02, `C` zu AB 03. Mit `npm run test:ab01` laufen nur die Tests mit **A**. Für die nächsten Arbeitsblätter gibt es `npm run test:ab02` und `npm run test:ab03`. Mit `npm test` laufen alle auf einmal, die Ausgabe ist dann sehr lang.
 
 <Task id="ts-ab01-a1-check">Lass jetzt den Compiler prüfen:</Task>
 
@@ -296,7 +296,7 @@ Ein Typ ist mehr als eine Prüfung: Er erzählt dem Editor, was du meinst. Mit `
 
 *Etwa 30 Minuten.*
 
-Jetzt kommen die ersten Funktionen. Für jede gibt es Tests, die du als Arbeitsliste nutzt: Lies zuerst die Namen der Tests in der Ausgabe von `npm test`, dann schreibst du die Funktion.
+Jetzt kommen die ersten Funktionen. Für jede gibt es Tests, die du als Arbeitsliste nutzt: Lies zuerst die Namen der Tests in der Ausgabe von `npm run test:ab01`, dann schreibst du die Funktion.
 
 #### A3: `describeTicket`
 
@@ -316,7 +316,7 @@ export function describeTicket(ticket: Ticket): string {
 }
 ```
 
-<Task id="ts-ab01-a5-describe-test">Starte `npm test`. Die Tests `A3 describeTicket` sind jetzt grün.</Task>
+<Task id="ts-ab01-a5-describe-test">Starte `npm run test:ab01`. Die Tests `A3 describeTicket` sind jetzt grün.</Task>
 
 **So funktioniert die Funktion:**
 
@@ -336,32 +336,56 @@ Ein Ticket ist **dringend**, wenn es die Priorität 1 hat **und** noch nicht erl
 
 Zum Vergleichen schreibst du in TypeScript `===` (gleich) und `!==` (ungleich), nicht `==` und `!=` wie in Java. Das einfache `==` wandelt die Werte vorher um (`'4' == 4` ist in JavaScript wahr) und wird deshalb nicht benutzt. „Und“ schreibst du wie in Java `&&`.
 
-<Task id="ts-ab01-a5-urgent">Schreibe `isUrgent` (Rückgabe `true` oder `false`). Prüfe mit `npm test`: Die vier Tests `A4 isUrgent` müssen grün werden.</Task>
+<Task id="ts-ab01-a5-urgent">Schreibe `isUrgent` (Rückgabe `true` oder `false`). Prüfe mit `npm run test:ab01`: Die vier Tests `A4 isUrgent` müssen grün werden.</Task>
 
 <Solution daten={solutionUrgent} titel="Musterlösung für A4: isUrgent" />
 
 #### A5: `assigneeName`
 
-Die Funktion liefert den Namen der bearbeitenden Person. Gibt es keine, ist das Ergebnis der Text `nicht zugewiesen`.
+Die Funktion liefert den Namen der bearbeitenden Person als Text. Gibt es keine, ist das Ergebnis der Text `nicht zugewiesen`.
 
-<Task id="ts-ab01-a5-assignee-or">Schreibe die Funktion zuerst mit dem Operator `||`. Er wählt den rechten Wert, wenn der linke „leer“ ist.</Task>
+| Ticket | Ergebnis |
+|---|---|
+| `assignee` ist `'Mara Voss'` | `Mara Voss` |
+| Das Feld `assignee` fehlt | `nicht zugewiesen` |
 
-```ts
-return ticket.assignee || 'nicht zugewiesen';
+Das Feld `assignee` ist optional (Aufgabe 3). Fehlt es, ist sein Wert `undefined`. Auch diese Funktion bekommst du als Vorlage zum Übernehmen, die Erklärung folgt direkt darunter.
+
+<Task id="ts-ab01-a5-assignee">Ersetze in `assigneeName` die Zeile `throw new Error('TODO A5: assigneeName');` durch die Zeile mit `return`. Die Funktion sieht danach so aus:</Task>
+
+```ts title="src/ticket.ts"
+export function assigneeName(ticket: Ticket): string {
+  return ticket.assignee ?? 'nicht zugewiesen';
+}
 ```
 
-<Task id="ts-ab01-a5-assignee-test">Starte `npm test`. Zwei Tests werden grün, **einer bleibt rot**. Lies seinen Namen und überlege: Warum schlägt er fehl?</Task>
+<Task id="ts-ab01-a5-assignee-test">Starte `npm run test:ab01`. Die drei Tests `A5 assigneeName` sind jetzt grün.</Task>
+
+**Was bedeutet `??`?**
+
+`??` heißt: „Nimm den linken Wert. Fehlt er (`undefined` oder `null`), nimm den rechten.“ In Java würdest du schreiben: `ticket.getAssignee() != null ? ticket.getAssignee() : "nicht zugewiesen"`. `??` ist die Kurzform dafür.
+
+| Ausdruck | Ergebnis | Warum |
+|---|---|---|
+| `undefined ?? 'nicht zugewiesen'` | `'nicht zugewiesen'` | links fehlt der Wert |
+| `null ?? 'nicht zugewiesen'` | `'nicht zugewiesen'` | `null` heißt auch „kein Wert“ |
+| `'Mara Voss' ?? 'nicht zugewiesen'` | `'Mara Voss'` | links steht ein Wert |
+| `'' ?? 'nicht zugewiesen'` | `''` | ein leerer Text ist ein Wert und bleibt |
+
+Der Typ von `ticket.assignee` ist `string | undefined`, gesprochen „Text **oder** undefined“. Hinter dem `??` steht ein Text. Damit ist das Ergebnis der ganzen Zeile immer ein `string`, und genau das verlangt der Rückgabetyp der Funktion.
+
+<Task id="ts-ab01-a5-assignee-check">Probiere, was der Compiler dazu sagt: Lösche kurz ` ?? 'nicht zugewiesen'` und starte `npm run check`. Es kommt die Meldung `Type 'string | undefined' is not assignable to type 'string'`. Der Compiler lässt nicht zu, dass du den Fall „kein Bearbeiter“ vergisst. Setze den Teil danach wieder ein.</Task>
 
 <details>
-<summary>Auflösung: || und ?? sind nicht dasselbe</summary>
+<summary>Zusatz: Warum nicht `||`?</summary>
 
-Der rote Test prüft ein Ticket mit dem **leeren Namen** `''`. Der Operator `||` behandelt jeden „unechten“ Wert als fehlend: den leeren Text `''`, die Zahl `0`, `false`, `undefined` und `null`. Er ersetzt deshalb auch `''`.
+In Java kennst du `||` als „oder“ für Wahrheitswerte. In JavaScript und TypeScript wählt `||` außerdem den rechten Wert, wenn der linke „unecht“ ist. Das ist mehr als „fehlt“: Unecht sind der leere Text `''`, die Zahl `0`, `false`, `undefined` und `null`. Du wirst `||` in fremdem Code oft sehen.
 
-Der Operator `??` ersetzt dagegen nur `undefined` und `null`. Ein leerer Name ist hier ein Name und bleibt, wie er ist.
+Probiere es aus: Ersetze `??` kurz durch `||` und starte `npm run test:ab01`. Ein Test wird rot, nämlich `ein leerer Name ist ein Name und wird nicht ersetzt`. Er prüft ein Ticket mit dem leeren Namen `''`. `||` ersetzt ihn durch `nicht zugewiesen`, `??` lässt ihn stehen. Setze danach wieder `??` ein.
+
+Für optionale Felder ist meistens `??` richtig, weil es nur ersetzt, wenn wirklich etwas fehlt.
 
 </details>
-
-<Task id="ts-ab01-a5-assignee-fix">Verwende stattdessen `??` und starte `npm test` erneut. Alle drei Tests `A5 assigneeName` sind jetzt grün.</Task>
 
 <Solution daten={solutionAssignee} titel="Musterlösung für A5: assigneeName" />
 
@@ -380,8 +404,8 @@ Der Operator `??` ersetzt dagegen nur `undefined` und `null`. Ein leerer Name is
       id: 'TF-01',
       beschreibung: 'Die Tests zu AB 01 sind grün',
       vorbedingung: 'Aufgaben 3 bis 5 sind erledigt',
-      schritte: ['npm test ausführen'],
-      erwartet: <>Alle neun Tests der Gruppen <code>A3</code>, <code>A4</code> und <code>A5</code> sind grün. Die übrigen 29 Tests (Gruppen <code>B</code> und <code>C</code>) sind noch rot.</>
+      schritte: ['npm run test:ab01 ausführen'],
+      erwartet: <>Alle neun Tests der Gruppen <code>A3</code>, <code>A4</code> und <code>A5</code> sind grün.</>
     },
     {
       id: 'TF-02',
@@ -410,12 +434,12 @@ Der Operator `??` ersetzt dagegen nur `undefined` und `null`. Ein leerer Name is
 ## Zusammenfassung
 
 :::tip Das hast du gelernt
-- Der **Compiler** (`npm run check`) prüft Typen, die **Tests** (`npm test`) prüfen Verhalten. Beides ist nötig.
+- Der **Compiler** (`npm run check`) prüft Typen, die **Tests** (`npm run test:ab01`) prüfen Verhalten. Beides ist nötig.
 - **Typen gibt es nur beim Schreiben:** Das Programm läuft auch mit Typfehlern, weil die Typen beim Kompilieren verschwinden.
 - Ein **Interface** beschreibt die Form von Daten. Optionale Felder tragen ein `?`, unveränderliche das Wort `readonly`.
 - Ein **Union-Typ** wie `'offen' | 'in Arbeit' | 'erledigt'` erlaubt nur die genannten Werte und gibt dem Editor Vorschläge.
 - Ein **Template-String** setzt Werte mit `${…}` in einen Text ein.
-- `??` ersetzt nur `undefined` und `null`, `||` ersetzt jeden „unechten“ Wert. Für optionale Felder ist meistens `??` richtig.
+- `??` ersetzt nur `undefined` und `null`, ein leerer Text bleibt ein Wert. Für optionale Felder ist meistens `??` richtig.
 :::
 
 ## Selbstkontrolle
@@ -423,7 +447,7 @@ Der Operator `??` ersetzt dagegen nur `undefined` und `null`. Ein leerer Name is
 1. Was bedeutet das Fragezeichen in `assignee?: string`, und was ist der Wert, wenn das Feld fehlt?
 2. Warum läuft das Programm in Aufgabe 2 trotz der Typfehler?
 3. Was ist der Unterschied zwischen `status: string` und `status: Status` (mit dem Union-Typ)?
-4. Was liefert `'' || 'nicht zugewiesen'`, und was liefert `'' ?? 'nicht zugewiesen'`?
+4. Was liefert `undefined ?? 'nicht zugewiesen'`, und was liefert `'' ?? 'nicht zugewiesen'`?
 5. Ein Kollege schreibt `status: any`. Was geht dadurch verloren?
 6. Wozu dient `readonly` bei `id`? Wann meldet der Compiler dann einen Fehler?
 
@@ -433,7 +457,7 @@ Der Operator `??` ersetzt dagegen nur `undefined` und `null`. Ein leerer Name is
 1. Das Feld darf fehlen. Fehlt es, ist sein Wert `undefined`. Der Compiler erinnert dich daran, das beim Lesen zu behandeln.
 2. Der Compiler entfernt die Typen beim Übersetzen. Was ausgeführt wird, ist reines JavaScript, und das kennt keine Typen. Typfehler sind Warnungen des Compilers, keine Laufzeitfehler.
 3. `string` erlaubt jeden Text, auch `'wartet'` und Tippfehler. Der Union-Typ erlaubt nur die drei genannten Werte. Der Compiler meldet alles andere, und der Editor schlägt die gültigen Werte vor.
-4. `'' || 'nicht zugewiesen'` liefert `'nicht zugewiesen'`, weil `''` für `||` „leer“ ist. `'' ?? 'nicht zugewiesen'` liefert `''`, weil `??` nur bei `undefined` und `null` ersetzt.
+4. `undefined ?? 'nicht zugewiesen'` liefert `'nicht zugewiesen'`, weil links der Wert fehlt. `'' ?? 'nicht zugewiesen'` liefert `''`, weil `??` nur bei `undefined` und `null` ersetzt und ein leerer Text ein Wert ist.
 5. Mit `any` prüft der Compiler das Feld nicht mehr. Falsche Werte und Tippfehler fallen nicht auf, und der Editor kann keine Vorschläge machen. `any` schaltet die Prüfung für diese Stelle aus.
 6. `readonly` schützt die Nummer davor, nachträglich geändert zu werden. Der Compiler meldet einen Fehler, sobald jemand zum Beispiel `ticket.id = 5` schreibt.
 
