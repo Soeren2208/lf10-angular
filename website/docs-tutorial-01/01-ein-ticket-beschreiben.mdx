@@ -304,28 +304,29 @@ Die Funktion bekommt ein Ticket und **gibt einen Text zurück**, eine Zeile für
 |---|---|
 | Nummer 7, Titel `Drucker defekt`, Status `offen` | `#7 Drucker defekt [offen]` |
 
-Der Text besteht aus der Nummer mit einem `#` davor, dem Titel und dem Status in eckigen Klammern.
+Diese Funktion bekommst du als Vorlage zum Übernehmen. Die Erklärung dazu folgt direkt darunter.
 
-**Text mit Werten zusammensetzen.** In Java hättest du die Teile mit `+` verbunden. Das geht in TypeScript auch. Lesbarer ist ein **Template-String**: Er steht in **Backticks**, und mit `${…}` setzt du an dieser Stelle einen Wert ein:
-
-```ts
-function greet(name: string): string {
-  return `Hallo ${name}!`;
-}
-// greet('Mara') liefert 'Hallo Mara!'
-```
-
-Zwischen `${` und `}` darf auch ein Zugriff auf ein Feld stehen, zum Beispiel `${ticket.id}`. Den Backtick tippst du auf der deutschen Tastatur mit **Umschalt + ´** (die Taste rechts neben dem ß) und danach der **Leertaste**, sonst wartet die Taste auf einen Buchstaben, der darunter gesetzt wird. Mehr zu Template-Strings steht im Infoblatt [Typen](/infoblaetter/typen).
-
-So sieht der Platzhalter im Starter aus. Die `throw`-Zeile bricht das Programm mit einem Fehler ab, deshalb sind die Tests rot:
+<Task id="ts-ab01-a5-describe">Öffne `src/ticket.ts`. Ersetze in `describeTicket` die Zeile `throw new Error('TODO A3: describeTicket');` durch die Zeile mit `return`. Die Funktion sieht danach so aus:</Task>
 
 ```ts title="src/ticket.ts"
 export function describeTicket(ticket: Ticket): string {
-  throw new Error('TODO A3: describeTicket');
+  return `#${ticket.id} ${ticket.title} [${ticket.status}]`;
 }
 ```
 
-<Task id="ts-ab01-a5-describe">Ersetze die `throw`-Zeile durch ein `return` mit einem Template-String, der das Ticket beschreibt. Prüfe mit `npm test`: Die Tests `A3 describeTicket` müssen grün werden.</Task>
+<Task id="ts-ab01-a5-describe-test">Starte `npm test`. Die Tests `A3 describeTicket` sind jetzt grün.</Task>
+
+**So funktioniert die Funktion:**
+
+- `describeTicket(ticket: Ticket): string` ist der Kopf der Funktion. Anders als in Java steht der Typ **hinter** dem Namen: `ticket: Ticket` heißt „Parameter `ticket` vom Typ `Ticket`“, und `: string` hinter den Klammern ist der Typ des Ergebnisses.
+- `return` gibt den Text an den Aufrufer zurück. Die `throw`-Zeile davor war nur der Platzhalter: Sie bricht das Programm mit einem Fehler ab, deshalb waren die Tests rot.
+- Der Text steht zwischen **Backticks** und heißt **Template-String**. Mit `${…}` setzt du an dieser Stelle einen Wert ein, hier den Wert eines Feldes: `${ticket.id}` ist die Nummer, `${ticket.title}` der Titel. Alles andere, das `#`, die Leerzeichen und die eckigen Klammern, bleibt als Text stehen. Aus dem Ticket von oben wird `#7 Drucker defekt [offen]`.
+- In Java hättest du die Teile mit `+` verbunden: `"#" + ticket.getId() + " " + ticket.getTitle() + …`. Das geht in TypeScript auch. Der Template-String ist lesbarer. Beachte außerdem: Auf die Felder greifst du direkt zu (`ticket.id`), es gibt keine Getter.
+- Den Backtick tippst du auf der deutschen Tastatur mit **Umschalt + ´** (die Taste rechts neben dem ß) und danach der **Leertaste**. Die Taste wartet sonst auf einen Buchstaben, den sie mit dem Akzent versehen soll, und die Leertaste setzt den Backtick allein.
+
+Mehr zu Template-Strings steht im Infoblatt [Typen](/infoblaetter/typen).
+
+<Task id="ts-ab01-a5-describe-typo">Probiere, was der Typ dir hier bringt: Ändere `${ticket.status}` kurz in `${ticket.statu}`. WebStorm unterstreicht den Fehler sofort rot, und `npm run check` meldet, dass es das Feld nicht gibt. Mach die Änderung wieder rückgängig.</Task>
 
 #### A4: `isUrgent`
 
