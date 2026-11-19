@@ -195,7 +195,28 @@ Ein Ticket besteht aus diesen Feldern:
 | `assignee` | Wer sich kümmert, kann noch niemand sein | `'Mara Voss'` | **nein** |
 | `createdAt` | Datum der Meldung | `'2026-11-02'` | ja |
 
-**Ein Interface statt einer Klasse.** In Java hättest du für das Ticket eine Klasse geschrieben, mit Feldern, Konstruktor, Gettern und Settern, und Tickets mit `new Ticket(...)` erzeugt. In TypeScript gehst du bei Daten oft einen einfacheren Weg: Ein Ticket ist ein gewöhnliches Objekt, das du direkt hinschreibst oder als JSON vom Server bekommst:
+<Task id="ts-ab01-a3-open">Öffne `src/ticket.ts`. Dort steht als Platzhalter `export type Ticket = any;` (was `any` bedeutet, erfährst du gleich unter dem Gerüst). Ersetze die Zeile durch ein **Interface**, das die Form eines Tickets beschreibt, und ergänze die vier fehlenden Felder. Vorerst ist `status` ein Text (`string`) und `priority` eine Zahl (`number`). `assignee` und `createdAt` sind ebenfalls Texte, auch das Datum (Begründung unten).</Task>
+
+```ts title="src/ticket.ts"
+export interface Ticket {
+  readonly id: number;
+  title: string;
+  // Ergänze: status, priority, assignee (optional!) und createdAt
+}
+```
+
+<details>
+<summary>Tipp: Wie macht man ein Feld optional?</summary>
+
+Mit einem Fragezeichen hinter dem Namen: `assignee?: string;`. Dann darf das Feld fehlen. Liest du es trotzdem, ist sein Wert `undefined`. Der Compiler erinnert dich später daran, diesen Fall zu behandeln.
+
+</details>
+
+**Was war das `any`?** Mit `type Name = …` gibst du einem Typ einen Namen. Der Starter hatte `Ticket` vorerst mit `any` belegt: Ein Wert vom Typ `any` darf alles sein, und der Compiler prüft **nichts** daran. Mit `any` hättest du `ticket.titel` oder `ticket.id = 'abc'` schreiben können, und es hätte keine Meldung gegeben. Deshalb übersetzte das Projekt am Anfang fehlerfrei, obwohl noch kein Typ beschrieben war.
+
+Das erklärt auch die Meldungen `Unused '@ts-expect-error' directive` aus Aufgabe 1: Die Prüfungen in `src/types.check.ts` erwarten Fehler, aber mit `any` verbietet der Compiler nichts. Du ersetzt Platzhalter für Platzhalter durch echte Typen, und die Meldungen verschwinden nach und nach. In deinen eigenen Programmen solltest du `any` möglichst nie schreiben, weil es genau die Prüfung abschaltet, wegen der es TypeScript gibt. Mehr dazu steht im Infoblatt [Typen: Daten beschreiben](/infoblaetter/typen).
+
+**Warum ein Interface und keine Klasse?** In Java hättest du für das Ticket eine Klasse geschrieben, mit Feldern, Konstruktor, Gettern und Settern, und Tickets mit `new Ticket(...)` erzeugt. In TypeScript gehst du bei Daten oft einen einfacheren Weg: Ein Ticket ist ein gewöhnliches Objekt, das du direkt hinschreibst oder als JSON vom Server bekommst:
 
 ```ts
 const ticket = { id: 7, title: 'Drucker defekt', status: 'offen' };
@@ -212,26 +233,13 @@ Ein `interface` legt nur fest, **welche Felder** so ein Objekt haben muss und we
 
 Klassen gibt es in TypeScript auch. Du brauchst sie, wenn ein Objekt eigenes Verhalten und einen eigenen Zustand hat. Das kommt in AB 03.
 
-**Und was ist `any`?** In `src/ticket.ts` steht der Typ `Ticket` noch als Platzhalter: `export type Ticket = any;`. Mit `type Name = …` gibst du einem Typ einen Namen. `any` bedeutet „irgendetwas“: Ein Wert vom Typ `any` darf alles sein, und der Compiler prüft **nichts** daran. Du könntest `ticket.titel` oder `ticket.id = 'abc'` schreiben, und es gäbe keine Meldung. Deshalb übersetzt das Projekt am Anfang ohne Fehler, auch wenn noch kein Typ beschrieben ist.
+:::info Warum ist `createdAt` ein Text und kein `Date`?
+Einen Datentyp für Datum und Uhrzeit gibt es: `Date`. Er ist in JavaScript eingebaut, du erzeugst ihn mit `new Date('2026-11-02')`. Ein reines Datum wie `LocalDate` in Java kennt JavaScript aber nicht, ein `Date` ist immer ein Zeitpunkt mit Uhrzeit.
 
-Das erklärt auch die Meldungen `Unused '@ts-expect-error' directive` aus Aufgabe 1: Die Prüfungen in `src/types.check.ts` erwarten Fehler, aber mit `any` verbietet der Compiler nichts. Du ersetzt jetzt Platzhalter für Platzhalter durch echte Typen, und die Meldungen verschwinden nach und nach. In deinen eigenen Programmen solltest du `any` möglichst nie schreiben, weil es genau die Prüfung abschaltet, wegen der es TypeScript gibt. Mehr dazu steht im Infoblatt [Typen: Daten beschreiben](/infoblaetter/typen).
+Der wichtigere Grund: **JSON hat keinen Datentyp für Datum.** Ein Datum kommt vom Server als Text an, zum Beispiel `"2026-11-02"`, und `response.json()` macht daraus kein `Date`. Würdest du `createdAt: Date` schreiben, behauptest du etwas, das zur Laufzeit nicht stimmt: Der Compiler glaubt dir, und `ticket.createdAt.getFullYear()` stürzt ab, weil dort ein Text liegt. Genau dieses Problem lernst du in AB 03 kennen („der Compiler glaubt dir“).
 
-<Task id="ts-ab01-a3-open">Öffne `src/ticket.ts`. Ersetze die Zeile `export type Ticket = any;` durch ein **Interface**, das die Form eines Tickets beschreibt, und ergänze die vier fehlenden Felder. Vorerst ist `status` ein Text (`string`) und `priority` eine Zahl (`number`).</Task>
-
-```ts title="src/ticket.ts"
-export interface Ticket {
-  readonly id: number;
-  title: string;
-  // Ergänze: status, priority, assignee (optional!) und createdAt
-}
-```
-
-<details>
-<summary>Tipp: Wie macht man ein Feld optional?</summary>
-
-Mit einem Fragezeichen hinter dem Namen: `assignee?: string;`. Dann darf das Feld fehlen. Liest du es trotzdem, ist sein Wert `undefined`. Der Compiler erinnert dich später daran, diesen Fall zu behandeln.
-
-</details>
+Darum ist das Datum hier ein Text im Format `'JJJJ-MM-TT'` (ISO 8601, zum Beispiel `'2026-11-02'`). Dieses Format sortiert sich als Text schon in Datumsreihenfolge. Brauchst du später ein `Date`, wandelst du den Text an der Stelle um: `new Date(ticket.createdAt)`.
+:::
 
 <Task id="ts-ab01-a3-check">Lass den Compiler prüfen:</Task>
 
