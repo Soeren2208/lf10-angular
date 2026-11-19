@@ -6,6 +6,8 @@ sidebar_position: 1
 ---
 
 import solution from '@site/src/data/solution-ab01.json';
+import solutionUrgent from '@site/src/data/solution-ab01-a4.json';
+import solutionAssignee from '@site/src/data/solution-ab01-a5.json';
 
 # AB 01 – Ein Ticket beschreiben
 
@@ -336,6 +338,8 @@ Zum Vergleichen schreibst du in TypeScript `===` (gleich) und `!==` (ungleich), 
 
 <Task id="ts-ab01-a5-urgent">Schreibe `isUrgent` (Rückgabe `true` oder `false`). Prüfe mit `npm test`: Die vier Tests `A4 isUrgent` müssen grün werden.</Task>
 
+<Solution daten={solutionUrgent} titel="Musterlösung für A4: isUrgent" />
+
 #### A5: `assigneeName`
 
 Die Funktion liefert den Namen der bearbeitenden Person. Gibt es keine, ist das Ergebnis der Text `nicht zugewiesen`.
@@ -359,7 +363,9 @@ Der Operator `??` ersetzt dagegen nur `undefined` und `null`. Ein leerer Name is
 
 <Task id="ts-ab01-a5-assignee-fix">Verwende stattdessen `??` und starte `npm test` erneut. Alle drei Tests `A5 assigneeName` sind jetzt grün.</Task>
 
-<Solution daten={solution} titel="Musterlösung für src/ticket.ts" />
+<Solution daten={solutionAssignee} titel="Musterlösung für A5: assigneeName" />
+
+<Solution daten={solution} titel="Die ganze Datei src/ticket.ts (Typen und alle drei Funktionen)" />
 
 ### Aufgabe 6 – Prüfen
 
