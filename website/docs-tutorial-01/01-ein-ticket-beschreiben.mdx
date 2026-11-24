@@ -56,6 +56,12 @@ In diesem Tutorial hast du zwei Prüfer, die dir Rückmeldung geben. Sie prüfen
 | **Tests** | `npm run test:ab01` | ob dein Code das **Richtige tut** (nur die Tests dieses Arbeitsblatts) |
 | beide | `npm run verify` | beides nacheinander, mit Zusammenfassung |
 
+:::info Der Editor zeigt Typfehler schon beim Tippen
+WebStorm fragt im Hintergrund denselben Compiler wie `npm run check` und unterstreicht Typfehler rot. Fährst du mit der Maus darüber, steht die Meldung da. Im Alltag reicht das oft.
+
+`npm run check` bleibt trotzdem aus zwei Gründen: Er prüft das **ganze Projekt**, auch Dateien, die du gerade nicht offen hast, und er läuft ohne WebStorm, zum Beispiel beim Prüfen deiner Abgabe. Er ist die Prüfung, die zählt.
+:::
+
 Am Anfang ist alles rot. Das ist die Arbeitsliste: Jede Aufgabe macht ein Stück davon grün.
 
 :::info Zum Nachschlagen
@@ -374,7 +380,7 @@ export function assigneeName(ticket: Ticket): string {
 
 Der Typ von `ticket.assignee` ist `string | undefined`, gesprochen „Text **oder** undefined“. Hinter dem `??` steht ein Text. Damit ist das Ergebnis der ganzen Zeile immer ein `string`, und genau das verlangt der Rückgabetyp der Funktion.
 
-<Task id="ts-ab01-a5-assignee-check">Probiere, was der Compiler dazu sagt: Lösche kurz ` ?? 'nicht zugewiesen'` und starte `npm run check`. Es kommt die Meldung `Type 'string | undefined' is not assignable to type 'string'`. Der Compiler lässt nicht zu, dass du den Fall „kein Bearbeiter“ vergisst. Setze den Teil danach wieder ein.</Task>
+<Task id="ts-ab01-a5-assignee-check">Probiere, was der Compiler dazu sagt: Lösche kurz ` ?? 'nicht zugewiesen'`. WebStorm unterstreicht die Zeile rot, und auch `npm run check` meldet `Type 'string | undefined' is not assignable to type 'string'`. Der Compiler lässt nicht zu, dass du den Fall „kein Bearbeiter“ vergisst. Setze den Teil danach wieder ein.</Task>
 
 <details>
 <summary>Zusatz: Warum nicht `||`?</summary>

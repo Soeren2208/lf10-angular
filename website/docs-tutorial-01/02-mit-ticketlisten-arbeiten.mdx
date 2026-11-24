@@ -158,7 +158,7 @@ export function findTicket(tickets: readonly Ticket[], id: number): Ticket | und
 
 Probiere aus, was das bedeutet. Das Ergebnis von `findTicket` lässt sich nicht einfach weiterverwenden:
 
-<Task id="ts-ab02-a3-error">Schreibe ganz unten in `src/ticket-list.ts` die Zeile `findTicket([], 1).title;`. Was meldet der Compiler? Sieh es dir mit `npm run check` an und lösche die Zeile wieder.</Task>
+<Task id="ts-ab02-a3-error">Schreibe ganz unten in `src/ticket-list.ts` die Zeile `findTicket([], 1).title;`. WebStorm unterkringelt sie rot. Fahre mit der Maus darüber und lies die Meldung. Starte dann `npm run check`: Er meldet dasselbe. Lösche die Zeile wieder.</Task>
 
 <details>
 <summary>Auflösung</summary>
