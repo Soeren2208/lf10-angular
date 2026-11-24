@@ -320,7 +320,18 @@ Der Test `B5 sortedByPriority › lässt die Eingabeliste unverändert` schlägt
 
 </details>
 
-<Task id="ts-ab02-a5-fix">Setze `readonly` wieder ein. Sortiere stattdessen eine **Kopie**: `[...tickets]` baut eine neue Liste mit denselben Elementen, und auf der darfst du `sort` aufrufen. Die Tests `B5 sortedByPriority` werden grün.</Task>
+<Task id="ts-ab02-a5-fix">Setze `readonly` wieder ein und sortiere eine **Kopie** der Liste statt der Liste selbst. So sieht die ganze Funktion aus:</Task>
+
+```ts title="src/ticket-list.ts"
+/** Die dringendsten zuerst (Priorität 1 vor 2 vor 3), bei Gleichstand das kleinere `id` zuerst. */
+export function sortedByPriority(tickets: readonly Ticket[]): Ticket[] {
+  return [...tickets].sort((a, b) => a.priority - b.priority || a.id - b.id);
+}
+```
+
+`[...tickets]` baut eine **neue** Liste mit denselben Elementen, den Spread kennst du von den Objekten in Aufgabe 4, bei Listen funktioniert er genauso. `sort` ordnet diese Kopie um und gibt sie zurück. Die Liste `tickets`, die die Funktion bekommen hat, bleibt unberührt, und genau das verspricht `readonly`. Der Compiler erlaubt den Aufruf, weil die Kopie eine gewöhnliche, nicht schreibgeschützte Liste ist.
+
+<Task id="ts-ab02-a5-test">Starte `npm run test:ab02`. Die Tests `B5 sortedByPriority` werden grün.</Task>
 
 :::tip Merke
 `sort`, `reverse` und `push` verändern die Liste selbst. `filter`, `map` und `slice` bauen eine neue. Will eine Funktion ihre Eingabe in Ruhe lassen, kopiert sie vor dem Sortieren. Eine Alternative ist `toSorted`, das gleich eine sortierte Kopie liefert.
