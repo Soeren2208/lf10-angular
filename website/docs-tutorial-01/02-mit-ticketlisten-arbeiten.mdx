@@ -81,7 +81,30 @@ export function openTickets(tickets: readonly Ticket[]): Ticket[] {
 }
 ```
 
-Die Methode `filter` geht jedes Element durch und behält nur die, für die die Funktion `true` liefert. Die Funktion `(ticket) => ticket.status === 'offen'` ist eine **Pfeilfunktion**: links vom Pfeil der Parameter, rechts der Rückgabewert.
+Zwei Dinge sind neu: die Methode `filter` und die Schreibweise `(ticket) => …`.
+
+**Was `filter` tut.** `filter` ist eine Methode jeder Liste. Sie bekommt eine **Funktion** übergeben und ruft diese Funktion **für jedes Element der Liste einmal** auf. Liefert die Funktion `true`, kommt das Element in die Ergebnisliste. Liefert sie `false`, bleibt es draußen. Am Ende gibt `filter` die neue Ergebnisliste zurück. Die ursprüngliche Liste bleibt unverändert.
+
+**Was die Funktion in der Klammer ist.** `(ticket) => ticket.status === 'offen'` ist eine **Pfeilfunktion**, also eine Funktion ohne Namen, die man direkt dort hinschreibt, wo man sie braucht. In Java heißt das Lambda: `ticket -> ticket.getStatus().equals("offen")`.
+
+| Teil | Bedeutung |
+|---|---|
+| `(ticket)` | Der **Parameter**: Hier trägt `filter` jeweils ein Element der Liste ein. |
+| `=>` | Der Pfeil: „liefert“. |
+| `ticket.status === 'offen'` | Der **Rückgabewert**. Der Vergleich ist `true` oder `false`. |
+
+**Der Name des Parameters ist frei.** `(ticket) => …` und `(t) => …` tun dasselbe, nur muss rechts vom Pfeil derselbe Name stehen wie links. Üblich ist die Einzahl des Listennamens: Die Liste heißt `tickets`, ein Element heißt `ticket`. Das liest sich wie dein `for (const ticket of tickets)` von eben, und die Bedingung aus deinem `if` steht jetzt rechts vom Pfeil. Die Ergebnisliste, `push` und die Schleife übernimmt `filter`.
+
+**Was beim Aufruf passiert.** Du rufst `openTickets` mit den ersten vier Beispieltickets auf:
+
+| Durchlauf | `ticket` | `ticket.status === 'offen'` | Ergebnis |
+|---|---|---|---|
+| 1 | #1 (erledigt) | `false` | bleibt draußen |
+| 2 | #2 (in Arbeit) | `false` | bleibt draußen |
+| 3 | #3 (offen) | `true` | kommt in die Ergebnisliste |
+| 4 | #4 (offen) | `true` | kommt in die Ergebnisliste |
+
+Ergebnis: eine Liste mit #3 und #4.
 
 <Task id="ts-ab02-a2-filter">Ersetze deine Schleife durch `filter`. Starte `npm run test:ab02`. Dieselben Tests sind noch grün.</Task>
 
