@@ -62,7 +62,33 @@ Der **Speicher** (`TicketStore`) hält eine Liste von Tickets und bietet vier Me
 | `setStatus(id, status)` | ändert den Status eines Tickets. Gibt es die Nummer nicht, geschieht nichts. |
 | `replaceAll(tickets)` | ersetzt alle Tickets |
 
-Der Speicher darf eine Liste, die er einmal herausgegeben hat, **nie** nachträglich verändern. Bei jeder Änderung entsteht eine **neue** Liste, und das Feld verweist danach auf sie. Das kennst du aus AB 02.
+Bevor du den Speicher baust, eine Regel, die den ganzen Entwurf bestimmt: **Eine Liste, die der Speicher einmal herausgegeben hat, ändert er nie mehr.** Warum, zeigt ein Beispiel ohne Speicher. Es geht um dasselbe wie in Java: Zwei Namen können auf **dieselbe** Liste zeigen.
+
+```ts
+const list = [ticketA, ticketB];   // der Speicher hält diese Liste
+const onScreen = list;             // all() gibt sie heraus, die Anzeige hält jetzt dieselbe Liste
+
+list.push(ticketC);                // der Speicher hängt ein Ticket an: er verändert die Liste
+
+onScreen.length;                   // 3: die Anzeige hat jetzt drei Tickets, ohne dass ihr jemand etwas gesagt hat
+onScreen === list;                 // true: es gibt keinen Unterschied zwischen vorher und nachher
+```
+
+Daraus folgen zwei Probleme:
+
+1. **Heimliche Änderung.** Jeder, der die Liste bekommen hat (die Ticketliste, der Zähler, die Statistik der Teamleiterin), sieht sie sich unter den Händen ändern. Der Zähler hat vielleicht schon „2 Tickets“ ausgerechnet, die Liste zeigt jetzt drei. Das ist ein Fehler, den niemand meldet.
+2. **Keine Änderung erkennbar.** Eine Anzeige kann nur fragen: „Ist das noch dieselbe Liste wie vorhin?“ Wurde die Liste selbst verändert, lautet die Antwort immer „ja“, und die Anzeige bemerkt nichts. Genau das brauchst du in Aufgabe 4: Der Speicher meldet jede Änderung, und die Anzeige erkennt an der **neuen** Liste, dass sie neu zeichnen muss. Das gilt später auch in Angular.
+
+Baut der Speicher stattdessen eine **neue** Liste, bleiben beide Probleme aus:
+
+```ts
+const next = [...list, ticketC];   // neue Liste mit drei Tickets
+
+onScreen.length;                   // 2: die Liste auf dem Bildschirm ist unverändert
+onScreen === next;                 // false: die Anzeige kann den Unterschied erkennen
+```
+
+Deshalb entsteht bei jeder Änderung eine **neue** Liste, und das Feld des Speichers verweist danach auf sie. Das ist dasselbe Prinzip wie bei `withStatus` in AB 02.
 
 <Task id="ts-ab03-a2-constructor">Ersetze im Starter den Konstruktor durch einen mit **Konstruktor-Attribut**: Das Wort `private` vor dem Parameter macht aus ihm gleichzeitig ein Feld.</Task>
 
@@ -75,6 +101,7 @@ export class TicketStore {
 ```
 
 Der Parameter hat einen **Standardwert** (`= []`): Wird der Speicher ohne Argument erzeugt, ist er leer.
+
 <Task id="ts-ab03-a2-all">Schreibe `all()`: Die Methode gibt die Liste zurück. Auf das Feld greifst du in einer Klasse immer mit `this.` zu.</Task>
 
 <Task id="ts-ab03-a2-add">Schreibe `add(ticket)`. Du brauchst eine **neue** Liste mit dem Ticket am Ende. Weise sie dem Feld zu: `this.tickets = …`. Ein `push` wäre falsch, weil es die alte Liste verändert.</Task>
