@@ -208,7 +208,28 @@ Start `0`, dann `2`, `4`, `5` und zum Schluss `8`. Das Ergebnis ist `8`.
 
 </details>
 
-Bei `countByStatus` ist der Zwischenstand kein Zahlenwert, sondern ein **Objekt**, das mitzählt. Um aus dem alten Zwischenstand einen neuen zu bauen, brauchst du zwei Schreibweisen, die du noch nicht kennst. Beide zeigt dir ein Beispiel mit einem anderen Objekt:
+<Task id="ts-ab02-a4-write">Übernimm die Funktion in `src/ticket-list.ts`. Sie ist neu für dich, die Erklärung folgt direkt darunter:</Task>
+
+```ts title="src/ticket-list.ts"
+/** Wie viele Tickets es je Status gibt. Auch ein Status ohne Tickets steht drin (mit 0). */
+export function countByStatus(tickets: readonly Ticket[]): Record<Status, number> {
+  return tickets.reduce<Record<Status, number>>(
+    (count, ticket) => ({ ...count, [ticket.status]: count[ticket.status] + 1 }),
+    { offen: 0, 'in Arbeit': 0, erledigt: 0 },
+  );
+}
+```
+
+<Task id="ts-ab02-a4-test">Starte `npm run test:ab02`. Die Tests `B4 countByStatus` werden grün.</Task>
+
+**Was hier passiert.** Der Aufruf hat zwei Teile, wie bei der Summe oben: eine Funktion und einen Startwert. Der Unterschied ist, dass der Zwischenstand kein Zahlenwert ist, sondern ein **Objekt**, das mitzählt.
+
+- **Der Startwert** `{ offen: 0, 'in Arbeit': 0, erledigt: 0 }` ist der Stand vor dem ersten Ticket: Jeder Status steht schon drin, mit 0. Deshalb kommt am Ende auch ein Status ohne Tickets mit 0 vor. Bei `'in Arbeit'` stehen Anführungszeichen, weil der Feldname ein Leerzeichen enthält. Namen wie `offen` brauchen keine, und ein Feld mit Leerzeichen im Namen liest du mit eckigen Klammern: `count['in Arbeit']`.
+- **Der Typ** `Record<Status, number>` beschreibt ein Objekt, das für **jeden** Status eine Zahl enthält. Mit `reduce<Record<Status, number>>` sagst du dem Compiler ausdrücklich, dass der Zwischenstand diesen Typ hat.
+- **Die Funktion** `(count, ticket) => ({ ... })` bekommt den bisherigen Zwischenstand `count` und das nächste Ticket und liefert den **neuen** Zwischenstand. Der neue Zwischenstand ist eine Kopie des alten, bei der der Zähler für den Status dieses Tickets um 1 größer ist. Dafür stecken in der Zeile zwei Schreibweisen, die du noch nicht kennst. Sie werden gleich erklärt.
+- **Die runden Klammern** um das Objekt sind nötig, damit TypeScript die geschweiften Klammern als Objekt versteht und nicht als Block.
+
+**Die beiden neuen Schreibweisen.** Ein Beispiel mit einem anderen Objekt:
 
 ```ts
 const a = { x: 1, y: 2 };
@@ -221,53 +242,16 @@ const c = { ...a, [key]: 9 };   // { x: 1, y: 2, z: 9 }: der Name des Feldes kom
 - `{ ...a, y: 5 }` baut ein **neues** Objekt. `...a` kopiert alle Felder von `a`, ein Feld dahinter überschreibt das gleichnamige. Das ändert `a` nicht. Das nennt man den **Spread-Operator**.
 - `[key]: 9` in eckigen Klammern heißt: Der **Name** des Feldes steht nicht fest, er ist der Wert von `key`.
 
-Der Zwischenstand beginnt so:
+In `countByStatus` zusammen: `{ ...count, [ticket.status]: count[ticket.status] + 1 }` kopiert alle Zähler und überschreibt den, dessen Name der Status des Tickets ist, mit dem alten Wert plus 1. Für die ersten drei Beispieltickets läuft das so:
 
-```ts
-{ offen: 0, 'in Arbeit': 0, erledigt: 0 }
-```
+| Schritt | Ticket | Zwischenstand danach |
+|---|---|---|
+| Start | | `{ offen: 0, 'in Arbeit': 0, erledigt: 0 }` |
+| 1 | #1 (erledigt) | `{ offen: 0, 'in Arbeit': 0, erledigt: 1 }` |
+| 2 | #2 (in Arbeit) | `{ offen: 0, 'in Arbeit': 1, erledigt: 1 }` |
+| 3 | #3 (offen) | `{ offen: 1, 'in Arbeit': 1, erledigt: 1 }` |
 
-und für jedes Ticket wird der Zähler seines Status um 1 erhöht.
-
-Bei `'in Arbeit'` stehen Anführungszeichen, weil der Feldname ein Leerzeichen enthält. Namen wie `offen` brauchen keine, und ein Feld mit Leerzeichen im Namen liest du mit eckigen Klammern: `count['in Arbeit']`.
-
-<Task id="ts-ab02-a4-write">Schreibe `countByStatus` mit `reduce`. Gehe in Schritten vor, die Tipps helfen dir.</Task>
-
-<details>
-<summary>Tipp 1: Das Gerüst</summary>
-
-```ts
-export function countByStatus(tickets: readonly Ticket[]): Record<Status, number> {
-  return tickets.reduce<Record<Status, number>>(
-    (count, ticket) => /* hier kommt der neue Zwischenstand hin */,
-    { offen: 0, 'in Arbeit': 0, erledigt: 0 },
-  );
-}
-```
-
-`Record<Status, number>` ist der Typ eines Objekts, das für **jeden** Status eine Zahl enthält. Mit `reduce<…>` sagst du dem Compiler, welchen Typ der Zwischenstand hat.
-
-</details>
-
-<details>
-<summary>Tipp 2: Der neue Zwischenstand</summary>
-
-Du brauchst ein **neues** Objekt, das so aussieht wie `count`, nur dass der Zähler für `ticket.status` um 1 größer ist. Das geht mit den beiden Schreibweisen von oben: `{ ...count, … }` kopiert alle Zähler, und das Feld dahinter überschreibt einen davon. Der Name dieses Feldes kommt aus einem Wert, steht also in eckigen Klammern: `[ticket.status]: …`.
-
-</details>
-
-<details>
-<summary>Tipp 3: Die Zeile</summary>
-
-```ts
-(count, ticket) => ({ ...count, [ticket.status]: count[ticket.status] + 1 })
-```
-
-Die runden Klammern um das Objekt sind nötig, damit TypeScript die geschweiften Klammern als Objekt versteht und nicht als Block.
-
-</details>
-
-<Task id="ts-ab02-a4-test">Die Tests `B4 countByStatus` werden grün.</Task>
+Weil jeder Schritt ein neues Objekt baut und das alte nicht anfasst, bleibt auch hier alles unverändert, wie es `readonly` verspricht.
 
 Zwei weitere Methoden beantworten Ja-Nein-Fragen zu einer Liste:
 
