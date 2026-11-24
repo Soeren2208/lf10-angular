@@ -1,0 +1,563 @@
+{
+  "formatVersion": 16,
+  "name": "Ticket-Board der HiTec GmbH",
+  "preset": "desktop",
+  "startScreen": "screen_board",
+  "screens": [
+    {
+      "id": "screen_board",
+      "name": "Board",
+      "endpunkt": false,
+      "x": 0,
+      "y": 180,
+      "elemente": [
+        {
+          "id": "b_titel",
+          "form": "label",
+          "beschriftung": "Ticket-Board · HiTec GmbH Support",
+          "parent": null,
+          "x": 32,
+          "y": 24,
+          "b": 800,
+          "h": 40,
+          "z": 1,
+          "textgroesse": "gross"
+        },
+        {
+          "id": "b_user",
+          "form": "label",
+          "beschriftung": "Angemeldet als Jonas Beck",
+          "parent": null,
+          "x": 912,
+          "y": 24,
+          "b": 336,
+          "h": 40,
+          "z": 2,
+          "textgroesse": "klein"
+        },
+        {
+          "id": "b_dringend",
+          "form": "checkbox",
+          "beschriftung": "Nur dringende Tickets zeigen",
+          "parent": null,
+          "x": 32,
+          "y": 88,
+          "b": 360,
+          "h": 40,
+          "z": 3
+        },
+        {
+          "id": "b_nummer",
+          "form": "textfeld",
+          "beschriftung": "Ticketnummer",
+          "parent": null,
+          "x": 704,
+          "y": 88,
+          "b": 300,
+          "h": 40,
+          "z": 4
+        },
+        {
+          "id": "b_nummer_ok",
+          "form": "button",
+          "beschriftung": "Ticket öffnen",
+          "parent": null,
+          "x": 1016,
+          "y": 88,
+          "b": 200,
+          "h": 40,
+          "z": 5
+        },
+        {
+          "id": "sp_offen",
+          "form": "container",
+          "beschriftung": "",
+          "parent": null,
+          "x": 32,
+          "y": 152,
+          "b": 392,
+          "h": 600,
+          "z": 6,
+          "umrandung": "sichtbar"
+        },
+        {
+          "id": "sp_offen_kopf",
+          "form": "label",
+          "beschriftung": "Offen · 2",
+          "parent": "sp_offen",
+          "x": 16,
+          "y": 8,
+          "b": 360,
+          "h": 32,
+          "z": 7,
+          "textgroesse": "gross"
+        },
+        {
+          "id": "sp_arbeit",
+          "form": "container",
+          "beschriftung": "",
+          "parent": null,
+          "x": 444,
+          "y": 152,
+          "b": 392,
+          "h": 600,
+          "z": 8,
+          "umrandung": "sichtbar"
+        },
+        {
+          "id": "sp_arbeit_kopf",
+          "form": "label",
+          "beschriftung": "In Arbeit · 1",
+          "parent": "sp_arbeit",
+          "x": 16,
+          "y": 8,
+          "b": 360,
+          "h": 32,
+          "z": 9,
+          "textgroesse": "gross"
+        },
+        {
+          "id": "sp_erledigt",
+          "form": "container",
+          "beschriftung": "",
+          "parent": null,
+          "x": 856,
+          "y": 152,
+          "b": 392,
+          "h": 600,
+          "z": 10,
+          "umrandung": "sichtbar"
+        },
+        {
+          "id": "sp_erledigt_kopf",
+          "form": "label",
+          "beschriftung": "Erledigt · 0",
+          "parent": "sp_erledigt",
+          "x": 16,
+          "y": 8,
+          "b": 360,
+          "h": 32,
+          "z": 11,
+          "textgroesse": "gross"
+        },
+        {
+          "id": "k4",
+          "form": "container",
+          "beschriftung": "",
+          "parent": "sp_offen",
+          "x": 16,
+          "y": 56,
+          "b": 360,
+          "h": 160,
+          "z": 12,
+          "umrandung": "sichtbar"
+        },
+        {
+          "id": "k4_titel",
+          "form": "label",
+          "beschriftung": "#4 E-Mail-Postfach der Geschäftsführung läuft voll",
+          "parent": "k4",
+          "x": 12,
+          "y": 12,
+          "b": 336,
+          "h": 32,
+          "z": 13
+        },
+        {
+          "id": "k4_info",
+          "form": "label",
+          "beschriftung": "Hoch · dringend · Jonas Beck",
+          "parent": "k4",
+          "x": 12,
+          "y": 52,
+          "b": 336,
+          "h": 32,
+          "z": 14,
+          "textgroesse": "klein"
+        },
+        {
+          "id": "k4_b0",
+          "form": "button",
+          "beschriftung": "Öffnen",
+          "parent": "k4",
+          "x": 12,
+          "y": 108,
+          "b": 104,
+          "h": 36,
+          "z": 15
+        },
+        {
+          "id": "k4_b1",
+          "form": "button",
+          "beschriftung": "In Arbeit →",
+          "parent": "k4",
+          "x": 128,
+          "y": 108,
+          "b": 140,
+          "h": 36,
+          "z": 16
+        },
+        {
+          "id": "k3",
+          "form": "container",
+          "beschriftung": "",
+          "parent": "sp_offen",
+          "x": 16,
+          "y": 232,
+          "b": 360,
+          "h": 160,
+          "z": 17,
+          "umrandung": "sichtbar"
+        },
+        {
+          "id": "k3_titel",
+          "form": "label",
+          "beschriftung": "#3 Drucker im Büro 2 druckt nicht",
+          "parent": "k3",
+          "x": 12,
+          "y": 12,
+          "b": 336,
+          "h": 32,
+          "z": 18
+        },
+        {
+          "id": "k3_info",
+          "form": "label",
+          "beschriftung": "Mittel · nicht zugewiesen",
+          "parent": "k3",
+          "x": 12,
+          "y": 52,
+          "b": 336,
+          "h": 32,
+          "z": 19,
+          "textgroesse": "klein"
+        },
+        {
+          "id": "k3_b0",
+          "form": "button",
+          "beschriftung": "Öffnen",
+          "parent": "k3",
+          "x": 12,
+          "y": 108,
+          "b": 104,
+          "h": 36,
+          "z": 20
+        },
+        {
+          "id": "k3_b1",
+          "form": "button",
+          "beschriftung": "In Arbeit →",
+          "parent": "k3",
+          "x": 128,
+          "y": 108,
+          "b": 140,
+          "h": 36,
+          "z": 21
+        },
+        {
+          "id": "k7",
+          "form": "container",
+          "beschriftung": "",
+          "parent": "sp_arbeit",
+          "x": 16,
+          "y": 56,
+          "b": 360,
+          "h": 160,
+          "z": 22,
+          "umrandung": "sichtbar"
+        },
+        {
+          "id": "k7_titel",
+          "form": "label",
+          "beschriftung": "#7 Software-Lizenz läuft ab",
+          "parent": "k7",
+          "x": 12,
+          "y": 12,
+          "b": 336,
+          "h": 32,
+          "z": 23
+        },
+        {
+          "id": "k7_info",
+          "form": "label",
+          "beschriftung": "Hoch · dringend · Jonas Beck",
+          "parent": "k7",
+          "x": 12,
+          "y": 52,
+          "b": 336,
+          "h": 32,
+          "z": 24,
+          "textgroesse": "klein"
+        },
+        {
+          "id": "k7_b0",
+          "form": "button",
+          "beschriftung": "Öffnen",
+          "parent": "k7",
+          "x": 12,
+          "y": 108,
+          "b": 96,
+          "h": 36,
+          "z": 25
+        },
+        {
+          "id": "k7_b1",
+          "form": "button",
+          "beschriftung": "← Offen",
+          "parent": "k7",
+          "x": 120,
+          "y": 108,
+          "b": 96,
+          "h": 36,
+          "z": 26
+        },
+        {
+          "id": "k7_b2",
+          "form": "button",
+          "beschriftung": "Erledigt →",
+          "parent": "k7",
+          "x": 228,
+          "y": 108,
+          "b": 112,
+          "h": 36,
+          "z": 27
+        },
+        {
+          "id": "sp_erledigt_leer",
+          "form": "label",
+          "beschriftung": "Keine Tickets",
+          "parent": "sp_erledigt",
+          "x": 16,
+          "y": 64,
+          "b": 360,
+          "h": 40,
+          "z": 28
+        }
+      ],
+      "interaktionen": [
+        {
+          "id": "i_b_dringend",
+          "element": "b_dringend",
+          "wasPassiert": "Zeigt nur dringende Tickets (Priorität hoch und noch nicht erledigt). Die Zähler in den Spalten passen sich an",
+          "ziel": null
+        },
+        {
+          "id": "i_b_nummer_ok",
+          "element": "b_nummer_ok",
+          "wasPassiert": "Öffnet das Ticket mit dieser Nummer. Beispiel: Nummer 99 gibt es nicht, deshalb erscheint „Ticket nicht gefunden“",
+          "ziel": "screen_nicht_gefunden"
+        },
+        {
+          "id": "i_k4_b0",
+          "element": "k4_b0",
+          "wasPassiert": "Öffnet das Ticket mit allen Angaben",
+          "ziel": "screen_ticket"
+        },
+        {
+          "id": "i_k4_b1",
+          "element": "k4_b1",
+          "wasPassiert": "Das Ticket wechselt in die Spalte „In Arbeit“. Die Zähler ändern sich sofort",
+          "ziel": null
+        },
+        {
+          "id": "i_k3_b0",
+          "element": "k3_b0",
+          "wasPassiert": "Öffnet das Ticket mit allen Angaben",
+          "ziel": "screen_ticket"
+        },
+        {
+          "id": "i_k3_b1",
+          "element": "k3_b1",
+          "wasPassiert": "Das Ticket wechselt in die Spalte „In Arbeit“. Die Zähler ändern sich sofort",
+          "ziel": null
+        },
+        {
+          "id": "i_k7_b0",
+          "element": "k7_b0",
+          "wasPassiert": "Öffnet das Ticket mit allen Angaben",
+          "ziel": "screen_ticket"
+        },
+        {
+          "id": "i_k7_b1",
+          "element": "k7_b1",
+          "wasPassiert": "Das Ticket wechselt zurück in die Spalte „Offen“. Die Zähler ändern sich sofort",
+          "ziel": null
+        },
+        {
+          "id": "i_k7_b2",
+          "element": "k7_b2",
+          "wasPassiert": "Das Ticket wechselt in die Spalte „Erledigt“. Die Zähler ändern sich sofort",
+          "ziel": null
+        }
+      ]
+    },
+    {
+      "id": "screen_ticket",
+      "name": "Ticket",
+      "endpunkt": false,
+      "x": 560,
+      "y": 0,
+      "elemente": [
+        {
+          "id": "t_titel",
+          "form": "label",
+          "beschriftung": "Ticket #4",
+          "parent": null,
+          "x": 32,
+          "y": 24,
+          "b": 800,
+          "h": 40,
+          "z": 1,
+          "textgroesse": "gross"
+        },
+        {
+          "id": "t_zurueck",
+          "form": "button",
+          "beschriftung": "Zurück zum Board",
+          "parent": null,
+          "x": 32,
+          "y": 88,
+          "b": 240,
+          "h": 40,
+          "z": 2
+        },
+        {
+          "id": "t_angaben",
+          "form": "container",
+          "beschriftung": "Angaben",
+          "parent": null,
+          "x": 32,
+          "y": 152,
+          "b": 800,
+          "h": 320,
+          "z": 3
+        },
+        {
+          "id": "t_a_titel",
+          "form": "label",
+          "beschriftung": "Titel: E-Mail-Postfach der Geschäftsführung läuft voll",
+          "parent": "t_angaben",
+          "x": 24,
+          "y": 24,
+          "b": 740,
+          "h": 40,
+          "z": 4
+        },
+        {
+          "id": "t_a_status",
+          "form": "label",
+          "beschriftung": "Stand: Offen",
+          "parent": "t_angaben",
+          "x": 24,
+          "y": 80,
+          "b": 740,
+          "h": 40,
+          "z": 5
+        },
+        {
+          "id": "t_a_prio",
+          "form": "label",
+          "beschriftung": "Priorität: Hoch · dringend",
+          "parent": "t_angaben",
+          "x": 24,
+          "y": 136,
+          "b": 740,
+          "h": 40,
+          "z": 6
+        },
+        {
+          "id": "t_a_wer",
+          "form": "label",
+          "beschriftung": "Bearbeiter: Jonas Beck",
+          "parent": "t_angaben",
+          "x": 24,
+          "y": 192,
+          "b": 740,
+          "h": 40,
+          "z": 7
+        },
+        {
+          "id": "t_a_datum",
+          "form": "label",
+          "beschriftung": "Gemeldet am: 04.11.2026",
+          "parent": "t_angaben",
+          "x": 24,
+          "y": 248,
+          "b": 740,
+          "h": 40,
+          "z": 8
+        }
+      ],
+      "interaktionen": [
+        {
+          "id": "i_t_zurueck",
+          "element": "t_zurueck",
+          "wasPassiert": "Zurück zum Board",
+          "ziel": "screen_board"
+        }
+      ]
+    },
+    {
+      "id": "screen_nicht_gefunden",
+      "name": "Ticket nicht gefunden",
+      "endpunkt": false,
+      "x": 560,
+      "y": 540,
+      "elemente": [
+        {
+          "id": "n_titel",
+          "form": "label",
+          "beschriftung": "Ticket nicht gefunden",
+          "parent": null,
+          "x": 32,
+          "y": 24,
+          "b": 800,
+          "h": 40,
+          "z": 1,
+          "textgroesse": "gross"
+        },
+        {
+          "id": "n_text",
+          "form": "label",
+          "beschriftung": "Zu dieser Nummer gibt es kein Ticket.",
+          "parent": null,
+          "x": 32,
+          "y": 88,
+          "b": 800,
+          "h": 40,
+          "z": 2
+        },
+        {
+          "id": "n_zurueck",
+          "form": "button",
+          "beschriftung": "Zurück zum Board",
+          "parent": null,
+          "x": 32,
+          "y": 152,
+          "b": 240,
+          "h": 40,
+          "z": 3
+        }
+      ],
+      "interaktionen": [
+        {
+          "id": "i_n_zurueck",
+          "element": "n_zurueck",
+          "wasPassiert": "Zurück zum Board",
+          "ziel": "screen_board"
+        }
+      ]
+    }
+  ],
+  "szenarien": [
+    {
+      "titel": "",
+      "ausgangslage": "Du bist Jonas Beck und arbeitest im Support der HiTec GmbH. Die Excel-Tabelle mit den Tickets wird durch das Ticket-Board ersetzt, und du probierst es zum ersten Mal aus.",
+      "aufgaben": [
+        "Finde ein dringendes Ticket und sieh nach, wer sich darum kümmert.",
+        "Du hast ein Ticket übernommen. Zeige allen im Team, dass es jetzt bearbeitet wird.",
+        "Ein Kollege nennt dir die Ticketnummer 99. Öffne dieses Ticket."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+<article class="card" [class.urgent]="urgent()">
+  <header class="card-head">
+    <span class="ticket-id">#{{ ticket().id }}</span>
+    @if (urgent()) {
+      <span class="tag-urgent">dringend</span>
+    }
+  </header>
+
+  <h3 class="card-title">{{ ticket().title }}</h3>
+
+  <div class="meta">
+    <span class="prio" [attr.data-priority]="ticket().priority">{{ priorityText() }}</span>
+    <span class="assignee">{{ assignee() }}</span>
+  </div>
+</article>

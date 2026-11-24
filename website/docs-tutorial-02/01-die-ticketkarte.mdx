@@ -1,0 +1,503 @@
+---
+title: "AB 01 – Die Ticketkarte"
+sidebar_label: "01 – Die Ticketkarte"
+slug: 01-die-ticketkarte
+sidebar_position: 1
+---
+
+import stage from '@site/src/data/t2-stage-ab01.json';
+import workshopModel from '@site/src/data/t2-workshop-modell.json';
+
+# AB 01 – Die Ticketkarte
+
+Aus einem Ticket wird eine Kachel: Du legst das Angular-Projekt an und schreibst deine erste Komponente.
+
+*Dauer: etwa eine Doppelstunde.*
+
+## Die Anforderung
+
+<StoryCard
+  story={<>
+    <strong>Als</strong> Support-Mitarbeiter, der eine neue Meldung bekommt, <strong>möchte ich</strong> ein Ticket auf einen Blick einschätzen, <strong>damit</strong> ich entscheide, ob ich es sofort übernehme oder ein dringenderes Ticket vorziehe.
+  </>}
+  criteria={[
+    {id: 'A_1', text: <>Ich sehe zu einem Ticket seine Nummer und seinen Titel.</>},
+    {id: 'A_2', text: <>Ich erkenne die Priorität eines Tickets: hoch, mittel oder niedrig.</>},
+    {id: 'A_3', text: <>Ein dringendes Ticket, also eines mit hoher Priorität, das noch nicht erledigt ist, fällt gegenüber den anderen Tickets auf.</>},
+    {id: 'A_4', text: <>Hat ein Ticket einen Bearbeiter, sehe ich seinen Namen.</>},
+    {id: 'A_5', text: <>Hat ein Ticket keinen Bearbeiter, sehe ich „nicht zugewiesen“.</>},
+  ]}
+/>
+
+Vorgabe der IT für alle neuen Oberflächen: Sie werden als Angular-Anwendung gebaut.
+
+Nicht Teil dieser Story: Den Bearbeitungsstand zeigt erst das Board (AB 02), und ändern lässt er sich erst in AB 03. Die Karte steht in diesem Arbeitsblatt deshalb dreimal untereinander, die Spalten folgen.
+
+Daraus hat dein Team im Sprint-Planning-Meeting 1 folgende Tasks abgeleitet:
+
+<PlanningBox>
+
+| # | Task | Erfüllt |
+|---|---|---|
+| T_1 | Angular-Projekt anlegen | IT-Vorgabe |
+| T_2 | Ticket-Modell und Beispieldaten übernehmen | Voraussetzung für A_1–A_5 |
+| T_3 | Design einbauen | Voraussetzung für A_1–A_5 |
+| T_4 | Komponente „Ticketkarte“ anlegen | Voraussetzung für A_1–A_5 |
+| T_5 | Nummer, Titel und Priorität anzeigen | A_1, A_2 |
+| T_6 | Dringende Tickets hervorheben | A_3 |
+| T_7 | Bearbeiter anzeigen | A_4, A_5 |
+| T_8 | Testfälle ausführen | alle |
+
+</PlanningBox>
+
+Nicht jede Task hat ein eigenes Kriterium. Manche sind Werkzeug für eine spätere.
+
+## Die Karte im Wireframe
+
+Im Wireframe des Design-Teams ist die Karte der kleinste Baustein des Boards:
+
+![Wireframe des Boards: Jede Spalte enthält Ticketkarten mit Nummer, Titel, Priorität, Bearbeiter und Knöpfen](/img/tutorial-02/01-board.png)
+
+Sie zeigt Nummer, Titel, Priorität und Bearbeiter. Die Knöpfe unten kommen in späteren Arbeitsblättern.
+
+## Was ist eine Komponente?
+
+Eine Angular-Anwendung besteht aus **Komponenten**. Eine Komponente ist ein Baustein der Oberfläche, zum Beispiel eine Ticketkarte. Sie besteht aus drei Dateien:
+
+| Datei | Inhalt | Beispiel in diesem Arbeitsblatt |
+|---|---|---|
+| `ticket-card.ts` | die **Klasse**: Daten und Verhalten | welches Ticket? ist es dringend? |
+| `ticket-card.html` | das **Template**: Aussehen als HTML | Nummer, Titel, Marke „dringend“ |
+| `ticket-card.css` | der **Stil** | Farben und Abstände |
+
+Das Design-Team hat die Oberfläche im Wireframe in solche Bausteine zerlegt. Mit dem kleinsten fängst du an.
+
+## Aufgaben
+
+### Aufgabe 1 – Das Projekt anlegen
+
+*Etwa 15 Minuten.*
+
+<TaskBadge>T_1 · Angular-Projekt anlegen</TaskBadge>
+
+<Task id="t2-ab01-a1-terminal">Öffne in WebStorm den Ordner, in dem deine Projekte liegen (**File → Open**), und danach das Terminal (**Alt + F12**). Gib ein:</Task>
+
+```bash
+npx -y @angular/cli new ticket-board --defaults --skip-tests
+```
+
+Das Anlegen dauert etwa zwei Minuten. Der Befehl besteht aus diesen Teilen:
+
+| Teil | Bedeutung |
+|---|---|
+| `npx -y @angular/cli` | startet die Angular-CLI, ohne sie vorher zu installieren (`-y` beantwortet die Rückfrage von `npx` mit „ja“) |
+| `new ticket-board` | legt ein neues Projekt mit dem Namen `ticket-board` an |
+| `--defaults` | nimmt die Standardeinstellungen, es gibt keine Fragen (Stile als CSS, kein Server-Rendering) |
+| `--skip-tests` | legt keine Testdateien an |
+
+:::info Meldung zur Node-Version
+Bricht der Befehl mit einer Meldung ab, die Angular brauche mindestens Node.js v22.22.3, v24.15.0 oder v26.0.0, ist deine Node-Version zu alt. Die Anleitung dazu steht unter [Entwicklungsumgebung einrichten](/vorbereitung/einrichten).
+:::
+
+<Task id="t2-ab01-a1-open">Öffne den neuen Ordner `ticket-board` in WebStorm (**File → Open**).</Task>
+
+<Task id="t2-ab01-a1-start">Starte die Anwendung im Terminal von WebStorm:</Task>
+
+```bash
+npm start
+```
+
+Im Terminal steht die Adresse `http://localhost:4200/`. Öffne sie im Browser. Du siehst die Willkommensseite von Angular.
+
+Das Terminal bleibt belegt, solange die Anwendung läuft (**Strg + C** beendet sie). Öffne dir für weitere Befehle ein zweites Terminal. Änderungen im Code erscheinen nach dem Speichern von selbst im Browser.
+
+Das ist in diesem Projekt wichtig:
+
+| Datei | Wofür |
+|---|---|
+| `package.json` | Abhängigkeiten und Befehle wie `npm start` |
+| `src/index.html` | die eine HTML-Seite, in die Angular die Anwendung setzt |
+| `src/styles.css` | Stile für die ganze Anwendung |
+| `src/app/app.ts`, `app.html`, `app.css` | die Hauptkomponente `App` |
+| `src/app/app.config.ts` | Einstellungen der Anwendung |
+| `src/app/app.routes.ts` | die Seiten und ihre Adressen (kommt in AB 04) |
+
+<Task id="t2-ab01-a1-title">Öffne `src/index.html`. Ändere `lang="en"` in `lang="de"` und den Titel in `Ticket-Board`. Im Browser-Tab steht der neue Titel.</Task>
+
+### Aufgabe 2 – Ticket-Modell und Beispieldaten übernehmen
+
+*Etwa 10 Minuten.*
+
+<TaskBadge>T_2 · Ticket-Modell und Beispieldaten übernehmen</TaskBadge>
+
+<Task id="t2-ab01-a2-copy">Kopiere aus deinem Projekt der TypeScript-Werkstatt die Dateien `src/ticket.ts` und `src/sample-data.ts` in den Ordner `src/app` des neuen Projekts.</Task>
+
+Das ist dein Code aus der Werkstatt: die Typen `Status`, `Priority` und `Ticket`, die Funktionen `isUrgent` und `assigneeName` und acht Beispieltickets. Er ist reines TypeScript und braucht kein Angular. So übernimmt man in der Praxis vorhandenen Code in ein neues Projekt.
+
+<Solution daten={workshopModel} titel="Werkstatt nicht fertig? Die Musterlösung dieser beiden Dateien" />
+
+<Task id="t2-ab01-a2-check">Im Terminal, in dem `npm start` läuft, steht keine rote Fehlermeldung.</Task>
+
+### Aufgabe 3 – Das Design einbauen
+
+*Etwa 5 Minuten.*
+
+<TaskBadge>T_3 · Design einbauen</TaskBadge>
+
+Das Design-Team hat Farben, Schrift und Knöpfe des Boards festgelegt. Du schreibst dafür kein CSS, du übernimmst es.
+
+<Task id="t2-ab01-a3-styles">Ersetze den gesamten Inhalt von `src/styles.css` durch:</Task>
+
+<CodeFile data={stage} file="src/styles.css" />
+
+<Task id="t2-ab01-a3-appcss">Ersetze den gesamten Inhalt von `src/app/app.css` durch:</Task>
+
+<CodeFile data={stage} file="src/app/app.css" />
+
+Die Datei `styles.css` gilt für die ganze Anwendung. Eine Datei wie `app.css` gilt nur für ihre eigene Komponente. Angular sorgt dafür, dass sich die Stile verschiedener Komponenten nicht in die Quere kommen.
+
+### Aufgabe 4 – Die Komponente anlegen
+
+*Etwa 15 Minuten.*
+
+<TaskBadge>T_4 · Komponente „Ticketkarte“ anlegen</TaskBadge>
+
+<Task id="t2-ab01-a4-generate">Lege die Komponente mit der Angular-CLI an. Gib im zweiten Terminal ein:</Task>
+
+```bash
+npx ng generate component ticket-card --skip-tests
+```
+
+Die CLI legt einen Ordner `src/app/ticket-card` mit drei Dateien an. Öffne `ticket-card.ts`:
+
+```ts title="src/app/ticket-card/ticket-card.ts"
+import { Component } from '@angular/core';
+
+@Component({
+  imports: [],
+  selector: 'app-ticket-card',
+  styleUrl: './ticket-card.css',
+  templateUrl: './ticket-card.html',
+})
+export class TicketCard {}
+```
+
+**So ist die Klasse aufgebaut:**
+
+- `@Component({ … })` sagt Angular, was diese Klasse ist. Das kennst du aus Java: Eine Annotation wie `@RestController` tut dasselbe.
+- `selector` ist der Name, unter dem du die Komponente in anderen Templates als HTML-Element einsetzt: `<app-ticket-card />`.
+- `templateUrl` und `styleUrl` verweisen auf die beiden anderen Dateien.
+- `imports` listet die Komponenten, die **dieses** Template benutzt. Das ist wie `import` in Java: Was nicht dasteht, kennt die Komponente nicht.
+
+<Task id="t2-ab01-a4-app">Setze die Komponente in die App. Ersetze den gesamten Inhalt von `src/app/app.ts` durch:</Task>
+
+```ts title="src/app/app.ts"
+import { Component } from '@angular/core';
+import { TicketCard } from './ticket-card/ticket-card';
+
+@Component({
+  selector: 'app-root',
+  imports: [TicketCard],
+  templateUrl: './app.html',
+  styleUrl: './app.css',
+})
+export class App {}
+```
+
+<Task id="t2-ab01-a4-html">Ersetze den gesamten Inhalt von `src/app/app.html` durch:</Task>
+
+```html title="src/app/app.html"
+<header class="app-header">
+  <span class="app-title">Ticket-Board <span class="company">· HiTec GmbH Support</span></span>
+  <span class="user">Angemeldet als Jonas Beck</span>
+</header>
+
+<main class="app-main">
+  <app-ticket-card />
+</main>
+```
+
+Im Browser steht jetzt unter der Kopfzeile der Text „ticket-card works!“. Er kommt aus der neuen Komponente.
+
+<Task id="t2-ab01-a4-error">Probiere, was passiert, wenn die App eine Komponente nicht kennt: Lösche in `app.ts` `TicketCard` aus der Liste `imports` und speichere. Lies die Fehlermeldung. Setze `TicketCard` danach wieder ein.</Task>
+
+<details>
+<summary>Was die Meldung sagt</summary>
+
+```text
+NG8001: 'app-ticket-card' is not a known element:
+1. If 'app-ticket-card' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+```
+
+Die Meldung nennt die Lösung gleich mit: Die Komponente muss in `imports` stehen. Das ist die häufigste Fehlermeldung in Angular, und sie ist hilfreich.
+
+</details>
+
+### Aufgabe 5 – Nummer, Titel und Priorität anzeigen
+
+*Etwa 20 Minuten.*
+
+<TaskBadge>T_5 · Nummer, Titel und Priorität anzeigen</TaskBadge>
+
+Die Karte soll ein Ticket zeigen. Dafür braucht sie von außen ein Ticket und einen Text für die Priorität.
+
+<Task id="t2-ab01-a5-labels">Lege die Datei `src/app/ticket-labels.ts` an:</Task>
+
+<CodeFile data={stage} file="src/app/ticket-labels.ts" />
+
+`Record<Priority, string>` kennst du aus der Werkstatt. Hier ordnet er jeder Priorität einen Text zu: Aus `1` wird „Hoch“.
+
+<Task id="t2-ab01-a5-class">Ersetze den gesamten Inhalt von `ticket-card.ts` durch:</Task>
+
+```ts title="src/app/ticket-card/ticket-card.ts"
+import { Component, input } from '@angular/core';
+import type { Ticket } from '../ticket';
+import { PRIORITY_LABEL } from '../ticket-labels';
+
+@Component({
+  selector: 'app-ticket-card',
+  imports: [],
+  templateUrl: './ticket-card.html',
+  styleUrl: './ticket-card.css',
+})
+export class TicketCard {
+  readonly ticket = input.required<Ticket>();
+
+  protected priorityText(): string {
+    return PRIORITY_LABEL[this.ticket().priority];
+  }
+}
+```
+
+**Das ist neu:**
+
+- `input.required<Ticket>()` macht aus `ticket` einen **Eingang**: Die Komponente bekommt ihr Ticket von außen, von der Komponente, die sie einsetzt. `required` heißt, dass es nicht fehlen darf.
+- Den Wert liest du mit Klammern: `this.ticket()`, nicht `this.ticket`. Warum das so ist, erfährst du in AB 03.
+- `protected` heißt wie in Java: Das Template der Komponente darf die Methode benutzen, andere Klassen nicht.
+
+<Task id="t2-ab01-a5-html">Ersetze den gesamten Inhalt von `ticket-card.html` durch:</Task>
+
+```html title="src/app/ticket-card/ticket-card.html"
+<article class="card">
+  <header class="card-head">
+    <span class="ticket-id">#{{ ticket().id }}</span>
+  </header>
+
+  <h3 class="card-title">{{ ticket().title }}</h3>
+
+  <div class="meta">
+    <span class="prio" [attr.data-priority]="ticket().priority">{{ priorityText() }}</span>
+  </div>
+</article>
+```
+
+**So funktioniert das Template:**
+
+- `{{ … }}` setzt einen Wert in den Text ein. Zwischen den Klammern steht ein Ausdruck, hier der Zugriff auf ein Feld des Tickets. Das nennt man **Interpolation**.
+- `[attr.data-priority]="…"` setzt ein HTML-Attribut auf den Wert eines Ausdrucks. Die eckigen Klammern bedeuten: Der Wert wird **berechnet**, er ist kein fester Text. Das Attribut steuert die Farbe der Prioritätsmarke im CSS.
+
+<Task id="t2-ab01-a5-css">Ersetze den gesamten Inhalt von `ticket-card.css` durch:</Task>
+
+<CodeFile data={stage} file="src/app/ticket-card/ticket-card.css" />
+
+Das Design der Karte ist vollständig. Einige Teile davon brauchst du erst in den nächsten Aufgaben.
+
+<Task id="t2-ab01-a5-app">Gib der Karte in der App Tickets. Ersetze den gesamten Inhalt von `app.ts` und `app.html` durch:</Task>
+
+<CodeFile data={stage} file="src/app/app.ts" />
+
+<CodeFile data={stage} file="src/app/app.html" />
+
+Jetzt steht die Karte **dreimal** im Browser, jedes Mal mit einem anderen Ticket. Das ist der Vorteil einer Komponente: Du schreibst sie einmal und benutzt sie, so oft du willst.
+
+- `tickets` kommt aus deinen Beispieldaten. `tickets[3]` ist das vierte Ticket, Nummer 4, denn die Zählung beginnt bei 0.
+- `[ticket]="tickets[3]"` reicht das Ticket an den Eingang `ticket` der Karte weiter. Die eckigen Klammern bedeuten wieder: Der Wert wird berechnet.
+- Drei Zeilen für drei Karten sind nur vorläufig. In AB 02 baut `@for` das aus den Daten.
+
+### Aufgabe 6 – Dringende Tickets hervorheben
+
+*Etwa 15 Minuten.*
+
+<TaskBadge>T_6 · Dringende Tickets hervorheben</TaskBadge>
+
+Dringend ist, was du in der Werkstatt als `isUrgent` geschrieben hast: Priorität hoch und noch nicht erledigt.
+
+<Task id="t2-ab01-a6-predict">Sage voraus: Welche der drei Karten (#4, #3, #6) fällt nach dieser Aufgabe auf? Schreibe es auf. Die Daten stehen in `sample-data.ts`.</Task>
+
+<Task id="t2-ab01-a6-class">Schreibe in `ticket-card.ts` die Methode `urgent()`. Sie gibt zurück, ob das Ticket der Karte dringend ist, und sieht aus wie `priorityText()`, nur mit deiner Funktion `isUrgent` aus der Werkstatt. Vergiss den Import von `isUrgent` nicht.</Task>
+
+<details>
+<summary>Lösung: ticket-card.ts</summary>
+
+```ts title="src/app/ticket-card/ticket-card.ts"
+import { Component, input } from '@angular/core';
+import { isUrgent } from '../ticket';
+import type { Ticket } from '../ticket';
+import { PRIORITY_LABEL } from '../ticket-labels';
+
+@Component({
+  selector: 'app-ticket-card',
+  imports: [],
+  templateUrl: './ticket-card.html',
+  styleUrl: './ticket-card.css',
+})
+export class TicketCard {
+  readonly ticket = input.required<Ticket>();
+
+  protected urgent(): boolean {
+    return isUrgent(this.ticket());
+  }
+
+  protected priorityText(): string {
+    return PRIORITY_LABEL[this.ticket().priority];
+  }
+}
+```
+
+</details>
+
+Jetzt muss das Template die Methode benutzen. Das ist neu.
+
+<Task id="t2-ab01-a6-html">Ersetze den gesamten Inhalt von `ticket-card.html` durch:</Task>
+
+```html title="src/app/ticket-card/ticket-card.html"
+<article class="card" [class.urgent]="urgent()">
+  <header class="card-head">
+    <span class="ticket-id">#{{ ticket().id }}</span>
+    @if (urgent()) {
+      <span class="tag-urgent">dringend</span>
+    }
+  </header>
+
+  <h3 class="card-title">{{ ticket().title }}</h3>
+
+  <div class="meta">
+    <span class="prio" [attr.data-priority]="ticket().priority">{{ priorityText() }}</span>
+  </div>
+</article>
+```
+
+**Das ist neu:**
+
+- `[class.urgent]="urgent()"` schaltet die CSS-Klasse `urgent` an, wenn der Ausdruck wahr ist. Das CSS macht daraus den roten Streifen links.
+- `@if (…) { … }` zeigt den Block nur, wenn die Bedingung wahr ist. Das nennt man **Control Flow** (Ablaufsteuerung im Template).
+
+Prüfe deine Vorhersage im Browser.
+
+<details>
+<summary>Auflösung</summary>
+
+Nur Karte #4 fällt auf: Sie hat Priorität hoch und ist offen. Karte #3 hat Priorität mittel. Karte #6 hat zwar Priorität hoch, ist aber erledigt, und ein erledigtes Ticket ist nie dringend. Das hat `isUrgent` in der Werkstatt so festgelegt.
+
+</details>
+
+<Task id="t2-ab01-a6-modify">Ändere in `sample-data.ts` bei Ticket 3 die Priorität auf `1` und speichere. Die Karte #3 fällt jetzt auf, ohne dass du am Template etwas getan hast. Setze die Priorität danach wieder auf `2`.</Task>
+
+### Aufgabe 7 – Bearbeiter anzeigen
+
+*Etwa 10 Minuten.*
+
+<TaskBadge>T_7 · Bearbeiter anzeigen</TaskBadge>
+
+<Task id="t2-ab01-a7-class">Schreibe in `ticket-card.ts` die Methode `assignee()`. Sie gibt den Namen des Bearbeiters zurück und benutzt deine Funktion `assigneeName` aus der Werkstatt, ganz wie `urgent()` die Funktion `isUrgent`.</Task>
+
+<Task id="t2-ab01-a7-html">Zeige den Bearbeiter im Template in dem Element mit der Klasse `meta` neben der Priorität an. Gib ihm die Klasse `assignee`.</Task>
+
+Deine Funktion `assigneeName` liefert „nicht zugewiesen“, wenn es keinen Bearbeiter gibt. Dafür musst du in der Karte nichts mehr tun.
+
+<details>
+<summary>Lösung: ticket-card.ts und ticket-card.html</summary>
+
+<CodeFile data={stage} file="src/app/ticket-card/ticket-card.ts" />
+
+<CodeFile data={stage} file="src/app/ticket-card/ticket-card.html" />
+
+</details>
+
+### Aufgabe 8 – Testfälle
+
+*Etwa 10 Minuten.*
+
+<TaskBadge>T_8 · Testfälle ausführen</TaskBadge>
+
+<Task id="t2-ab01-a8">Führe die Testfälle aus. Jeder ist einem Akzeptanzkriterium der Story zugeordnet.</Task>
+
+<TestTable
+  storageKey="t2-ab01-tests"
+  tests={[
+    {
+      id: 'TF-01',
+      beschreibung: '(A_1) Nummer und Titel',
+      vorbedingung: 'Die Anwendung läuft (npm start)',
+      schritte: ['http://localhost:4200 im Browser öffnen', 'Die erste Karte ansehen'],
+      erwartet: <>Die erste Karte zeigt <code>#4</code> und den Titel „E-Mail-Postfach der Geschäftsführung läuft voll“.</>,
+    },
+    {
+      id: 'TF-02',
+      beschreibung: '(A_2) Priorität erkennen',
+      vorbedingung: 'TF-01 wurde ausgeführt',
+      schritte: ['Die Prioritätsmarken der ersten beiden Karten ansehen'],
+      erwartet: <>Die erste Karte zeigt „Hoch“, die zweite „Mittel“.</>,
+    },
+    {
+      id: 'TF-03',
+      beschreibung: '(A_3) Ein dringendes Ticket fällt auf',
+      vorbedingung: 'TF-01 wurde ausgeführt',
+      schritte: ['Die erste und die zweite Karte vergleichen'],
+      erwartet: <>Die erste Karte hat einen roten Streifen links und die Marke „DRINGEND“. Die zweite Karte hat beides nicht.</>,
+    },
+    {
+      id: 'TF-04',
+      beschreibung: '(A_3) Ein erledigtes Ticket ist nie dringend',
+      vorbedingung: 'TF-01 wurde ausgeführt',
+      schritte: ['Die dritte Karte (#6) ansehen'],
+      erwartet: <>Die Karte zeigt die Priorität „Hoch“, hat aber weder den roten Streifen noch die Marke „DRINGEND“.</>,
+    },
+    {
+      id: 'TF-05',
+      beschreibung: '(A_4) Der Bearbeiter steht da',
+      vorbedingung: 'TF-01 wurde ausgeführt',
+      schritte: ['Bei der ersten Karte den Bearbeiter ansehen'],
+      erwartet: <>Die erste Karte zeigt „Jonas Beck“.</>,
+    },
+    {
+      id: 'TF-06',
+      beschreibung: '(A_5) Ohne Bearbeiter steht „nicht zugewiesen“',
+      vorbedingung: 'TF-01 wurde ausgeführt',
+      schritte: ['Bei der zweiten Karte (#3) den Bearbeiter ansehen'],
+      erwartet: <>Die zweite Karte zeigt „nicht zugewiesen“.</>,
+    },
+    {
+      id: 'TF-07',
+      beschreibung: '(IT-Vorgabe) Die Oberfläche ist eine Angular-Anwendung',
+      vorbedingung: 'Das Projekt wurde mit der Angular-CLI angelegt',
+      schritte: ['Im Projektordner nach der Datei angular.json suchen', 'In app.html nachsehen, wie die Karte eingesetzt wird'],
+      erwartet: <>Die Datei <code>angular.json</code> existiert. In <code>app.html</code> steht <code>&lt;app-ticket-card …&gt;</code> dreimal, es ist keine Karte von Hand dreimal gebaut.</>,
+    },
+  ]}
+/>
+
+## Das hast du gelernt
+
+- Ein Angular-Projekt legst du mit der **Angular-CLI** an, Komponenten erzeugst du mit `ng generate component`.
+- Eine **Komponente** besteht aus Klasse, Template und Stil. Sie hat einen `selector`, unter dem du sie in anderen Templates einsetzt, und `imports` für das, was sie selbst benutzt.
+- Mit **`input.required<…>()`** bekommt eine Komponente Daten von außen, mit `[ticket]="…"` gibst du sie ihr mit.
+- Im Template setzt `{{ … }}` Werte in den Text ein. `[class.urgent]="…"` und `[attr.data-priority]="…"` binden Klassen und Attribute an Ausdrücke. `@if` zeigt etwas nur unter einer Bedingung.
+- Eigener TypeScript-Code aus der Werkstatt lässt sich in Angular unverändert weiterbenutzen.
+
+## Selbstkontrolle
+
+1. Welche drei Dateien gehören zu einer Komponente, und was steht in jeder?
+2. Du setzt `<app-ticket-card />` in ein Template, aber der Browser zeigt nichts, und im Terminal steht NG8001. Was fehlt?
+3. Was bedeuten die eckigen Klammern in `[ticket]="tickets[3]"`?
+4. Warum zeigt Karte #6 trotz Priorität „Hoch“ die Marke „dringend“ nicht?
+
+<details>
+<summary>Antworten</summary>
+
+1. Die Klasse (`.ts`) mit Daten und Verhalten, das Template (`.html`) mit dem Aussehen als HTML und der Stil (`.css`) mit Farben und Abständen.
+2. Die Komponente steht nicht in der Liste `imports` der Komponente, in deren Template du sie einsetzt.
+3. Der Wert wird berechnet. Ohne eckige Klammern wäre `tickets[3]` ein fester Text.
+4. Weil `isUrgent` nur offene und in Arbeit befindliche Tickets mit hoher Priorität als dringend einstuft. #6 ist erledigt.
+
+</details>

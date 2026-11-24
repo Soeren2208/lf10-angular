@@ -1,0 +1,464 @@
+---
+title: "AB 02 – Das Board"
+sidebar_label: "02 – Das Board"
+slug: 02-das-board
+sidebar_position: 2
+---
+
+import stage from '@site/src/data/t2-stage-ab02.json';
+import workshopList from '@site/src/data/t2-workshop-liste.json';
+import ticketList from '@site/src/data/t2-ab02-ticket-list.json';
+
+# AB 02 – Das Board
+
+Aus einer Karte wird ein Board: Die Tickets stehen in drei Spalten, die dringendsten oben.
+
+*Dauer: etwa eine Doppelstunde.*
+
+## Die Anforderung
+
+<StoryCard
+  story={<>
+    <strong>Als</strong> Support-Mitarbeiter, der ein neues Ticket übernehmen will, <strong>möchte ich</strong> alle Tickets nach ihrem Stand geordnet sehen und auf die dringenden beschränken können, <strong>damit</strong> ich sofort erkenne, was noch offen ist, und das Dringendste zuerst bearbeite.
+  </>}
+  criteria={[
+    {id: 'A_1', text: <>Ich sehe drei Spalten mit den Überschriften „Offen“, „In Arbeit“ und „Erledigt“.</>},
+    {id: 'A_2', text: <>Jedes Ticket steht in der Spalte, die seinem Stand entspricht.</>},
+    {id: 'A_3', text: <>In jeder Spalte stehen Tickets mit höherer Priorität weiter oben.</>},
+    {id: 'A_4', text: <>Ich kann auswählen, dass nur dringende Tickets angezeigt werden. Alle anderen sind dann nicht zu sehen.</>},
+    {id: 'A_5', text: <>Ich kann die Auswahl zurücknehmen und sehe wieder alle Tickets.</>},
+    {id: 'A_6', text: <>Hat eine Spalte kein Ticket, steht dort „Keine Tickets“.</>},
+  ]}
+/>
+
+Nicht Teil dieser Story: Den Stand eines Tickets ändern und die Zahlen über den Spalten kommen in AB 03, ein einzelnes Ticket aufrufen in AB 04. Die Daten sind weiter die Beispieldaten aus der Werkstatt.
+
+Daraus hat dein Team im Sprint-Planning-Meeting 2 folgende Tasks abgeleitet:
+
+<PlanningBox>
+
+| # | Task | Erfüllt |
+|---|---|---|
+| T_1 | Komponente „Board“ anlegen und einsetzen | Voraussetzung für A_1–A_6 |
+| T_2 | Tickets eines Standes aus der Liste holen | Voraussetzung für A_2 |
+| T_3 | Alle Tickets aus den Daten anzeigen | Voraussetzung für A_1–A_6 |
+| T_4 | Drei Spalten mit Überschrift bauen | A_1, A_2 |
+| T_5 | Die dringendsten Tickets nach oben sortieren | A_3 |
+| T_6 | Schalter „Nur dringende Tickets zeigen“ bauen | A_4, A_5 |
+| T_7 | Leere Spalten melden | A_6 |
+| T_8 | Testfälle ausführen | alle |
+
+</PlanningBox>
+
+## Das Board im Wireframe
+
+![Wireframe des Boards mit drei Spalten Offen, In Arbeit und Erledigt, Ticketkacheln, einem Schalter für dringende Tickets und einem Feld für die Ticketnummer](/img/tutorial-02/01-board.png)
+
+Das Board besteht aus drei Spalten, jede mit ihrer Überschrift und ihren Karten. Über den Spalten liegt der Schalter „Nur dringende Tickets zeigen“. Die Zahlen in den Spaltenköpfen, die Knöpfe auf den Karten und das Feld für die Ticketnummer gehören zu späteren Arbeitsblättern.
+
+## Aufgaben
+
+### Aufgabe 1 – Die Komponente „Board“
+
+*Etwa 10 Minuten.*
+
+<TaskBadge>T_1 · Komponente „Board“ anlegen und einsetzen</TaskBadge>
+
+Das Board ist eine neue Komponente. Sie setzt die Karten ein, die du in AB 01 gebaut hast, so wie bisher die App sie eingesetzt hat.
+
+<Task id="t2-ab02-a1-generate">Lege mit der Angular-CLI die Komponente `ticket-board` an, wie in AB 01 die Karte.</Task>
+
+<Task id="t2-ab02-a1-app">Die App soll jetzt nicht mehr die Karten zeigen, sondern das Board. Setze `app-ticket-board` in der App ein und entferne die drei Karten samt Beispieldaten und Import aus der App.</Task>
+
+<Task id="t2-ab02-a1-css">Ersetze den gesamten Inhalt von `src/app/app.css`. Die Klasse für die drei Karten untereinander entfällt.</Task>
+
+<CodeFile data={stage} file="src/app/app.css" />
+
+Im Browser steht unter der Kopfzeile „ticket-board works!“. Die Karten sind erst einmal weg, sie kommen gleich im Board zurück.
+
+<details>
+<summary>Lösung: Befehl, app.ts und app.html</summary>
+
+```bash
+npx ng generate component ticket-board --skip-tests
+```
+
+<CodeFile data={stage} file="src/app/app.ts" />
+
+<CodeFile data={stage} file="src/app/app.html" />
+
+</details>
+
+### Aufgabe 2 – Tickets eines Standes aus der Liste holen
+
+*Etwa 10 Minuten.*
+
+<TaskBadge>T_2 · Tickets eines Standes aus der Liste holen</TaskBadge>
+
+Jede Spalte zeigt die Tickets mit einem Stand. In der Werkstatt hast du dafür `openTickets` geschrieben, das nur die offenen Tickets liefert. Das Board braucht diese Auswahl für alle drei Stände.
+
+<Task id="t2-ab02-a2-copy">Kopiere aus deinem Projekt der TypeScript-Werkstatt die Datei `src/ticket-list.ts` in den Ordner `src/app` des Projekts.</Task>
+
+<Solution daten={workshopList} titel="Werkstatt nicht fertig? Die Musterlösung dieser Datei" />
+
+<Task id="t2-ab02-a2-write">Schreibe in `ticket-list.ts` die Funktion `ticketsWithStatus(tickets, status)`. Sie gibt alle Tickets zurück, deren Stand `status` ist, und lässt die übergebene Liste unverändert. Sie ist wie `openTickets`, nur dass der Stand ein Parameter ist. Der Typ `Status` ist in der Datei schon importiert.</Task>
+
+<details>
+<summary>Lösung: ticket-list.ts</summary>
+
+<CodeFile data={ticketList} file="src/app/ticket-list.ts" />
+
+</details>
+
+<Task id="t2-ab02-a2-check">Im Terminal, in dem `npm start` läuft, steht keine rote Fehlermeldung.</Task>
+
+### Aufgabe 3 – Alle Tickets aus den Daten anzeigen
+
+*Etwa 15 Minuten.*
+
+<TaskBadge>T_3 · Alle Tickets aus den Daten anzeigen</TaskBadge>
+
+In AB 01 standen drei Karten fest im Template, jede von Hand. Das geht nicht für ein Board: Es soll so viele Karten zeigen, wie es Tickets gibt. Dafür gibt es in Angular die Schleife `@for`.
+
+<Task id="t2-ab02-a3-css">Das Design des Boards ist fertig. Ersetze den gesamten Inhalt von `ticket-board.css` durch:</Task>
+
+<CodeFile data={stage} file="src/app/ticket-board/ticket-board.css" />
+
+Einige Teile davon brauchst du erst in den nächsten Aufgaben.
+
+<Task id="t2-ab02-a3-class">Ersetze den gesamten Inhalt von `ticket-board.ts` durch:</Task>
+
+```ts title="src/app/ticket-board/ticket-board.ts"
+import { Component } from '@angular/core';
+import { sampleTickets } from '../sample-data';
+import { TicketCard } from '../ticket-card/ticket-card';
+
+@Component({
+  selector: 'app-ticket-board',
+  imports: [TicketCard],
+  templateUrl: './ticket-board.html',
+  styleUrl: './ticket-board.css',
+})
+export class TicketBoard {
+  protected readonly tickets = sampleTickets;
+}
+```
+
+Das kennst du aus AB 01: Das Board benutzt die Karte, deshalb steht sie in `imports`. Die Beispieldaten liegen jetzt im Board statt in der App.
+
+<Task id="t2-ab02-a3-html">Ersetze den gesamten Inhalt von `ticket-board.html` durch:</Task>
+
+```html title="src/app/ticket-board/ticket-board.html"
+<div class="column">
+  @for (ticket of tickets; track ticket.id) {
+    <app-ticket-card [ticket]="ticket" />
+  }
+</div>
+```
+
+Im Browser stehen jetzt alle **acht** Karten untereinander. Sie sind aus einer einzigen Zeile Template entstanden.
+
+**So funktioniert `@for`:**
+
+- `@for (ticket of tickets; … ) { … }` wiederholt den Block für jedes Element der Liste. `ticket` ist die Schleifenvariable, in jedem Durchlauf ein anderes Ticket. Das entspricht `for (Ticket ticket : tickets)` in Java.
+- `track ticket.id` ist Pflicht. Es sagt Angular, woran es ein Element wiedererkennt. Ändert sich die Liste später, baut Angular nur die Karten neu, die sich geändert haben, und nicht alle. Als Merkmal nimmst du etwas, das jedes Element nur einmal hat, hier die Nummer des Tickets.
+- Innerhalb des Blocks gibst du mit `[ticket]="ticket"` das aktuelle Ticket an die Karte weiter, wie in AB 01.
+
+<Task id="t2-ab02-a3-count">Zähle die Karten im Browser. Es sind acht, wie viele Tickets in `sample-data.ts` stehen.</Task>
+
+### Aufgabe 4 – Drei Spalten mit Überschrift
+
+*Etwa 25 Minuten.*
+
+<TaskBadge>T_4 · Drei Spalten mit Überschrift bauen</TaskBadge>
+
+Jetzt verteilst du die Tickets auf drei Spalten. Jede Spalte braucht eine Überschrift, und die Texte dafür schreibst du wie die Prioritätstexte in AB 01.
+
+<Task id="t2-ab02-a4-labels">Ergänze in `ticket-labels.ts` die Tabelle `STATUS_LABEL`. Sie ordnet jedem Stand den Text für die Spaltenüberschrift zu: „Offen“, „In Arbeit“ und „Erledigt“. Sie ist aufgebaut wie `PRIORITY_LABEL`.</Task>
+
+<details>
+<summary>Lösung: ticket-labels.ts</summary>
+
+<CodeFile data={stage} file="src/app/ticket-labels.ts" />
+
+</details>
+
+Danach gibst du dem Board die Liste der drei Spalten.
+
+<Task id="t2-ab02-a4-class">Ersetze den gesamten Inhalt von `ticket-board.ts` durch:</Task>
+
+```ts title="src/app/ticket-board/ticket-board.ts"
+import { Component } from '@angular/core';
+import { sampleTickets } from '../sample-data';
+import type { Status } from '../ticket';
+import { ticketsWithStatus } from '../ticket-list';
+import { TicketCard } from '../ticket-card/ticket-card';
+import { STATUS_LABEL } from '../ticket-labels';
+
+/** Die drei Spalten des Boards, von links nach rechts. */
+const COLUMNS: { status: Status; css: string }[] = [
+  { status: 'offen', css: 'open' },
+  { status: 'in Arbeit', css: 'progress' },
+  { status: 'erledigt', css: 'done' },
+];
+
+@Component({
+  selector: 'app-ticket-board',
+  imports: [TicketCard],
+  templateUrl: './ticket-board.html',
+  styleUrl: './ticket-board.css',
+})
+export class TicketBoard {
+  protected readonly tickets = sampleTickets;
+
+  /** Je Spalte die Tickets mit dem passenden Stand. */
+  protected columns() {
+    return COLUMNS.map((column) => ({
+      css: column.css,
+      label: STATUS_LABEL[column.status],
+      tickets: ticketsWithStatus(this.tickets, column.status),
+    }));
+  }
+}
+```
+
+**Das ist neu:**
+
+- `COLUMNS` beschreibt die drei Spalten. `{ status: Status; css: string }[]` ist der Typ „Liste von Objekten mit diesen zwei Feldern“, hier ohne eigenes `interface` direkt hingeschrieben. `status` sagt, welche Tickets in die Spalte gehören, `css` ist ein Name, mit dem das Design die Spalte einfärbt.
+- `columns()` macht aus dieser Liste, was das Template braucht: je Spalte die Klasse, die Überschrift und die Tickets. Dafür benutzt es `map`, das du aus der Werkstatt kennst, und deine Funktion `ticketsWithStatus` aus Aufgabe 2.
+- `STATUS_LABEL[column.status]` schlägt den Text für den Stand nach, genau wie `PRIORITY_LABEL[…]` in AB 01.
+
+<Task id="t2-ab02-a4-html">Ersetze den gesamten Inhalt von `ticket-board.html` durch:</Task>
+
+```html title="src/app/ticket-board/ticket-board.html"
+<div class="columns">
+  @for (column of columns(); track column.css) {
+    <section [class]="'column ' + column.css">
+      <h2 class="column-title">
+        <span class="dot" aria-hidden="true"></span>
+        {{ column.label }}
+      </h2>
+
+      @for (ticket of column.tickets; track ticket.id) {
+        <app-ticket-card [ticket]="ticket" />
+      }
+    </section>
+  }
+</div>
+```
+
+**So funktioniert das Template:**
+
+- Die äußere Schleife läuft über die **Spalten**, die innere über die **Tickets der Spalte**. Zwei `@for` ineinander sind üblich.
+- `[class]="'column ' + column.css"` setzt alle CSS-Klassen des Elements auf den berechneten Text. Für die Spalte „Offen“ ist das `column open`. Das Design färbt damit den Punkt vor der Überschrift.
+- Der Punkt ist nur Dekoration. `aria-hidden="true"` sagt Screenreadern, dass sie ihn überspringen.
+
+<Task id="t2-ab02-a4-check">Prüfe im Browser: Es gibt drei Spalten „Offen“, „In Arbeit“ und „Erledigt“. In „Offen“ stehen vier Karten, in „In Arbeit“ zwei und in „Erledigt“ zwei.</Task>
+
+### Aufgabe 5 – Die dringendsten Tickets nach oben
+
+*Etwa 10 Minuten.*
+
+<TaskBadge>T_5 · Die dringendsten Tickets nach oben sortieren</TaskBadge>
+
+<Task id="t2-ab02-a5-predict">Sage voraus: In welcher Reihenfolge (nach Nummer) sollen die Tickets in der Spalte „Offen“ stehen, wenn die dringendsten oben stehen sollen? Schreibe es auf. Bei gleicher Priorität zählt die kleinere Nummer zuerst. Die Daten stehen in `sample-data.ts`.</Task>
+
+<Task id="t2-ab02-a5-sort">In der Werkstatt hast du die Funktion `sortedByPriority` geschrieben. Sortiere damit die Tickets jeder Spalte in `columns()`. Prüfe im Browser deine Vorhersage.</Task>
+
+<details>
+<summary>Lösung: ticket-board.ts</summary>
+
+```ts title="src/app/ticket-board/ticket-board.ts"
+import { Component } from '@angular/core';
+import { sampleTickets } from '../sample-data';
+import type { Status } from '../ticket';
+import { sortedByPriority, ticketsWithStatus } from '../ticket-list';
+import { TicketCard } from '../ticket-card/ticket-card';
+import { STATUS_LABEL } from '../ticket-labels';
+
+/** Die drei Spalten des Boards, von links nach rechts. */
+const COLUMNS: { status: Status; css: string }[] = [
+  { status: 'offen', css: 'open' },
+  { status: 'in Arbeit', css: 'progress' },
+  { status: 'erledigt', css: 'done' },
+];
+
+@Component({
+  selector: 'app-ticket-board',
+  imports: [TicketCard],
+  templateUrl: './ticket-board.html',
+  styleUrl: './ticket-board.css',
+})
+export class TicketBoard {
+  protected readonly tickets = sampleTickets;
+
+  /** Je Spalte die Tickets, die dringendsten zuerst. */
+  protected columns() {
+    return COLUMNS.map((column) => ({
+      css: column.css,
+      label: STATUS_LABEL[column.status],
+      tickets: sortedByPriority(ticketsWithStatus(this.tickets, column.status)),
+    }));
+  }
+}
+```
+
+Die Reihenfolge in „Offen“ ist #4 (Priorität hoch), #3 und #8 (beide mittel, die kleinere Nummer zuerst), dann #5 (niedrig).
+
+</details>
+
+### Aufgabe 6 – Der Schalter „Nur dringende Tickets zeigen“
+
+*Etwa 15 Minuten.*
+
+<TaskBadge>T_6 · Schalter „Nur dringende Tickets zeigen“ bauen</TaskBadge>
+
+Bisher zeigt das Board nur an. Jetzt reagiert es auf den Benutzer: Ein Haken schaltet um, ob alle Tickets oder nur die dringenden zu sehen sind.
+
+<Task id="t2-ab02-a6-class">Ersetze den gesamten Inhalt von `ticket-board.ts` durch:</Task>
+
+<CodeFile data={stage} file="src/app/ticket-board/ticket-board.ts" />
+
+**Das ist neu:**
+
+- `protected urgentOnly = false;` ist der Zustand des Schalters: Steht er auf `true`, sollen nur dringende Tickets erscheinen.
+- `toggleUrgent()` kehrt den Zustand um. Das Template ruft die Methode auf, wenn der Haken sich ändert.
+- `columns()` nimmt jetzt erst die dringenden Tickets heraus, wenn der Schalter an ist. `this.tickets.filter(isUrgent)` ist die Kurzform von `this.tickets.filter((ticket) => isUrgent(ticket))`: Statt eines Pfeils steht der Name der Funktion.
+
+<Task id="t2-ab02-a6-html">Ersetze den gesamten Inhalt von `ticket-board.html` durch:</Task>
+
+```html title="src/app/ticket-board/ticket-board.html"
+<div class="toolbar">
+  <label class="switch">
+    <input type="checkbox" [checked]="urgentOnly" (change)="toggleUrgent()" />
+    Nur dringende Tickets zeigen
+  </label>
+</div>
+
+<div class="columns">
+  @for (column of columns(); track column.css) {
+    <section [class]="'column ' + column.css">
+      <h2 class="column-title">
+        <span class="dot" aria-hidden="true"></span>
+        {{ column.label }}
+      </h2>
+
+      @for (ticket of column.tickets; track ticket.id) {
+        <app-ticket-card [ticket]="ticket" />
+      }
+    </section>
+  }
+</div>
+```
+
+**Das ist neu:**
+
+- `(change)="toggleUrgent()"` ist ein **Event-Binding**. Die runden Klammern bedeuten: Wenn dieses Ereignis eintritt, führe den Ausdruck aus. Hier ruft die Änderung am Haken die Methode auf. Die eckigen Klammern kennst du schon (`[ticket]="…"` rechnet einen Wert aus). Die runden stehen für das Gegenteil: Sie melden etwas **nach außen**, vom Template an die Klasse.
+- `[checked]="urgentOnly"` hält den Haken im Einklang mit dem Zustand der Klasse.
+- Nach einem Klick führt Angular das Template neu aus und ruft dabei `columns()` erneut auf. Deshalb zeigt das Board sofort den neuen Stand. Warum das nicht immer so einfach klappt, erfährst du in AB 03.
+
+<Task id="t2-ab02-a6-predict">Sage voraus: Du setzt den Haken. Welche Tickets bleiben auf dem Board? Welche Spalte ist danach leer? Probiere es im Browser aus.</Task>
+
+<details>
+<summary>Auflösung</summary>
+
+Es bleiben #4 in „Offen“ und #2 in „In Arbeit“. Das sind die einzigen dringenden Tickets. „Erledigt“ ist leer, denn ein erledigtes Ticket ist nie dringend. Nimmst du den Haken wieder heraus, stehen alle acht Tickets wieder da.
+
+</details>
+
+### Aufgabe 7 – Leere Spalten melden
+
+*Etwa 5 Minuten.*
+
+<TaskBadge>T_7 · Leere Spalten melden</TaskBadge>
+
+Mit gesetztem Haken ist die Spalte „Erledigt“ leer, und das Board sagt dazu nichts. Der Support-Mitarbeiter kann nicht erkennen, ob die Spalte wirklich leer ist oder ob etwas nicht geladen wurde. Die Schleife `@for` hat dafür einen eigenen Block.
+
+<Task id="t2-ab02-a7-html">Ersetze den gesamten Inhalt von `ticket-board.html` durch:</Task>
+
+<CodeFile data={stage} file="src/app/ticket-board/ticket-board.html" />
+
+**Das ist neu:** Ein Block `@empty { … }` direkt hinter dem `@for` wird nur gezeigt, wenn die Liste leer ist. Es ist kein `@if` mit einer Prüfung nötig, die Schleife kennt den Fall selbst.
+
+<Task id="t2-ab02-a7-check">Setze den Haken. In der Spalte „Erledigt“ steht „Keine Tickets“, in den anderen beiden Spalten nicht. Nimm den Haken heraus: Die Meldung verschwindet.</Task>
+
+### Aufgabe 8 – Testfälle
+
+*Etwa 10 Minuten.*
+
+<TaskBadge>T_8 · Testfälle ausführen</TaskBadge>
+
+<Task id="t2-ab02-a8">Führe die Testfälle aus. Jeder ist einem Akzeptanzkriterium der Story zugeordnet.</Task>
+
+<TestTable
+  storageKey="t2-ab02-tests"
+  tests={[
+    {
+      id: 'TF-01',
+      beschreibung: '(A_1) Drei Spalten mit Überschrift',
+      vorbedingung: 'Die Anwendung läuft (npm start)',
+      schritte: ['http://localhost:4200 im Browser öffnen'],
+      erwartet: <>Das Board hat drei Spalten mit den Überschriften „Offen“, „In Arbeit“ und „Erledigt“, von links nach rechts.</>,
+    },
+    {
+      id: 'TF-02',
+      beschreibung: '(A_2) Jedes Ticket steht in der Spalte seines Standes',
+      vorbedingung: 'TF-01 wurde ausgeführt',
+      schritte: ['Die Nummern der Karten in jeder Spalte ansehen und mit den Daten in sample-data.ts vergleichen'],
+      erwartet: <>„Offen“ zeigt die Tickets 4, 3, 8 und 5. „In Arbeit“ zeigt 2 und 7. „Erledigt“ zeigt 6 und 1.</>,
+    },
+    {
+      id: 'TF-03',
+      beschreibung: '(A_3) Dringendere Tickets stehen oben',
+      vorbedingung: 'TF-01 wurde ausgeführt',
+      schritte: ['Die Reihenfolge der Karten in der Spalte „Offen“ ansehen'],
+      erwartet: <>Die Reihenfolge ist 4, 3, 8, 5: erst die Priorität „Hoch“, dann „Mittel“ (kleinere Nummer zuerst), dann „Niedrig“.</>,
+    },
+    {
+      id: 'TF-04',
+      beschreibung: '(A_4) Nur dringende Tickets zeigen',
+      vorbedingung: 'TF-01 wurde ausgeführt',
+      schritte: ['Den Haken bei „Nur dringende Tickets zeigen“ setzen'],
+      erwartet: <>Auf dem Board stehen nur noch die Tickets 4 (in „Offen“) und 2 (in „In Arbeit“).</>,
+    },
+    {
+      id: 'TF-05',
+      beschreibung: '(A_5) Auswahl zurücknehmen',
+      vorbedingung: 'TF-04 wurde ausgeführt, der Haken ist gesetzt',
+      schritte: ['Den Haken wieder entfernen'],
+      erwartet: <>Alle acht Tickets stehen wieder auf dem Board, wie in TF-02.</>,
+    },
+    {
+      id: 'TF-06',
+      beschreibung: '(A_6) Leere Spalte meldet „Keine Tickets“',
+      vorbedingung: 'TF-01 wurde ausgeführt, der Haken ist nicht gesetzt',
+      schritte: ['Prüfen, dass keine Spalte „Keine Tickets“ zeigt', 'Den Haken setzen', 'Die Spalte „Erledigt“ ansehen'],
+      erwartet: <>Ohne Haken zeigt keine Spalte die Meldung. Mit Haken steht in der Spalte „Erledigt“ der Text „Keine Tickets“, in den anderen beiden Spalten nicht.</>,
+    },
+  ]}
+/>
+
+## Das hast du gelernt
+
+- Mit **`@for (… of …; track …)`** zeigst du eine Liste an, eine Karte je Ticket. Das Merkmal hinter `track` muss für jedes Element eindeutig sein, meist die Nummer.
+- **`@empty`** hinter einem `@for` zeigt etwas, wenn die Liste leer ist.
+- Mit **`(change)="…"`** reagiert das Template auf eine Eingabe des Benutzers (Event-Binding). `[class]="…"` und `[checked]="…"` rechnen einen Wert aus.
+- Ein einfaches Feld der Klasse genügt als Zustand, wenn nur ein Klick ihn ändert. Angular zeichnet nach dem Klick neu.
+- Funktionen aus der Werkstatt (`ticketsWithStatus`, `sortedByPriority`, `isUrgent`) arbeiten unverändert im Board, weil sie reines TypeScript sind.
+
+## Selbstkontrolle
+
+1. Wozu dient `track ticket.id` in einem `@for`?
+2. Du setzt in `ticket-board.html` `<app-ticket-card />` ein, die Karten erscheinen aber nicht und im Terminal steht NG8001. Was fehlt?
+3. Was ist der Unterschied zwischen `[checked]="urgentOnly"` und `(change)="toggleUrgent()"`?
+4. Warum steht in „Erledigt“ nichts, wenn der Haken gesetzt ist, und wie änderst du das?
+
+<details>
+<summary>Antworten</summary>
+
+1. Es sagt Angular, woran es ein Element wiedererkennt. Ändert sich die Liste, baut Angular nur die Karten neu, die sich geändert haben.
+2. Die Karte steht nicht in der Liste `imports` des Boards.
+3. `[checked]="…"` schreibt einen Wert aus der Klasse ins Template, hier den Zustand des Hakens. `(change)="…"` ruft die Klasse auf, wenn der Benutzer etwas ändert.
+4. Ein erledigtes Ticket ist nie dringend, der Filter lässt es also nicht durch. Die Meldung „Keine Tickets“ erscheint mit einem `@empty`-Block hinter dem inneren `@for`.
+
+</details>

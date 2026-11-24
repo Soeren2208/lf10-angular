@@ -1,4 +1,4 @@
-# AbhÃ¤ngigkeiten und Bauergebnisse
+# Abhängigkeiten und Bauergebnisse
 node_modules/
 build/
 .docusaurus/
@@ -8,7 +8,7 @@ dist/
 # Log-Dateien
 *.log
 
-# Alte Word-ArbeitsblÃ¤tter bleiben lokal
+# Alte Word-Arbeitsblätter bleiben lokal
 *.docx
 *.doc
 
@@ -25,3 +25,9 @@ _serve/
 
 # Beim Bauen erzeugt (website/scripts)
 website/src/data/
+
+# Tutorial 02: Musterlösung und Testwerkzeuge werden erzeugt (node build-solution.mjs)
+02-angular-einstieg/solution/
+02-angular-einstieg/solution-*/
+02-angular-einstieg/e2e/node_modules/
+02-angular-einstieg/e2e/bilder/

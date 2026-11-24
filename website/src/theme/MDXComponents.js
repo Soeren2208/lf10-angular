@@ -8,6 +8,7 @@ import Solution from '@site/src/components/Solution';
 import StoryCard from '@site/src/components/StoryCard';
 import TaskBadge from '@site/src/components/TaskBadge';
 import PlanningBox from '@site/src/components/PlanningBox';
+import CodeFile from '@site/src/components/CodeFile';
 
 export default {
   // Bestehende Docusaurus-MDX-Komponenten übernehmen ...
@@ -21,4 +22,5 @@ export default {
   StoryCard,
   TaskBadge,
   PlanningBox,
+  CodeFile,
 };

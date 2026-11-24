@@ -166,12 +166,25 @@ private readonly listeners = new Set<Listener>();
 
 <Task id="ts-ab03-a4-notify">Schreibe die private Methode `notify()`: Sie ruft **jeden** angemeldeten Listener mit der aktuellen Liste auf.</Task>
 
-<Task id="ts-ab03-a4-onchange">Schreibe `onChange(listener)`: Die Methode merkt sich den Listener. Als Ergebnis liefert sie eine **Funktion**, die ihn wieder entfernt (`delete`).</Task>
-
-<details>
-<summary>Tipp: Eine Funktion, die eine Funktion zurückgibt</summary>
+`onChange` soll als Ergebnis eine **Funktion** liefern, mit der man sich wieder abmeldet. Eine Funktion, die eine Funktion zurückgibt, ist neu. Hier ein Beispiel mit etwas anderem:
 
 ```ts
+function makeGreeter(greeting: string): () => string {
+  return () => `${greeting}, Welt!`;
+}
+
+const hello = makeGreeter('Hallo');
+hello();   // 'Hallo, Welt!'
+```
+
+Der Rückgabetyp `() => string` heißt: eine Funktion ohne Parameter, die einen Text liefert. Die zurückgegebene Funktion „erinnert sich“ an `greeting`, auch nachdem `makeGreeter` längst beendet ist. Man nennt das eine **Closure**.
+
+<Task id="ts-ab03-a4-onchange">Schreibe `onChange(listener)`: Die Methode merkt sich den Listener. Als Ergebnis liefert sie eine **Funktion**, die ihn wieder entfernt (`delete`). Der Rückgabetyp ist `() => void`, eine Funktion ohne Parameter, die nichts zurückgibt.</Task>
+
+<details>
+<summary>Lösung: onChange</summary>
+
+```ts title="src/ticket-store.ts"
 onChange(listener: Listener): () => void {
   this.listeners.add(listener);
   return () => {
@@ -179,8 +192,6 @@ onChange(listener: Listener): () => void {
   };
 }
 ```
-
-Der Rückgabetyp `() => void` heißt: eine Funktion ohne Parameter, die nichts zurückgibt. Die zurückgegebene Funktion „erinnert sich“ an `listener`, auch nachdem `onChange` längst beendet ist. Man nennt das eine **Closure**.
 
 </details>
 
@@ -217,11 +228,24 @@ Nein. `fetch` meldet einen Fehler nur, wenn das **Netz** scheitert (kein Interne
 
 </details>
 
-<Task id="ts-ab03-a5-load">Schreibe `loadTickets`. Die Funktion ist schon als `async` gekennzeichnet. Gehe so vor:</Task>
+So sieht die Funktion `loadTickets` aus. Sie ist neu, deshalb steht sie hier vollständig:
 
-1. Rufe die Adresse mit `await fetch(url)` ab.
-2. Ist `response.ok` falsch, wirf einen Fehler: ``throw new Error(`HTTP ${response.status}`)``.
-3. Sonst liefere den Inhalt: `(await response.json()) as Ticket[]`.
+```ts title="src/ticket-store.ts"
+export async function loadTickets(url: string): Promise<Ticket[]> {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+  return (await response.json()) as Ticket[];
+}
+```
+
+- `async` kennzeichnet eine Funktion, die auf etwas wartet. Ihr Ergebnis ist immer ein **`Promise`**, eine Zusage auf einen Wert, der später da ist. `Promise<Ticket[]>` heißt: später liegt hier eine Liste von Tickets.
+- `await fetch(url)` ruft die Adresse ab und **wartet** auf die Antwort, ohne das Programm anzuhalten. Das geht nur in einer `async`-Funktion.
+- `response.ok` ist wahr, wenn der Server mit Erfolg geantwortet hat. Sonst wirft die Funktion einen Fehler mit dem Text `HTTP 404` (oder die jeweilige Nummer).
+- `await response.json()` liest den Inhalt der Antwort als Daten, und `as Ticket[]` sagt dem Compiler, welche Form sie haben.
+
+<Task id="ts-ab03-a5-load">Übernimm die Funktion in `src/ticket-store.ts`. Sie ersetzt den Platzhalter `loadTickets`.</Task>
 
 <Task id="ts-ab03-a5-test1">Starte `npm run test:ab03`. Die zwei Tests `loadTickets` in der Gruppe `C3` werden grün. Sie benutzen ein **vorgegebenes** `fetch` und brauchen kein Netz.</Task>
 
@@ -250,15 +274,31 @@ Wer ein `Result` benutzt, **muss** zuerst prüfen, ob `ok` wahr ist. Erst dann w
 
 **C4** `loadTicketsSafe(url)` ruft `loadTickets` auf, wirft aber **nie**, sondern liefert ein `Result`.
 
+Eine Neuerung gibt es noch beim Fehlertext. Der Fehler im `catch` hat den Typ `unknown`, denn in JavaScript kann man alles werfen, nicht nur Fehlerobjekte. Prüfe, ob es ein Fehlerobjekt ist, bevor du den Text benutzt. Ein Beispiel mit etwas anderem:
+
+```ts
+try {
+  riskyCall();
+} catch (error: unknown) {
+  const text = error instanceof Error ? error.message : String(error);
+}
+```
+
+`error instanceof Error` kennst du aus Java: Es prüft, ob der Wert ein Fehlerobjekt ist. Dann steht sein Text in `error.message`. Sonst macht `String(error)` aus jedem beliebigen Wert einen Text.
+
 <Task id="ts-ab03-a5-safe">Schreibe `loadTicketsSafe` mit `try` und `catch`. Im `try` liefert die Funktion `{ ok: true, data: … }`, im `catch` `{ ok: false, error: … }`.</Task>
 
 <details>
-<summary>Tipp: Der Fehlertext</summary>
+<summary>Lösung: loadTicketsSafe</summary>
 
-Der Fehler im `catch` hat den Typ `unknown`, denn in JavaScript kann man alles werfen. Prüfe, ob es ein Fehlerobjekt ist, bevor du den Text benutzt:
-
-```ts
-error instanceof Error ? error.message : String(error)
+```ts title="src/ticket-store.ts"
+export async function loadTicketsSafe(url: string): Promise<Result<Ticket[]>> {
+  try {
+    return { ok: true, data: await loadTickets(url) };
+  } catch (error: unknown) {
+    return { ok: false, error: error instanceof Error ? error.message : String(error) };
+  }
+}
 ```
 
 </details>

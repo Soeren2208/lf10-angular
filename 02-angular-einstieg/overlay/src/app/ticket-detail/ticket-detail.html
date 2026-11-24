@@ -1,0 +1,30 @@
+@if (view(); as v) {
+  <article class="detail">
+    <a class="back" routerLink="/">← Zurück zum Board</a>
+    <h1>Ticket #{{ v.ticket.id }}</h1>
+
+    <dl class="facts">
+      <dt>Titel</dt>
+      <dd>{{ v.ticket.title }}</dd>
+      <dt>Stand</dt>
+      <dd>{{ v.statusText }}</dd>
+      <dt>Priorität</dt>
+      <dd>
+        {{ v.priorityText }}
+        @if (v.urgent) {
+          <span class="tag-urgent">dringend</span>
+        }
+      </dd>
+      <dt>Bearbeiter</dt>
+      <dd>{{ v.assignee }}</dd>
+      <dt>Gemeldet am</dt>
+      <dd>{{ v.ticket.createdAt | date: 'dd.MM.yyyy' }}</dd>
+    </dl>
+  </article>
+} @else {
+  <article class="detail not-found">
+    <h1>Ticket nicht gefunden</h1>
+    <p>Zu dieser Nummer gibt es kein Ticket.</p>
+    <a class="btn" routerLink="/">Zurück zum Board</a>
+  </article>
+}

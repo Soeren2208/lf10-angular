@@ -36,6 +36,15 @@ const tutorials = [
       'ein Datenmodell, eine Logik und einen Speicher – geprüft von Tests, ' +
       'die zuerst rot sind.',
   },
+  {
+    id: 'tutorial-02',
+    nummer: '02',
+    titel: 'Das Ticket-Board',
+    stichworte: 'Komponenten · Control Flow · Signals · Service · Routing',
+    beschreibung:
+      'Der Angular-Einstieg: Aus Personas, Nutzungsanforderungen und einem ' +
+      'Wireframe wird ein Board für die Support-Tickets der HiTec GmbH.',
+  },
 ];
 
 // GitHub Actions setzt CI=true. Daran erkennen wir eine Veröffentlichung.

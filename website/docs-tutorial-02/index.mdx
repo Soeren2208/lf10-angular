@@ -1,0 +1,132 @@
+---
+title: "Tutorial 02 – Das Ticket-Board"
+sidebar_label: Übersicht
+slug: /
+sidebar_position: 0
+---
+
+# Tutorial 02 – Das Ticket-Board
+
+## Die Situation
+
+Die Support-Abteilung der **HiTec GmbH** hat ihre Tickets lange in einer Excel-Tabelle verwaltet. In der TypeScript-Werkstatt hast du dafür die Logik gebaut: Typen, Listenfunktionen, einen Speicher. Jetzt bekommt die Abteilung ihre Oberfläche, das **Ticket-Board**.
+
+Aus dem Gespräch mit der Support-Leitung:
+
+> „Wir ersetzen die Tabelle. Ich will auf einen Blick sehen, was offen ist, woran gerade gearbeitet wird und was erledigt ist. Und wenn ein Kollege ein Ticket übernimmt, soll es sofort in der richtigen Spalte stehen.“
+
+**Dein Auftrag:** Baue die Oberfläche mit Angular, nach den Anforderungen und dem Wireframe auf dieser Seite.
+
+Wie in einem echten Projekt fängst du nicht mit einer leeren Seite an. Das Team hat vorher die Nutzenden befragt, Erfordernisse und Nutzungsanforderungen abgeleitet und einen Wireframe entworfen, so wie du es aus dem Design-Prozess kennst. Das Ergebnis liegt dir hier vor. In jedem Arbeitsblatt bekommst du daraus eine **User Story** mit Akzeptanzkriterien.
+
+## Die Nutzenden
+
+Beide Personas sind für den Unterricht konstruiert.
+
+### Jonas Beck, Support-Mitarbeiter
+
+| | |
+|---|---|
+| **Alter** | 27 |
+| **Wohnort** | Bremen |
+| **Ausbildung** | Fachinformatiker für Systemintegration |
+| **Beruf** | Support-Mitarbeiter (1st Level) bei der HiTec GmbH, seit vier Jahren |
+| **Arbeitsplatz** | Desktop-PC mit zwei Monitoren, Headset |
+| **Technikaffinität** | Hoch: kennt Ticketsysteme, Tastaturkürzel und Excel |
+
+> „Wenn ich morgens die Tabelle öffne, weiß ich nie, ob nicht schon jemand dasselbe Ticket angefasst hat.“
+
+**Ziele:** Dringendes zuerst erledigen · kein Ticket doppelt bearbeiten · den Stand aktuell halten, ohne etwas nachzutragen · Rückfragen schnell beantworten.
+
+**Frustrationen:** Zwei Kollegen ändern gleichzeitig dieselbe Tabelle. Der Status steht mal als „in arbeit“, mal als „Erledigt“. Rückfragen kommen per Chat mit einer Ticketnummer, und er sucht die Zeile.
+
+**Nutzungskontext:** Desktop-PC im Büro des Supports, den ganzen Tag über, mehrere Dutzend Mal am Tag und meist nur für einen kurzen Blick zwischen zwei Telefonaten. Im Großraumbüro klingelt das Telefon, die Aufmerksamkeit ist geteilt. Das Board muss deshalb **auf einen Blick** erfassbar sein.
+
+### Mara Voss, Teamleiterin Support
+
+| | |
+|---|---|
+| **Alter** | 38 |
+| **Wohnort** | Bremen |
+| **Ausbildung** | Studium der Wirtschaftsinformatik |
+| **Beruf** | Teamleiterin Support (sechs Personen) |
+| **Arbeitsplatz** | Laptop, Büro und Besprechungsraum |
+| **Technikaffinität** | Mittel bis hoch |
+
+> „Ich muss nicht jedes Ticket kennen. Ich muss wissen, wo es sich staut.“
+
+**Ziele:** Überblick über die Stände der Tickets · Arbeit im Team verteilen · Dringendes nicht liegen lassen.
+
+**Frustrationen:** Sie zählt die Tickets für den Wochenbericht in Excel von Hand. Einen Rückstau erfährt sie oft erst, wenn sich jemand beschwert.
+
+**Nutzungskontext:** Laptop im Büro und im Besprechungsraum. Mehrmals täglich ein kurzer Blick zwischen zwei Terminen, einmal pro Woche die Teambesprechung mit dem Board auf dem Beamer. Die Anzeige muss auch auf dem Beamer lesbar sein.
+
+## Erfordernisse und Nutzungsanforderungen
+
+Das Design-Team hat aus dem Nutzungskontext die folgenden Erfordernisse und Nutzungsanforderungen abgeleitet.
+
+| Erfordernis | Nutzungsanforderungen |
+|---|---|
+| **E1** Der Support-Mitarbeiter muss wissen, welche Meldungen noch nicht bearbeitet werden, um das nächste Ticket zu übernehmen. | **NA 1.1** Der Nutzer muss am System überblicken können, welche Tickets offen sind.<br />**NA 1.2** Der Nutzer muss am System unterscheiden können, ob ein Ticket offen, in Arbeit oder erledigt ist. |
+| **E2** Der Support-Mitarbeiter muss einschätzen können, wie dringend ein Ticket ist, um dringende Störungen zuerst zu bearbeiten. | **NA 2.1** Der Nutzer muss am System erkennen können, welche Priorität ein Ticket hat.<br />**NA 2.2** Der Nutzer muss am System dringende Tickets von den übrigen unterscheiden können.<br />**NA 2.3** Der Nutzer muss am System auswählen können, ob er nur dringende Tickets sehen will. |
+| **E3** Der Support-Mitarbeiter muss wissen, wer sich um ein Ticket kümmert, um nicht doppelt zu arbeiten. | **NA 3.1** Der Nutzer muss am System erkennen können, wer ein Ticket bearbeitet.<br />**NA 3.2** Der Nutzer muss am System erkennen können, dass ein Ticket noch niemandem zugewiesen ist. |
+| **E4** Der Support-Mitarbeiter muss den Bearbeitungsstand eines Tickets ändern können, um mit dem Team auf demselben Stand zu arbeiten. | **NA 4.1** Der Nutzer muss am System den Bearbeitungsstand eines Tickets auswählen können.<br />**NA 4.2** Der Nutzer muss am System feststellen können, dass die Änderung übernommen wurde. |
+| **E5** Der Support-Mitarbeiter muss alle Angaben zu einem Ticket verfügbar haben, um Rückfragen beantworten zu können. | **NA 5.1** Der Nutzer muss am System erkennen können, wann ein Ticket gemeldet wurde.<br />**NA 5.2** Der Nutzer muss am System alle Angaben zu einem Ticket auf einen Blick erkennen können. |
+| **E6** Der Support-Mitarbeiter muss ein bestimmtes Ticket gezielt zeigen können, um Rückfragen schnell zu klären. | **NA 6.1** Der Nutzer muss am System eingeben können, welches Ticket er aufrufen will.<br />**NA 6.2** Der Nutzer muss am System feststellen können, dass es ein Ticket nicht gibt. |
+| **E7** Die Teamleiterin muss einschätzen können, wie viele Tickets in welchem Stand sind, um die Arbeit im Team zu verteilen. | **NA 7.1** Der Nutzer muss am System überblicken können, wie viele Tickets es je Bearbeitungsstand gibt. |
+| **E8** Der Support-Mitarbeiter muss erkennen können, wenn zu einem Stand kein Ticket vorliegt, um zu wissen, dass nichts liegen geblieben ist. | **NA 8.1** Der Nutzer muss am System feststellen können, dass es zu einem Bearbeitungsstand kein Ticket gibt. |
+
+## Der Wireframe
+
+Aus den Nutzungsanforderungen hat das Team eine **Gestaltungslösung** entworfen. Wichtigste Entscheidung: ein **Board mit drei Spalten** statt einer Tabelle. Der Stand eines Tickets ist die wichtigste Achse. Die Spalte zeigt ihn, ohne dass man ein Etikett lesen muss, und die Spaltenköpfe zählen die Tickets (NA 7.1).
+
+Der Screenflow zeigt die drei Bildschirme und ihre Verbindungen:
+
+![Screenflow: Das Board führt zu Ticket und Ticket nicht gefunden, beide führen zurück zum Board](/img/tutorial-02/screenflow.png)
+
+**Das Board** (Startbildschirm):
+
+![Wireframe des Boards mit drei Spalten Offen, In Arbeit und Erledigt, Ticketkacheln mit Knöpfen, einem Schalter für dringende Tickets und einem Feld für die Ticketnummer](/img/tutorial-02/01-board.png)
+
+**Ein einzelnes Ticket** und **Ticket nicht gefunden**:
+
+![Wireframe der Ticket-Ansicht mit allen Angaben und einem Knopf zurück zum Board](/img/tutorial-02/02-ticket.png)
+
+![Wireframe der Meldung Ticket nicht gefunden mit einem Knopf zurück zum Board](/img/tutorial-02/03-ticket-nicht-gefunden.png)
+
+[Den Wireframe im Werkzeug ausprobieren](https://wireframe.heidelab.de/#d=1.SERTMR9V0ejFWctu20YU_ZXBZNMCtMCXRIm7GHaTNs0DsFcODGEoXkoTkUNhZlg7CgxklXXRRVdBV_6GduNV9Sf-kmL4El82acdBV6bIMc-55565c2f4CW94_AHWErufMCMRYBef0sUa5MFhTLiPfODoJT2FBXoReS-xhjccBEjsYh_EWsYbrGEhCZcnCw7AsItFejH31L-rh-lPgd33nzD1289z0MP8JzB_kzDFJyChAA1fYlfX8EfsGlNdwxBCBEzC_nXeXFIJIdZwEPMIuzgkXvrTA7FYcRrIhC2bUf37TyUodJJsNjGXKjjCgUnssiQMU2jLTLFNW8Medqe6ruEVdm1dw1vsGhqWcCmXPAYhVBBLHguBr7SSWiKA9zJ7zpYQQeiDRCQU6JeYEYEOYbHuIjQzaowsa1JlZDYZrUOgrMrI55Qtgfl7VosVLNZefNkm9ibhqBgPKBNQoC3QJbB7xJpOM2qTmlhWhQRLoqgqjOIcQOjflbVyfAvS0e0aZj1BdgtzHq_3sF4iZczuAkW7v4OAdUdq6MakimvWccclrtjM4yBIX1LIHTNJKEvDaeDeo6kxNrMAZ2YKNNEzpImGk4gT5mdvEHSxkh7huEVgvo43Qa8V36qhanaYFS7VIFTseeS1JCuaW-w6PTNCbOaEe0Dlo_WwbfteQaYDBMkoDFPkZ4aep8OVKkZDlTKWHllm_bIAD8Gny8cLMx1P7hXG0AcoU7AYps1xPlpJozekqcTTI47RV0bX9kNF6XasEqgCb0xyYcw-Ydb2wDXmmY2OD14TGh68i4UMyGKVrp8v1KjddSBFsLtZ8YQtUbi7TgKJfovDsMo7DfUy4_Qx-1Mp8oVgVpUZZUHcS-xlvFipLBXVXF13rjNNBuNuBnbPOrO2557eX2h3fzYrbEsBPfOMoeq8IjDJCIxrUEY_1H4e3375oxtwWke09RriZI9oPY0fTcvsNqTTa0hrqCEtdMSTxRo4ohE63N3wGJnIV7ckYuq9NSmsIe6bVmkMct9rKiWEynMpJNomS7igIBqZt4Y4r1VKm86zHu08a4jzTL0G9U3OswY5zzT2iM5jnNexSt1RCs3-UugMdZ6DTuJAXhAOB7_SLbBtUfOIVxPBGeA506oSeOqK5wzwndlb8ZxH-87p9N1sUjPBuIY0wHa3X35Hb_Oa04Gl3wc2qYGZ_WBlJ9C0eI5nNi1umDVAp7MJCWHA7ukVUFZuToY0IRO7a3tiTq_ONUyZBE7WksYqSeUek85rG6d8E9rcT10Q8Y4IQYGrR2eg9GCdW6gf3nEacyp31xKtlFET5iOmLrICWfD-cYSOKKCz3fUqVCWcIR8YOtmQUAJDGyIEMKQmKSIqKVsKYdYRlnIq5tWdT5V69X6de-ZSiXwics4oohL5qmZz9Cb9vxE6BCo2FEI3v4NmM7SknkQgsjg05INYkdBDwMViBZRJdPv5r_yNWahLCBLmA7v9_LWMoDgiSEfMixG4ElTRX-zDKe4MCoSEITD0nC2JB6wFK9OBTTijBWe04I72MBewWAkIZZo0CnnSVPjlenD7-Ws9v7tr5gPPMyriIDuT6MxqscxVGFnfUwCrJYD1PwvgtARwvqcATksAZ6gA24TvbhbrthBpef5WEcwWK_NxaSlq-MMJne-rd00_rX6ieMfp3niSrUWdp3vyQad76Jn95Id4cr5NeJL1DD2r4Fme6G0SoeI8s-eQzLTrq1AFlpTm7O_49kbuO0AqorfM5rGcnJPBYktV9b9tq1sN8DJLzj5Hjn3HOZ4iKSSRiehleSIJ8912D9QNrA6X28DjGvCG0_7Gc7-0u6jZhPbTMKxJF49JjcfFgLboELK2H7h7R997B4GZ2UXAqRHwiUyiXgovylPtyEW6PTKMkambkyEmmHZxuL9Dq87TfT2s3m30Zx2Ttb4KZF8o2tWt0ZY0qlyjr-kpemO7s-yxh5W9FuTTlkA2V497yZwl9Q6xbAbXQFm-_oz6S2KDnFmh8V0qcVEZG6XYutdtrNNt7Cncdq5hsQVGOM0hMyuk23qSiCVhSxGSpcrTUYI8KmRlgqc7iXzmC6kOffKPW40PedkKf3y5gPDgVKUzhKzFB1buUi6o-v6XcFXaywYi_4AGXIDcSi3F8xO04bFHgYs03ypIdQ0MvSYhIokYpdyDbKq77_FPVG2HlC3KzVHZoag3CgorxMhipaEL4Fnn4ROeRGi9u1HeSo10lKAVUZClvdDuxgPO4igCNkJqCwZ5q0cjdAok0lQoQpH8oPgjryiTMg1XvfWYMvQqDkNYAmLAmNr38LRXqn6MQrPZCGXNZeZ6UTr8_Or86uo_): Der Link öffnet das Projekt in wireframe.heidelab.de. Mit „Ausprobieren“ klickst du dich durch.
+
+## Von den Anforderungen zu den Stories
+
+Jede Nutzungsanforderung wird in genau einem Arbeitsblatt umgesetzt. Die Stories sind dort als Karten abgedruckt: auf der Vorderseite die Story, auf der Rückseite die Akzeptanzkriterien.
+
+| Arbeitsblatt | Die Story in einem Satz | Nutzungsanforderungen |
+|---|---|---|
+| [01 Die Ticketkarte](01-die-ticketkarte) | Ein Ticket auf einen Blick einschätzen | 2.1, 2.2, 3.1, 3.2 |
+| [02 Das Board](02-das-board) | Alle Tickets nach ihrem Stand geordnet sehen | 1.1, 1.2, 2.2, 2.3, 8.1 |
+| [03 Status und Zahlen](03-status-und-zahlen) | Den Status eines Tickets ändern, und als Teamleiterin die Zahlen im Blick haben | 4.1, 4.2, 7.1 |
+| [04 Ein Ticket aufrufen](04-ein-ticket-aufrufen) | Ein einzelnes Ticket aufrufen und die Adresse weitergeben | 5.1, 5.2, 6.1, 6.2 |
+
+## So arbeitest du
+
+Jedes Arbeitsblatt beginnt mit der **Story** und ihren **Akzeptanzkriterien** `A_1 …`. Daraus hat dein Team im Sprint-Planning **Tasks** `T_1 …` abgeleitet. Bei jeder Aufgabe steht, welchen Task sie erledigt. Am Ende prüfst du mit **Testfällen** `TF-01 …`, ob die Kriterien erfüllt sind.
+
+**Definition of Done**, für jede Story gleich:
+
+1. Jedes Kriterium der Story hast du im Browser ausprobiert und abgehakt.
+2. Die zugehörigen Tests sind grün.
+3. Jemand anderes hat deinen Code angeschaut.
+
+## Was du am Ende kannst
+
+- eine Seite in **Komponenten** zerlegen und diese in Angular schreiben (Klasse, Template, Stil)
+- Werte und Ereignisse im Template einsetzen (Interpolation, Property-Binding, Event-Binding)
+- Listen und Bedingungen mit **`@for`** und **`@if`** darstellen
+- Daten an eine Komponente übergeben (**`input()`**) und Ereignisse an die übergeordnete Komponente melden (**`output()`**)
+- erklären, warum eine Anzeige veraltet, und das mit **Signals** und **`computed`** lösen
+- Daten mit einem **Service** zwischen Seiten teilen (**`inject()`**)
+- mehrere Seiten mit dem **Router** verbinden, mit einer Adresse pro Ticket
+
+:::info Vorwissen zum Nachschlagen
+Dieses Tutorial setzt die TypeScript-Werkstatt (Tutorial 01) voraus. Das Ticket-Modell und die Listenfunktionen hast du dort geschrieben und kopierst sie in dein neues Projekt. Wer die Werkstatt nicht fertig hat, findet in den Arbeitsblättern ausklappbare Musterlösungen dieser Dateien.
+:::

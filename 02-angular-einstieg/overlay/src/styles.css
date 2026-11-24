@@ -1,0 +1,91 @@
+/* Globales Design des Ticket-Boards: Farben, Schrift, Knöpfe. */
+:root {
+  --bg: #f3f5f8;
+  --surface: #ffffff;
+  --column: #e8ecf2;
+  --text: #1b2430;
+  --muted: #5b6676;
+  --border: #dde3ea;
+  --primary: #2457c5;
+  --primary-hover: #1c47a3;
+  --radius: 12px;
+  --shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 4px 12px rgba(16, 24, 40, 0.06);
+
+  --open: #2563eb;
+  --progress: #d97706;
+  --done: #16a34a;
+
+  --high: #b42318;
+  --high-bg: #fdecea;
+  --medium: #9a5b00;
+  --medium-bg: #fff3dc;
+  --low: #475467;
+  --low-bg: #eceff3;
+
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--primary);
+}
+
+:focus-visible {
+  outline: 3px solid #93b4f5;
+  outline-offset: 2px;
+}
+
+/* Knöpfe: .btn ist der Standard, .btn-ghost der leise Zweitknopf. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  background: var(--primary);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--primary);
+  border-color: var(--border);
+}
+
+.btn-ghost:hover {
+  background: #eef3fc;
+  border-color: var(--primary);
+}

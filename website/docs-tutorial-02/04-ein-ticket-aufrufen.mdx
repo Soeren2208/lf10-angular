@@ -1,0 +1,760 @@
+---
+title: "AB 04 – Ein Ticket aufrufen"
+sidebar_label: "04 – Ein Ticket aufrufen"
+slug: 04-ein-ticket-aufrufen
+sidebar_position: 4
+---
+
+import stage from '@site/src/data/t2-stage-ab04.json';
+
+# AB 04 – Ein Ticket aufrufen
+
+Die Anwendung bekommt eine zweite Seite: die Ansicht eines einzelnen Tickets, mit einer eigenen Adresse. Dafür lernst du den **Router** und **Services** kennen.
+
+*Dauer: etwas mehr als eine Doppelstunde.*
+
+## Die Anforderung
+
+<StoryCard
+  story={<>
+    <strong>Als</strong> Support-Mitarbeiter, der eine Rückfrage zu einem Ticket bekommt, <strong>möchte ich</strong> ein bestimmtes Ticket gezielt aufrufen und die Adresse weitergeben können, <strong>damit</strong> ich die Rückfrage schnell beantworte.
+  </>}
+  criteria={[
+    {id: 'A_1', text: <>Ich kann ein Ticket von seiner Karte aus öffnen.</>},
+    {id: 'A_2', text: <>Das geöffnete Ticket zeigt Nummer, Titel, Stand, Priorität und Bearbeiter.</>},
+    {id: 'A_3', text: <>Ein dringendes Ticket ist dort als dringend gekennzeichnet.</>},
+    {id: 'A_4', text: <>Das geöffnete Ticket zeigt, wann es gemeldet wurde, als Datum in der Form TT.MM.JJJJ.</>},
+    {id: 'A_5', text: <>Ich kann auf dem Board eine Ticketnummer eingeben und das Ticket dazu öffnen.</>},
+    {id: 'A_6', text: <>Gibt es zu einer Nummer kein Ticket, steht dort „Ticket nicht gefunden“.</>},
+    {id: 'A_7', text: <>Jedes Ticket hat eine eigene Adresse. Wer sie aufruft, sieht direkt dieses Ticket.</>},
+    {id: 'A_8', text: <>Ich komme vom geöffneten Ticket zurück zum Board und sehe dort alle Änderungen, die ich vorher gemacht habe.</>},
+  ]}
+/>
+
+Nicht Teil dieser Story: Ein Ticket in seiner Ansicht ändern. Den Stand änderst du weiter auf dem Board. Die Tickets liegen weiter nur im Speicher der Seite und sind nach dem Neuladen wieder wie in den Beispieldaten.
+
+Daraus hat dein Team im Sprint-Planning-Meeting 4 folgende Tasks abgeleitet:
+
+<PlanningBox>
+
+| # | Task | Erfüllt |
+|---|---|---|
+| T_1 | Seiten und Adressen festlegen | Voraussetzung für A_1, A_5, A_7 |
+| T_2 | Die Angaben eines Tickets anzeigen | A_2, A_3, A_4 |
+| T_3 | Von der Karte zur Ticket-Ansicht verlinken | A_1 |
+| T_4 | Tickets in einem Service für alle Seiten halten | A_8 |
+| T_5 | Zurück zum Board und „Ticket nicht gefunden“ | A_6, A_8 |
+| T_6 | Ticketnummer eingeben | A_5 |
+| T_7 | Testfälle ausführen | alle |
+
+</PlanningBox>
+
+## Die Ticket-Ansicht im Wireframe
+
+![Wireframe der Ticket-Ansicht mit Titel, Stand, Priorität, Bearbeiter, Meldedatum und einem Knopf zurück zum Board](/img/tutorial-02/02-ticket.png)
+
+Die Ansicht trägt die Nummer in der Überschrift, darunter stehen Titel, Stand, Priorität mit dem Hinweis „dringend“, Bearbeiter und Meldedatum. Gibt es das Ticket nicht, zeigt der dritte Bildschirm des Wireframes „Ticket nicht gefunden“:
+
+![Wireframe der Meldung Ticket nicht gefunden mit einem Knopf zurück zum Board](/img/tutorial-02/03-ticket-nicht-gefunden.png)
+
+## Aufgaben
+
+### Aufgabe 1 – Seiten und Adressen
+
+*Etwa 15 Minuten.*
+
+<TaskBadge>T_1 · Seiten und Adressen festlegen</TaskBadge>
+
+Bisher besteht die Anwendung aus einer Seite. Jetzt kommt eine zweite dazu. In einer Angular-Anwendung wechselst du nicht zwischen HTML-Dateien. Der **Router** zeigt je nach Adresse im Browser eine andere Komponente: `/` zeigt das Board, `/tickets/4` das Ticket #4.
+
+<Task id="t2-ab04-a1-generate">Lege mit der Angular-CLI die Komponente `ticket-detail` an, wie in AB 01 die Karte.</Task>
+
+<Task id="t2-ab04-a1-routes">Das Projekt hat schon eine Datei für die Adressen, `app.routes.ts`, aber noch keine Adresse darin. Ersetze den gesamten Inhalt durch:</Task>
+
+```ts title="src/app/app.routes.ts"
+import { Routes } from '@angular/router';
+import { TicketBoard } from './ticket-board/ticket-board';
+import { TicketDetail } from './ticket-detail/ticket-detail';
+
+export const routes: Routes = [
+  { path: '', component: TicketBoard },
+  { path: 'tickets/:id', component: TicketDetail },
+  { path: '**', redirectTo: '' },
+];
+```
+
+**So funktioniert das:**
+
+- `routes` ist eine Liste von Adressen. Jeder Eintrag sagt: Bei dieser Adresse zeige diese Komponente.
+- `path: ''` ist die Startadresse, bei ihr erscheint das Board.
+- `tickets/:id` hat einen Platzhalter: `:id` steht für die Nummer. Die Adresse `/tickets/4` und `/tickets/17` passen beide, die Nummer landet jeweils im Platzhalter.
+- `**` passt auf jede andere Adresse. Der Router geht die Liste von oben nach unten durch, deshalb steht dieser Eintrag zuletzt. `redirectTo: ''` schickt unbekannte Adressen zum Board.
+
+<Task id="t2-ab04-a1-app">Die App zeigt jetzt nicht mehr fest das Board, sondern die Komponente, die zur Adresse passt. Ersetze den gesamten Inhalt von `app.ts` und `app.html` durch:</Task>
+
+```ts title="src/app/app.ts" {2,6}
+import { Component } from '@angular/core';
+import { RouterLink, RouterOutlet } from '@angular/router';
+
+@Component({
+  selector: 'app-root',
+  imports: [RouterOutlet, RouterLink],
+  templateUrl: './app.html',
+  styleUrl: './app.css',
+})
+export class App {}
+```
+
+```html title="src/app/app.html" {2,7}
+<header class="app-header">
+  <a class="app-title" routerLink="/">Ticket-Board <span class="company">· HiTec GmbH Support</span></a>
+  <span class="user">Angemeldet als Jonas Beck</span>
+</header>
+
+<main class="app-main">
+  <router-outlet />
+</main>
+```
+
+**Das ist neu:**
+
+- `<router-outlet />` ist der Platz, an dem der Router die Komponente zur aktuellen Adresse zeigt. Er ersetzt das fest eingesetzte `<app-ticket-board />`.
+- `routerLink="/"` macht den Titel zu einem Link zum Board. Die Seite wird dabei nicht neu geladen, nur die Komponente wechselt. Beide Teile, `RouterOutlet` und `RouterLink`, stehen in `imports`, sonst kennt die App sie nicht.
+
+<Task id="t2-ab04-a1-check">Prüfe im Browser: `http://localhost:4200/` zeigt das Board. `http://localhost:4200/tickets/4` zeigt „ticket-detail works!“. Eine unbekannte Adresse wie `http://localhost:4200/irgendwas` führt zurück zum Board.</Task>
+
+### Aufgabe 2 – Die Angaben eines Tickets
+
+*Etwa 25 Minuten.*
+
+<TaskBadge>T_2 · Die Angaben eines Tickets anzeigen</TaskBadge>
+
+Die Ansicht muss wissen, welches Ticket sie zeigen soll. Das steht in der Adresse, im Platzhalter `:id`. Der Router kann diesen Wert an die Komponente weiterreichen, wie das Board der Karte ein Ticket gibt: als Eingang `input()`. Das musst du einmal in der Konfiguration der Anwendung einschalten.
+
+<Task id="t2-ab04-a2-config">Ersetze den gesamten Inhalt von `app.config.ts` durch:</Task>
+
+```ts title="src/app/app.config.ts" {2,6}
+import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { routes } from './app.routes';
+
+export const appConfig: ApplicationConfig = {
+  providers: [provideBrowserGlobalErrorListeners(), provideRouter(routes, withComponentInputBinding())],
+};
+```
+
+`withComponentInputBinding()` sorgt dafür, dass der Router Werte aus der Adresse in gleichnamige Eingänge der Komponente schreibt. Aus dem Platzhalter `:id` wird der Eingang `id`.
+
+<Task id="t2-ab04-a2-class">Ersetze den gesamten Inhalt von `ticket-detail.ts` durch:</Task>
+
+```ts title="src/app/ticket-detail/ticket-detail.ts"
+import { DatePipe } from '@angular/common';
+import { Component, computed, input } from '@angular/core';
+import { sampleTickets } from '../sample-data';
+import { assigneeName, isUrgent } from '../ticket';
+import { findTicket } from '../ticket-list';
+import { PRIORITY_LABEL, STATUS_LABEL } from '../ticket-labels';
+
+@Component({
+  selector: 'app-ticket-detail',
+  imports: [DatePipe],
+  templateUrl: './ticket-detail.html',
+  styleUrl: './ticket-detail.css',
+})
+export class TicketDetail {
+  /** Die Nummer aus der Adresse (`/tickets/:id`). Der Router liefert sie als Text. */
+  readonly id = input.required<string>();
+
+  /** Alles, was die Seite zeigt. `undefined`, wenn es das Ticket nicht gibt. */
+  protected readonly view = computed(() => {
+    const number = Number(this.id());
+    const ticket = Number.isInteger(number) ? findTicket(sampleTickets, number) : undefined;
+    if (!ticket) {
+      return undefined;
+    }
+    return {
+      ticket,
+      statusText: STATUS_LABEL[ticket.status],
+      priorityText: PRIORITY_LABEL[ticket.priority],
+      urgent: isUrgent(ticket),
+      assignee: assigneeName(ticket),
+    };
+  });
+}
+```
+
+**Das ist neu:**
+
+- `id = input.required<string>()` ist der Eingang für die Nummer aus der Adresse. Eine Adresse besteht aus Text, deshalb ist es ein `string`, auch wenn eine Zahl darin steht.
+- `view` ist ein `computed`, denn es hängt vom Signal `id()` ab. Es bereitet alles vor, was die Seite zeigt, und ist `undefined`, wenn es das Ticket nicht gibt.
+- `Number(this.id())` macht aus dem Text eine Zahl. Aus `"abc"` wird `NaN`, und `Number.isInteger` ist dafür `false`. Dann ist `ticket` `undefined`, ohne dass etwas abstürzt.
+- `findTicket` ist deine Funktion aus der Werkstatt. Sie sucht hier noch direkt in den Beispieldaten.
+- `DatePipe` steht in `imports`, weil das Template gleich eine Pipe benutzt.
+
+<Task id="t2-ab04-a2-html">Ersetze den gesamten Inhalt von `ticket-detail.html` durch:</Task>
+
+```html title="src/app/ticket-detail/ticket-detail.html"
+@if (view(); as v) {
+  <article class="detail">
+    <h1>Ticket #{{ v.ticket.id }}</h1>
+
+    <dl class="facts">
+      <dt>Titel</dt>
+      <dd>{{ v.ticket.title }}</dd>
+      <dt>Stand</dt>
+      <dd>{{ v.statusText }}</dd>
+      <dt>Priorität</dt>
+      <dd>
+        {{ v.priorityText }}
+        @if (v.urgent) {
+          <span class="tag-urgent">dringend</span>
+        }
+      </dd>
+      <dt>Bearbeiter</dt>
+      <dd>{{ v.assignee }}</dd>
+      <dt>Gemeldet am</dt>
+      <dd>{{ v.ticket.createdAt | date: 'dd.MM.yyyy' }}</dd>
+    </dl>
+  </article>
+}
+```
+
+**Das ist neu:**
+
+- `@if (view(); as v) { … }` ist ein `@if` mit einem Namen für den Wert: Ist `view()` nicht `undefined`, steht es im Block als `v` zur Verfügung. So rufst du `view()` nur einmal auf.
+- `{{ … | date: 'dd.MM.yyyy' }}` ist eine **Pipe**. Das Zeichen `|` schickt den Wert durch eine Umwandlung, bevor er angezeigt wird. `date` macht aus dem Text `2026-11-04` die Anzeige `04.11.2026`. `dd` ist der Tag, `MM` der Monat, `yyyy` das Jahr.
+- `<dl>` ist die HTML-Liste für Bezeichnung und Wert, `<dt>` die Bezeichnung, `<dd>` der Wert.
+
+<Task id="t2-ab04-a2-css">Ersetze den gesamten Inhalt von `ticket-detail.css` durch:</Task>
+
+<CodeFile data={stage} file="src/app/ticket-detail/ticket-detail.css" />
+
+<Task id="t2-ab04-a2-check">Öffne `http://localhost:4200/tickets/4`. Die Ansicht zeigt Titel, Stand, Priorität mit „dringend“, Bearbeiter und das Meldedatum 04.11.2026. Probiere auch `/tickets/3`: Dort steht „nicht zugewiesen“. Bei `/tickets/99` bleibt die Seite leer, dafür sorgst du in Aufgabe 5.</Task>
+
+### Aufgabe 3 – Von der Karte zur Ansicht
+
+*Etwa 10 Minuten.*
+
+<TaskBadge>T_3 · Von der Karte zur Ticket-Ansicht verlinken</TaskBadge>
+
+Auf jeder Karte soll ein Link „Öffnen“ zur Ansicht des Tickets führen.
+
+<Task id="t2-ab04-a3-class">Ersetze den gesamten Inhalt von `ticket-card.ts` durch:</Task>
+
+```ts title="src/app/ticket-card/ticket-card.ts" {2,19}
+import { Component, computed, input, output } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { assigneeName, isUrgent } from '../ticket';
+import type { Status, Ticket } from '../ticket';
+import { PRIORITY_LABEL } from '../ticket-labels';
+
+/** Wohin ein Ticket von seinem Stand aus wechseln kann, und wie der Knopf heißt. */
+const MOVES: Record<Status, { to: Status; label: string }[]> = {
+  offen: [{ to: 'in Arbeit', label: 'In Arbeit →' }],
+  'in Arbeit': [
+    { to: 'offen', label: '← Offen' },
+    { to: 'erledigt', label: 'Erledigt →' },
+  ],
+  erledigt: [{ to: 'in Arbeit', label: '← In Arbeit' }],
+};
+
+@Component({
+  selector: 'app-ticket-card',
+  imports: [RouterLink],
+  templateUrl: './ticket-card.html',
+  styleUrl: './ticket-card.css',
+})
+export class TicketCard {
+  readonly ticket = input.required<Ticket>();
+  readonly statusChange = output<Status>();
+
+  protected readonly urgent = computed(() => isUrgent(this.ticket()));
+  protected readonly priorityText = computed(() => PRIORITY_LABEL[this.ticket().priority]);
+  protected readonly assignee = computed(() => assigneeName(this.ticket()));
+  protected readonly moves = computed(() => MOVES[this.ticket().status]);
+}
+```
+
+<Task id="t2-ab04-a3-html">Ersetze den gesamten Inhalt von `ticket-card.html` durch:</Task>
+
+```html title="src/app/ticket-card/ticket-card.html" {17}
+<article class="card" [class.urgent]="urgent()">
+  <header class="card-head">
+    <span class="ticket-id">#{{ ticket().id }}</span>
+    @if (urgent()) {
+      <span class="tag-urgent">dringend</span>
+    }
+  </header>
+
+  <h3 class="card-title">{{ ticket().title }}</h3>
+
+  <div class="meta">
+    <span class="prio" [attr.data-priority]="ticket().priority">{{ priorityText() }}</span>
+    <span class="assignee">{{ assignee() }}</span>
+  </div>
+
+  <footer class="actions">
+    <a class="btn btn-ghost" [routerLink]="['/tickets', ticket().id]">Öffnen</a>
+    @for (move of moves(); track move.to) {
+      <button type="button" class="btn" (click)="statusChange.emit(move.to)">{{ move.label }}</button>
+    }
+  </footer>
+</article>
+```
+
+**Das ist neu:** `[routerLink]="['/tickets', ticket().id]"` setzt die Adresse aus ihren Teilen zusammen: aus `'/tickets'` und der Nummer des Tickets wird `/tickets/4`. Die eckigen Klammern kennst du: Der Wert wird berechnet. Der Link braucht `RouterLink` in `imports`, wie jede Komponente, die du im Template benutzt.
+
+<Task id="t2-ab04-a3-predict">Sage voraus: Du setzt auf dem Board Ticket #3 mit „In Arbeit →“ auf „In Arbeit“ und klickst dann bei #3 auf „Öffnen“. Welchen Stand zeigt die Ansicht? Du gehst danach über den Titel in der Kopfzeile zurück zum Board. In welcher Spalte steht #3 dann? Schreibe es auf und probiere es aus.</Task>
+
+<details>
+<summary>Auflösung</summary>
+
+Die Ansicht zeigt „Offen“, und auf dem Board steht #3 danach wieder in „Offen“. Der Grund ist derselbe: Jede Seite hält ihre eigenen Tickets. Das Board hat seine Liste im Signal `tickets`, und mit dem Board verschwindet sie, sobald du die Seite wechselst. Beim Zurückkommen legt Angular ein neues Board an, das wieder bei den Beispieldaten beginnt. Die Ansicht liest die Beispieldaten selbst und kennt deine Änderung nie.
+
+</details>
+
+### Aufgabe 4 – Ein Service für alle Seiten
+
+*Etwa 20 Minuten.*
+
+<TaskBadge>T_4 · Tickets in einem Service für alle Seiten halten</TaskBadge>
+
+Zwei Seiten brauchen dieselben Tickets, also dürfen die Tickets keiner der beiden Seiten gehören. Sie gehören in eine eigene Klasse, die beide benutzen: einen **Service**.
+
+- Ein Service ist eine Klasse mit `@Injectable({ providedIn: 'root' })`. Angular legt von ihr genau **eine** Instanz an, die die ganze Anwendung teilt.
+- Eine Komponente holt sich diese Instanz mit `inject(TicketService)`.
+- Das kennst du aus Spring: Dort ist es `@Service` und die Instanz kommt über den Konstruktor, das ist **Dependency Injection**. In Angular heißt es `@Injectable` und `inject()`, gemeint ist dasselbe.
+- Hält der Service die Tickets in einem Signal, erneuern sich alle Seiten, die es lesen, wenn sich etwas ändert.
+
+<Task id="t2-ab04-a4-service">Lege die Datei `src/app/ticket.service.ts` an:</Task>
+
+```ts title="src/app/ticket.service.ts"
+import { Injectable, signal } from '@angular/core';
+import { sampleTickets } from './sample-data';
+import type { Status, Ticket } from './ticket';
+import { findTicket, withStatus } from './ticket-list';
+
+/** Hält die Tickets für alle Seiten. Wer sie ändert, ändert sie überall. */
+@Injectable({ providedIn: 'root' })
+export class TicketService {
+  readonly tickets = signal<readonly Ticket[]>(sampleTickets);
+
+  /** Das Ticket mit der Nummer `id`, oder `undefined`. Liest das Signal, ist also reaktiv. */
+  find(id: number): Ticket | undefined {
+    return findTicket(this.tickets(), id);
+  }
+
+  setStatus(id: number, status: Status): void {
+    this.tickets.update((tickets) => withStatus(tickets, id, status));
+  }
+}
+```
+
+**So ist der Service aufgebaut:**
+
+- Das Signal `tickets` ist jetzt hier zu Hause. `signal<readonly Ticket[]>(…)` legt zusätzlich den Typ fest: eine Liste, die nicht verändert, sondern nur ersetzt wird.
+- `find(id)` sucht ein Ticket. Es liest das Signal, deshalb aktualisiert sich ein `computed`, das `find` benutzt, wenn sich die Tickets ändern.
+- `setStatus` ist das, was bisher `changeStatus` im Board getan hat.
+
+<Task id="t2-ab04-a4-board">Das Board holt sich die Tickets aus dem Service. Ersetze den gesamten Inhalt von `ticket-board.ts` durch:</Task>
+
+```ts title="src/app/ticket-board/ticket-board.ts" {1,4-5,23,29,42}
+import { Component, computed, inject, signal } from '@angular/core';
+import { isUrgent } from '../ticket';
+import type { Status } from '../ticket';
+import { sortedByPriority, ticketsWithStatus } from '../ticket-list';
+import { TicketService } from '../ticket.service';
+import { TicketCard } from '../ticket-card/ticket-card';
+import { STATUS_LABEL } from '../ticket-labels';
+
+/** Die drei Spalten des Boards, von links nach rechts. */
+const COLUMNS: { status: Status; css: string }[] = [
+  { status: 'offen', css: 'open' },
+  { status: 'in Arbeit', css: 'progress' },
+  { status: 'erledigt', css: 'done' },
+];
+
+@Component({
+  selector: 'app-ticket-board',
+  imports: [TicketCard],
+  templateUrl: './ticket-board.html',
+  styleUrl: './ticket-board.css',
+})
+export class TicketBoard {
+  private readonly service = inject(TicketService);
+
+  protected readonly urgentOnly = signal(false);
+
+  /** Je Spalte die Tickets, die dringendsten zuerst. Ändert sich ein Signal, rechnet das Board neu. */
+  protected readonly columns = computed(() => {
+    const tickets = this.urgentOnly() ? this.service.tickets().filter(isUrgent) : this.service.tickets();
+    return COLUMNS.map((column) => ({
+      css: column.css,
+      label: STATUS_LABEL[column.status],
+      tickets: sortedByPriority(ticketsWithStatus(tickets, column.status)),
+    }));
+  });
+
+  protected toggleUrgent(): void {
+    this.urgentOnly.update((value) => !value);
+  }
+
+  protected changeStatus(id: number, status: Status): void {
+    this.service.setStatus(id, status);
+  }
+}
+```
+
+**Das ist neu:**
+
+- `private readonly service = inject(TicketService);` holt die geteilte Instanz. `private` heißt wie in Java: Nur das Board selbst benutzt das Feld, nicht das Template.
+- Das Board besitzt keine eigene Liste mehr. Es liest `this.service.tickets()` und ändert sie über `this.service.setStatus(…)`.
+- `urgentOnly` bleibt im Board, denn die Auswahl „Nur dringende“ gehört zu dieser Seite und nicht zu den Tickets.
+
+<Task id="t2-ab04-a4-detail">Die Ansicht soll dieselbe Quelle benutzen. Ändere `ticket-detail.ts`: Hole dir den Service, wie das Board es tut, und suche das Ticket mit `this.service.find(…)` statt direkt in den Beispieldaten.</Task>
+
+<details>
+<summary>Lösung: ticket-detail.ts</summary>
+
+```ts title="src/app/ticket-detail/ticket-detail.ts" {2,4,14,22}
+import { DatePipe } from '@angular/common';
+import { Component, computed, inject, input } from '@angular/core';
+import { assigneeName, isUrgent } from '../ticket';
+import { TicketService } from '../ticket.service';
+import { PRIORITY_LABEL, STATUS_LABEL } from '../ticket-labels';
+
+@Component({
+  selector: 'app-ticket-detail',
+  imports: [DatePipe],
+  templateUrl: './ticket-detail.html',
+  styleUrl: './ticket-detail.css',
+})
+export class TicketDetail {
+  private readonly service = inject(TicketService);
+
+  /** Die Nummer aus der Adresse (`/tickets/:id`). Der Router liefert sie als Text. */
+  readonly id = input.required<string>();
+
+  /** Alles, was die Seite zeigt. `undefined`, wenn es das Ticket nicht gibt. */
+  protected readonly view = computed(() => {
+    const number = Number(this.id());
+    const ticket = Number.isInteger(number) ? this.service.find(number) : undefined;
+    if (!ticket) {
+      return undefined;
+    }
+    return {
+      ticket,
+      statusText: STATUS_LABEL[ticket.status],
+      priorityText: PRIORITY_LABEL[ticket.priority],
+      urgent: isUrgent(ticket),
+      assignee: assigneeName(ticket),
+    };
+  });
+}
+```
+
+</details>
+
+<Task id="t2-ab04-a4-check">Wiederhole den Versuch aus Aufgabe 3: Setze #3 auf „In Arbeit“ und öffne es. Die Ansicht zeigt jetzt „In Arbeit“. Wenn du über die Kopfzeile zurückgehst, steht #3 noch in „In Arbeit“.</Task>
+
+### Aufgabe 5 – Zurück zum Board und „Ticket nicht gefunden“
+
+*Etwa 10 Minuten.*
+
+<TaskBadge>T_5 · Zurück zum Board und „Ticket nicht gefunden“</TaskBadge>
+
+Die Ansicht braucht noch einen Link zurück zum Board. Und sie soll, wenn es das Ticket nicht gibt, das auch sagen, statt leer zu bleiben.
+
+<Task id="t2-ab04-a5-class">Ersetze den gesamten Inhalt von `ticket-detail.ts` durch:</Task>
+
+```ts title="src/app/ticket-detail/ticket-detail.ts" {3,10}
+import { DatePipe } from '@angular/common';
+import { Component, computed, inject, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { assigneeName, isUrgent } from '../ticket';
+import { TicketService } from '../ticket.service';
+import { PRIORITY_LABEL, STATUS_LABEL } from '../ticket-labels';
+
+@Component({
+  selector: 'app-ticket-detail',
+  imports: [DatePipe, RouterLink],
+  templateUrl: './ticket-detail.html',
+  styleUrl: './ticket-detail.css',
+})
+export class TicketDetail {
+  private readonly service = inject(TicketService);
+
+  /** Die Nummer aus der Adresse (`/tickets/:id`). Der Router liefert sie als Text. */
+  readonly id = input.required<string>();
+
+  /** Alles, was die Seite zeigt. `undefined`, wenn es das Ticket nicht gibt. */
+  protected readonly view = computed(() => {
+    const number = Number(this.id());
+    const ticket = Number.isInteger(number) ? this.service.find(number) : undefined;
+    if (!ticket) {
+      return undefined;
+    }
+    return {
+      ticket,
+      statusText: STATUS_LABEL[ticket.status],
+      priorityText: PRIORITY_LABEL[ticket.priority],
+      urgent: isUrgent(ticket),
+      assignee: assigneeName(ticket),
+    };
+  });
+}
+```
+
+<Task id="t2-ab04-a5-html">Ersetze den gesamten Inhalt von `ticket-detail.html` durch:</Task>
+
+```html title="src/app/ticket-detail/ticket-detail.html" {3,24-29}
+@if (view(); as v) {
+  <article class="detail">
+    <a class="back" routerLink="/">← Zurück zum Board</a>
+    <h1>Ticket #{{ v.ticket.id }}</h1>
+
+    <dl class="facts">
+      <dt>Titel</dt>
+      <dd>{{ v.ticket.title }}</dd>
+      <dt>Stand</dt>
+      <dd>{{ v.statusText }}</dd>
+      <dt>Priorität</dt>
+      <dd>
+        {{ v.priorityText }}
+        @if (v.urgent) {
+          <span class="tag-urgent">dringend</span>
+        }
+      </dd>
+      <dt>Bearbeiter</dt>
+      <dd>{{ v.assignee }}</dd>
+      <dt>Gemeldet am</dt>
+      <dd>{{ v.ticket.createdAt | date: 'dd.MM.yyyy' }}</dd>
+    </dl>
+  </article>
+} @else {
+  <article class="detail not-found">
+    <h1>Ticket nicht gefunden</h1>
+    <p>Zu dieser Nummer gibt es kein Ticket.</p>
+    <a class="btn" routerLink="/">Zurück zum Board</a>
+  </article>
+}
+```
+
+**Das ist neu:** `@else { … }` hinter einem `@if` wird gezeigt, wenn die Bedingung **nicht** zutrifft. Hier ist das der Fall, wenn `view()` `undefined` ist, also zur Nummer kein Ticket gefunden wurde. Die beiden Links benutzen `routerLink`, wie der Titel in der Kopfzeile.
+
+<Task id="t2-ab04-a5-check">Öffne `http://localhost:4200/tickets/99` und `http://localhost:4200/tickets/abc`. Beide zeigen „Ticket nicht gefunden“. Bei einem vorhandenen Ticket führt „← Zurück zum Board“ zum Board.</Task>
+
+### Aufgabe 6 – Ticketnummer eingeben
+
+*Etwa 15 Minuten.*
+
+<TaskBadge>T_6 · Ticketnummer eingeben</TaskBadge>
+
+Jonas bekommt Rückfragen per Chat mit einer Ticketnummer. Er soll die Nummer direkt auf dem Board eingeben können, ohne eine Adresse zu tippen.
+
+<Task id="t2-ab04-a6-css">Ersetze den gesamten Inhalt von `ticket-board.css` durch:</Task>
+
+<CodeFile data={stage} file="src/app/ticket-board/ticket-board.css" />
+
+<Task id="t2-ab04-a6-class">Ersetze den gesamten Inhalt von `ticket-board.ts` durch:</Task>
+
+```ts title="src/app/ticket-board/ticket-board.ts" {2,25,47-52}
+import { Component, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { isUrgent } from '../ticket';
+import type { Status } from '../ticket';
+import { sortedByPriority, ticketsWithStatus } from '../ticket-list';
+import { TicketService } from '../ticket.service';
+import { TicketCard } from '../ticket-card/ticket-card';
+import { STATUS_LABEL } from '../ticket-labels';
+
+/** Die drei Spalten des Boards, von links nach rechts. */
+const COLUMNS: { status: Status; css: string }[] = [
+  { status: 'offen', css: 'open' },
+  { status: 'in Arbeit', css: 'progress' },
+  { status: 'erledigt', css: 'done' },
+];
+
+@Component({
+  selector: 'app-ticket-board',
+  imports: [TicketCard],
+  templateUrl: './ticket-board.html',
+  styleUrl: './ticket-board.css',
+})
+export class TicketBoard {
+  private readonly service = inject(TicketService);
+  private readonly router = inject(Router);
+
+  protected readonly urgentOnly = signal(false);
+
+  /** Je Spalte die Tickets, die dringendsten zuerst. Ändert sich ein Signal, rechnet das Board neu. */
+  protected readonly columns = computed(() => {
+    const tickets = this.urgentOnly() ? this.service.tickets().filter(isUrgent) : this.service.tickets();
+    return COLUMNS.map((column) => ({
+      css: column.css,
+      label: STATUS_LABEL[column.status],
+      tickets: sortedByPriority(ticketsWithStatus(tickets, column.status)),
+    }));
+  });
+
+  protected toggleUrgent(): void {
+    this.urgentOnly.update((value) => !value);
+  }
+
+  protected changeStatus(id: number, status: Status): void {
+    this.service.setStatus(id, status);
+  }
+
+  protected openTicket(input: string): void {
+    const number = input.trim();
+    if (number !== '') {
+      void this.router.navigate(['/tickets', number]);
+    }
+  }
+}
+```
+
+**Das ist neu:**
+
+- `inject(Router)` holt den Router, der auch die Adressen verwaltet, genauso wie den Service.
+- `openTicket(input)` bekommt den eingegebenen Text. `trim()` entfernt Leerzeichen am Rand. Ist nichts eingegeben, passiert nichts.
+- `this.router.navigate(['/tickets', number])` wechselt per Code zur Adresse `/tickets/7`. Das ist das Gegenstück zu `routerLink` im Template. `navigate` liefert ein Promise, das du aus der Werkstatt kennst. `void` sagt, dass du nicht darauf wartest.
+
+<Task id="t2-ab04-a6-html">Ersetze den gesamten Inhalt von `ticket-board.html` durch:</Task>
+
+```html title="src/app/ticket-board/ticket-board.html" {7-10}
+<div class="toolbar">
+  <label class="switch">
+    <input type="checkbox" [checked]="urgentOnly()" (change)="toggleUrgent()" />
+    Nur dringende Tickets zeigen
+  </label>
+
+  <div class="open-ticket">
+    <input #nr type="text" inputmode="numeric" placeholder="Ticketnummer" aria-label="Ticketnummer" (keydown.enter)="openTicket(nr.value)" />
+    <button type="button" class="btn" (click)="openTicket(nr.value)">Ticket öffnen</button>
+  </div>
+</div>
+
+<div class="columns">
+  @for (column of columns(); track column.css) {
+    <section [class]="'column ' + column.css">
+      <h2 class="column-title">
+        <span class="dot" aria-hidden="true"></span>
+        {{ column.label }}
+        <span class="count">{{ column.tickets.length }}</span>
+      </h2>
+
+      @for (ticket of column.tickets; track ticket.id) {
+        <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
+      } @empty {
+        <p class="empty">Keine Tickets</p>
+      }
+    </section>
+  }
+</div>
+```
+
+**Das ist neu:**
+
+- `#nr` gibt dem Eingabefeld einen Namen im Template (eine **Template-Referenzvariable**). Mit `nr.value` liest du, was darin steht. Für ein einzelnes Feld brauchst du kein Formular.
+- `(keydown.enter)="…"` reagiert nur auf die Eingabetaste. `(click)` auf dem Knopf tut dasselbe, damit man die Nummer mit der Maus oder der Tastatur abschicken kann.
+
+<Task id="t2-ab04-a6-check">Gib im Board `7` ein und drücke Enter: Das Ticket #7 öffnet sich. Gib `99` ein und klicke auf „Ticket öffnen“: „Ticket nicht gefunden“.</Task>
+
+### Aufgabe 7 – Testfälle
+
+*Etwa 10 Minuten.*
+
+<TaskBadge>T_7 · Testfälle ausführen</TaskBadge>
+
+<Task id="t2-ab04-a7">Führe die Testfälle aus. Jeder ist einem Akzeptanzkriterium der Story zugeordnet.</Task>
+
+<TestTable
+  storageKey="t2-ab04-tests"
+  tests={[
+    {
+      id: 'TF-01',
+      beschreibung: '(A_1) Ticket von der Karte öffnen',
+      vorbedingung: 'Die Anwendung läuft (npm start), das Board ist offen',
+      schritte: ['Bei Ticket #4 auf „Öffnen“ klicken'],
+      erwartet: <>Die Ansicht „Ticket #4“ erscheint. Die Adresse im Browser endet mit <code>/tickets/4</code>.</>,
+    },
+    {
+      id: 'TF-02',
+      beschreibung: '(A_2) Alle Angaben stehen da',
+      vorbedingung: 'TF-01 wurde ausgeführt',
+      schritte: ['Die Angaben der Ansicht ansehen'],
+      erwartet: <>Titel „E-Mail-Postfach der Geschäftsführung läuft voll“, Stand „Offen“, Priorität „Hoch“, Bearbeiter „Jonas Beck“.</>,
+    },
+    {
+      id: 'TF-03',
+      beschreibung: '(A_3) Ein dringendes Ticket ist gekennzeichnet',
+      vorbedingung: 'TF-01 wurde ausgeführt',
+      schritte: ['Die Priorität von #4 ansehen', 'Die Ansicht von #3 öffnen (Adresse /tickets/3) und die Priorität ansehen'],
+      erwartet: <>Bei #4 steht „Hoch“ und die Marke „dringend“. Bei #3 steht „Mittel“ ohne die Marke.</>,
+    },
+    {
+      id: 'TF-04',
+      beschreibung: '(A_4) Das Meldedatum',
+      vorbedingung: 'TF-01 wurde ausgeführt',
+      schritte: ['„Gemeldet am“ bei #4 ansehen'],
+      erwartet: <>Dort steht <code>04.11.2026</code>.</>,
+    },
+    {
+      id: 'TF-05',
+      beschreibung: '(A_5) Nummer eingeben',
+      vorbedingung: 'Das Board ist offen',
+      schritte: ['In das Feld „Ticketnummer“ 7 eingeben', 'Enter drücken'],
+      erwartet: <>Die Ansicht „Ticket #7“ erscheint.</>,
+    },
+    {
+      id: 'TF-06',
+      beschreibung: '(A_6) Es gibt kein Ticket zur Nummer',
+      vorbedingung: 'Das Board ist offen',
+      schritte: ['In das Feld „Ticketnummer“ 99 eingeben und auf „Ticket öffnen“ klicken', 'Danach die Adresse /tickets/abc aufrufen'],
+      erwartet: <>Beide Male steht „Ticket nicht gefunden“.</>,
+    },
+    {
+      id: 'TF-07',
+      beschreibung: '(A_7) Die Adresse genügt',
+      vorbedingung: 'Die Anwendung läuft',
+      schritte: ['In einem neuen Browser-Tab http://localhost:4200/tickets/3 aufrufen'],
+      erwartet: <>Die Ansicht „Ticket #3“ erscheint sofort, mit Bearbeiter „nicht zugewiesen“.</>,
+    },
+    {
+      id: 'TF-08',
+      beschreibung: '(A_8) Zurück zum Board mit erhaltenen Änderungen',
+      vorbedingung: 'Das Board ist frisch geladen',
+      schritte: ['Bei #3 auf „In Arbeit →“ klicken', 'Bei #4 auf „Öffnen“ klicken', 'Auf „← Zurück zum Board“ klicken'],
+      erwartet: <>Das Board zeigt #3 in der Spalte „In Arbeit“.</>,
+    },
+  ]}
+/>
+
+## Das hast du gelernt
+
+- Der **Router** zeigt je nach Adresse eine andere Komponente. Die Adressen stehen in `app.routes.ts`, `<router-outlet />` ist der Platz dafür, `routerLink` verlinkt, `Router.navigate` wechselt per Code.
+- Ein Platzhalter wie `:id` in der Adresse landet mit `withComponentInputBinding()` als Eingang in der Komponente, immer als Text.
+- Ein **Service** hält Daten, die mehrere Seiten teilen. Angular legt eine Instanz an, jede Komponente holt sie mit `inject(…)`. Mit Signals darin erneuern sich alle Seiten, die sie lesen.
+- Mit `@if (…; as v)` und `@else` zeigst du etwas oder sein Gegenteil, und Pipes wie `date` formatieren Werte für die Anzeige.
+
+## Selbstkontrolle
+
+1. Welche Aufgabe haben `<router-outlet />` und `routerLink`?
+2. Warum zeigte die Ansicht in Aufgabe 3 den alten Stand, und was hat der Service daran geändert?
+3. Warum ist `id` in `TicketDetail` ein `string`, obwohl eine Zahl in der Adresse steht?
+4. Was zeigt die Ansicht für `/tickets/abc`, und welche Zeilen im Code sorgen dafür?
+
+<details>
+<summary>Antworten</summary>
+
+1. `<router-outlet />` ist der Platz, an dem der Router die Komponente zur aktuellen Adresse zeigt. `routerLink` macht ein Element zu einem Link auf eine Adresse, ohne dass die Seite neu geladen wird.
+2. Board und Ansicht hielten je ihre eigenen Tickets. Der Service hält sie an einer Stelle, und beide lesen von dort. Änderungen sind überall sichtbar.
+3. Eine Adresse besteht aus Text. Der Router gibt den Wert, wie er dort steht. Die Umwandlung in eine Zahl machst du selbst mit `Number(…)`.
+4. „Ticket nicht gefunden“. `Number('abc')` ist `NaN`, `Number.isInteger` liefert `false`, `ticket` ist `undefined`, `view()` ebenfalls, und der `@else`-Zweig des Templates greift.
+
+</details>
+
+## Geschafft
+
+Das Ticket-Board ist fertig: Komponenten, Control Flow, Signals, ein Service und der Router, alles an einem Beispiel. Die Tickets liegen noch im Speicher der Seite. Mit einem Server dahinter bleiben Änderungen erhalten, und das ist ein eigenes Thema.

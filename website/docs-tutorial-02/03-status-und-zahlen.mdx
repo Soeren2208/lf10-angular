@@ -1,0 +1,695 @@
+---
+title: "AB 03 – Status und Zahlen"
+sidebar_label: "03 – Status und Zahlen"
+slug: 03-status-und-zahlen
+sidebar_position: 3
+---
+
+import stage from '@site/src/data/t2-stage-ab03.json';
+
+# AB 03 – Status und Zahlen
+
+Das Board wird lebendig: Tickets wechseln ihren Stand, und die Spalten zählen mit. Dabei lernst du, warum eine Anzeige veralten kann und wie **Signals** das verhindern.
+
+*Dauer: etwa eine Doppelstunde.*
+
+## Die Anforderung
+
+Dieses Arbeitsblatt setzt zwei Stories um. Die Kriterien sind über beide Stories durchnummeriert.
+
+### Story 1 – Den Stand ändern
+
+<StoryCard
+  story={<>
+    <strong>Als</strong> Support-Mitarbeiter, der ein Ticket übernimmt, <strong>möchte ich</strong> den Stand des Tickets mit einem Klick ändern, <strong>damit</strong> das Team sofort sieht, woran gearbeitet wird.
+  </>}
+  criteria={[
+    {id: 'A_1', text: <>Auf der Karte eines Tickets kann ich den Stand wählen, in den es wechseln soll: von „Offen“ nach „In Arbeit“, von „In Arbeit“ nach „Offen“ oder „Erledigt“, von „Erledigt“ zurück nach „In Arbeit“.</>},
+    {id: 'A_2', text: <>Nach meiner Wahl steht das Ticket sofort in der Spalte des neuen Standes.</>},
+  ]}
+/>
+
+### Story 2 – Die Zahlen im Blick
+
+<StoryCard
+  story={<>
+    <strong>Als</strong> Teamleiterin, die die Arbeit im Team verteilt, <strong>möchte ich</strong> sehen, wie viele Tickets in welchem Stand sind, <strong>damit</strong> ich erkenne, wo es sich staut.
+  </>}
+  criteria={[
+    {id: 'A_3', text: <>Über jeder Spalte steht die Anzahl ihrer Tickets.</>},
+    {id: 'A_4', text: <>Wechselt ein Ticket den Stand, stimmen die Anzahlen sofort.</>},
+    {id: 'A_5', text: <>Ist nur die Anzeige der dringenden Tickets gewählt, zählt die Anzahl nur die Tickets, die zu sehen sind.</>},
+  ]}
+/>
+
+Nicht Teil dieser Story: Ein einzelnes Ticket aufrufen kommt in AB 04. Die Änderungen gelten nur, solange die Seite offen ist. Nach dem Neuladen stehen die Tickets wieder wie in den Beispieldaten, gespeichert wird erst mit einem Server.
+
+Daraus hat dein Team im Sprint-Planning-Meeting 3 folgende Tasks abgeleitet:
+
+<PlanningBox>
+
+| # | Task | Erfüllt |
+|---|---|---|
+| T_1 | Karte: Wechsel anbieten und dem Board melden | A_1 |
+| T_2 | Board: Stand eines Tickets ändern | A_2 |
+| T_3 | Experiment: Ein Kollege übernimmt ein Ticket | Voraussetzung für T_4 |
+| T_4 | Zustand des Boards als Signal halten | Voraussetzung für T_5 |
+| T_5 | Abgeleitete Werte mit `computed` berechnen | Voraussetzung für AB 04 |
+| T_6 | Anzahl über jeder Spalte zeigen | A_3, A_4, A_5 |
+| T_7 | Testfälle ausführen | alle |
+
+</PlanningBox>
+
+## Karte und Spaltenköpfe im Wireframe
+
+![Wireframe des Boards: Ticketkarten mit Knöpfen zum Wechseln des Standes und Spaltenüberschriften mit der Anzahl der Tickets](/img/tutorial-02/01-board.png)
+
+Unten auf jeder Karte stehen Knöpfe für den Wechsel in den benachbarten Stand. Hinter jeder Spaltenüberschrift steht die Anzahl der Tickets in der Spalte.
+
+## Aufgaben
+
+### Aufgabe 1 – Die Karte bietet den Wechsel an
+
+*Etwa 20 Minuten.*
+
+<TaskBadge>T_1 · Karte: Wechsel anbieten und dem Board melden</TaskBadge>
+
+Die Karte zeigt ein Ticket, das ihr das Board gegeben hat. Die Tickets gehören dem Board, deshalb darf die Karte sie nicht selbst ändern. Sie kann dem Board aber **melden**: „Der Benutzer möchte dieses Ticket in den Stand X verschieben.“ Dafür gibt es den **Ausgang** `output()`. Er ist das Gegenstück zum Eingang `input()` aus AB 01: Mit `input()` kommen Daten von oben in die Komponente, mit `output()` gehen Meldungen nach oben hinaus.
+
+<Task id="t2-ab03-a1-class">Ersetze den gesamten Inhalt von `ticket-card.ts` durch:</Task>
+
+```ts title="src/app/ticket-card/ticket-card.ts" {1,3,6-14,24,38-40}
+import { Component, input, output } from '@angular/core';
+import { assigneeName, isUrgent } from '../ticket';
+import type { Status, Ticket } from '../ticket';
+import { PRIORITY_LABEL } from '../ticket-labels';
+
+/** Wohin ein Ticket von seinem Stand aus wechseln kann, und wie der Knopf heißt. */
+const MOVES: Record<Status, { to: Status; label: string }[]> = {
+  offen: [{ to: 'in Arbeit', label: 'In Arbeit →' }],
+  'in Arbeit': [
+    { to: 'offen', label: '← Offen' },
+    { to: 'erledigt', label: 'Erledigt →' },
+  ],
+  erledigt: [{ to: 'in Arbeit', label: '← In Arbeit' }],
+};
+
+@Component({
+  selector: 'app-ticket-card',
+  imports: [],
+  templateUrl: './ticket-card.html',
+  styleUrl: './ticket-card.css',
+})
+export class TicketCard {
+  readonly ticket = input.required<Ticket>();
+  readonly statusChange = output<Status>();
+
+  protected urgent(): boolean {
+    return isUrgent(this.ticket());
+  }
+
+  protected priorityText(): string {
+    return PRIORITY_LABEL[this.ticket().priority];
+  }
+
+  protected assignee(): string {
+    return assigneeName(this.ticket());
+  }
+
+  protected moves(): { to: Status; label: string }[] {
+    return MOVES[this.ticket().status];
+  }
+}
+```
+
+**Das ist neu:**
+
+- `output<Status>()` legt den Ausgang `statusChange` an. Der Typ in den spitzen Klammern sagt, was die Karte mitschickt: den neuen Stand. Mit `statusChange.emit(…)` schickt sie die Meldung ab.
+- `MOVES` legt fest, wohin ein Ticket von jedem Stand aus wechseln kann. `Record<Status, …>` kennst du. Der Wert ist eine Liste von Wechseln, jeder mit dem neuen Stand (`to`) und dem Text auf dem Knopf (`label`).
+- `moves()` gibt die Wechsel für das Ticket der Karte zurück.
+
+<Task id="t2-ab03-a1-html">Ersetze den gesamten Inhalt von `ticket-card.html` durch:</Task>
+
+```html title="src/app/ticket-card/ticket-card.html" {16-20}
+<article class="card" [class.urgent]="urgent()">
+  <header class="card-head">
+    <span class="ticket-id">#{{ ticket().id }}</span>
+    @if (urgent()) {
+      <span class="tag-urgent">dringend</span>
+    }
+  </header>
+
+  <h3 class="card-title">{{ ticket().title }}</h3>
+
+  <div class="meta">
+    <span class="prio" [attr.data-priority]="ticket().priority">{{ priorityText() }}</span>
+    <span class="assignee">{{ assignee() }}</span>
+  </div>
+
+  <footer class="actions">
+    @for (move of moves(); track move.to) {
+      <button type="button" class="btn" (click)="statusChange.emit(move.to)">{{ move.label }}</button>
+    }
+  </footer>
+</article>
+```
+
+**Das ist neu:**
+
+- Pro Wechsel entsteht ein Knopf, `@for` kennst du aus AB 02. Als `track` dient der neue Stand: Jeder Knopf einer Karte hat einen anderen.
+- `(click)="statusChange.emit(move.to)"` ist ein Event-Binding wie `(change)` in AB 02. Beim Klick schickt die Karte den neuen Stand über ihren Ausgang ab.
+
+<Task id="t2-ab03-a1-css">Ergänze am Ende von `ticket-card.css`:</Task>
+
+```css
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 4px;
+}
+```
+
+<Task id="t2-ab03-a1-check">Im Browser haben die Karten jetzt Knöpfe: in „Offen“ einen, in „In Arbeit“ zwei, in „Erledigt“ einen. Ein Klick bewirkt noch nichts. Die Karte meldet, aber niemand hört zu.</Task>
+
+### Aufgabe 2 – Das Board hört zu
+
+*Etwa 15 Minuten.*
+
+<TaskBadge>T_2 · Board: Stand eines Tickets ändern</TaskBadge>
+
+Jetzt hört das Board auf die Meldung der Karte und ändert das Ticket. Dafür hast du in der Werkstatt `withStatus` geschrieben: Die Funktion liefert dieselbe Liste mit geändertem Stand und lässt die alte unverändert.
+
+<Task id="t2-ab03-a2-predict">Sage voraus: Du klickst bei Ticket #3 auf „In Arbeit →“. In welcher Spalte steht es danach, und an welcher Stelle? Schreibe es auf.</Task>
+
+<Task id="t2-ab03-a2-class">Ersetze den gesamten Inhalt von `ticket-board.ts` durch:</Task>
+
+```ts title="src/app/ticket-board/ticket-board.ts" {5,23,40-42}
+import { Component } from '@angular/core';
+import { sampleTickets } from '../sample-data';
+import { isUrgent } from '../ticket';
+import type { Status } from '../ticket';
+import { sortedByPriority, ticketsWithStatus, withStatus } from '../ticket-list';
+import { TicketCard } from '../ticket-card/ticket-card';
+import { STATUS_LABEL } from '../ticket-labels';
+
+/** Die drei Spalten des Boards, von links nach rechts. */
+const COLUMNS: { status: Status; css: string }[] = [
+  { status: 'offen', css: 'open' },
+  { status: 'in Arbeit', css: 'progress' },
+  { status: 'erledigt', css: 'done' },
+];
+
+@Component({
+  selector: 'app-ticket-board',
+  imports: [TicketCard],
+  templateUrl: './ticket-board.html',
+  styleUrl: './ticket-board.css',
+})
+export class TicketBoard {
+  protected tickets = sampleTickets;
+  protected urgentOnly = false;
+
+  /** Je Spalte die Tickets, die dringendsten zuerst. */
+  protected columns() {
+    const tickets = this.urgentOnly ? this.tickets.filter(isUrgent) : this.tickets;
+    return COLUMNS.map((column) => ({
+      css: column.css,
+      label: STATUS_LABEL[column.status],
+      tickets: sortedByPriority(ticketsWithStatus(tickets, column.status)),
+    }));
+  }
+
+  protected toggleUrgent(): void {
+    this.urgentOnly = !this.urgentOnly;
+  }
+
+  protected changeStatus(id: number, status: Status): void {
+    this.tickets = withStatus(this.tickets, id, status);
+  }
+}
+```
+
+**Das ist neu:**
+
+- `changeStatus(id, status)` ersetzt die Liste `tickets` durch die Liste, die `withStatus` liefert.
+- Deshalb steht bei `tickets` kein `readonly` mehr: Das Feld bekommt einen neuen Wert.
+
+<Task id="t2-ab03-a2-html">Ersetze den gesamten Inhalt von `ticket-board.html` durch:</Task>
+
+```html title="src/app/ticket-board/ticket-board.html" {17}
+<div class="toolbar">
+  <label class="switch">
+    <input type="checkbox" [checked]="urgentOnly" (change)="toggleUrgent()" />
+    Nur dringende Tickets zeigen
+  </label>
+</div>
+
+<div class="columns">
+  @for (column of columns(); track column.css) {
+    <section [class]="'column ' + column.css">
+      <h2 class="column-title">
+        <span class="dot" aria-hidden="true"></span>
+        {{ column.label }}
+      </h2>
+
+      @for (ticket of column.tickets; track ticket.id) {
+        <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
+      } @empty {
+        <p class="empty">Keine Tickets</p>
+      }
+    </section>
+  }
+</div>
+```
+
+**Das ist neu:** `(statusChange)="changeStatus(ticket.id, $event)"` hört auf den Ausgang der Karte, so wie `(change)` auf den Haken hört. Event-Bindings gibt es für HTML-Elemente und für eigene Komponenten. `$event` ist der Wert, den die Karte mit `emit` geschickt hat, hier der neue Stand.
+
+<Task id="t2-ab03-a2-check">Probiere es aus: Klicke bei #3 auf „In Arbeit →“, danach auf „← Offen“. Vergleiche mit deiner Vorhersage.</Task>
+
+<details>
+<summary>Auflösung</summary>
+
+#3 steht danach in „In Arbeit“, zwischen #2 und #7. Beide haben mittlere Priorität, #3 hat die kleinere Nummer und steht deshalb vor #7. #2 hat hohe Priorität und steht ganz oben. Aus „Offen“ ist #3 verschwunden.
+
+</details>
+
+### Aufgabe 3 – Experiment: Ein Kollege übernimmt ein Ticket
+
+*Etwa 15 Minuten.*
+
+<TaskBadge>T_3 · Experiment: Ein Kollege übernimmt ein Ticket</TaskBadge>
+
+Im Betrieb ändern nicht nur du, sondern auch deine Kollegen Tickets, und dein Board soll das mitbekommen. Später kommen solche Änderungen vom Server. Hier simulierst du sie mit einem Timer: Nach fünf Sekunden übernimmt ein Kollege Ticket #3.
+
+<Task id="t2-ab03-a3-predict">Lies zuerst den Code unten. Er ruft nach fünf Sekunden `changeStatus(3, 'in Arbeit')` auf, tut also dasselbe wie dein Klick eben. Sage voraus: Was siehst du nach sechs Sekunden im Browser, wenn du nichts anklickst?</Task>
+
+<Task id="t2-ab03-a3-class">Ersetze den gesamten Inhalt von `ticket-board.ts` durch:</Task>
+
+```ts title="src/app/ticket-board/ticket-board.ts" {26-29}
+import { Component } from '@angular/core';
+import { sampleTickets } from '../sample-data';
+import { isUrgent } from '../ticket';
+import type { Status } from '../ticket';
+import { sortedByPriority, ticketsWithStatus, withStatus } from '../ticket-list';
+import { TicketCard } from '../ticket-card/ticket-card';
+import { STATUS_LABEL } from '../ticket-labels';
+
+/** Die drei Spalten des Boards, von links nach rechts. */
+const COLUMNS: { status: Status; css: string }[] = [
+  { status: 'offen', css: 'open' },
+  { status: 'in Arbeit', css: 'progress' },
+  { status: 'erledigt', css: 'done' },
+];
+
+@Component({
+  selector: 'app-ticket-board',
+  imports: [TicketCard],
+  templateUrl: './ticket-board.html',
+  styleUrl: './ticket-board.css',
+})
+export class TicketBoard {
+  protected tickets = sampleTickets;
+  protected urgentOnly = false;
+
+  constructor() {
+    // Ein Kollege übernimmt nach fünf Sekunden das Ticket 3.
+    setTimeout(() => this.changeStatus(3, 'in Arbeit'), 5000);
+  }
+
+  /** Je Spalte die Tickets, die dringendsten zuerst. */
+  protected columns() {
+    const tickets = this.urgentOnly ? this.tickets.filter(isUrgent) : this.tickets;
+    return COLUMNS.map((column) => ({
+      css: column.css,
+      label: STATUS_LABEL[column.status],
+      tickets: sortedByPriority(ticketsWithStatus(tickets, column.status)),
+    }));
+  }
+
+  protected toggleUrgent(): void {
+    this.urgentOnly = !this.urgentOnly;
+  }
+
+  protected changeStatus(id: number, status: Status): void {
+    this.tickets = withStatus(this.tickets, id, status);
+  }
+}
+```
+
+- `constructor()` ist der Konstruktor der Klasse. Er läuft einmal, wenn Angular das Board anlegt.
+- `setTimeout(funktion, 5000)` führt die Funktion nach 5000 Millisekunden aus.
+
+<Task id="t2-ab03-a3-run">Lade die Seite neu. Fasse nichts an und beobachte Ticket #3 sechs Sekunden lang. Notiere, was passiert.</Task>
+
+<Task id="t2-ab03-a3-click">Setze danach den Haken „Nur dringende Tickets zeigen“ und nimm ihn wieder heraus. Notiere, was jetzt mit #3 ist.</Task>
+
+<details>
+<summary>Auflösung</summary>
+
+Nach sechs Sekunden steht #3 noch in „Offen“. Erst nach dem Klick auf den Haken springt es nach „In Arbeit“. Die Liste `tickets` war die ganze Zeit schon geändert. Die **Anzeige** hat sich nicht erneuert, bis der Klick sie dazu gebracht hat.
+
+</details>
+
+**Warum das so ist:** Angular zeichnet das Board nur neu, wenn es einen Anlass dafür kennt. Ein Klick im Template ist so ein Anlass. Deshalb hat Aufgabe 2 funktioniert. Ein Timer ist keiner: Das Feld hat einen neuen Wert, aber niemand hat es Angular gesagt. Neue Angular-Projekte kommen ohne die Bibliothek Zone.js, die früher jeden Timer beobachtet hat.
+
+Ein Kollege, der ein Ticket übernimmt, ist genau der Fall, in dem du das Board nicht anfassen willst, damit es stimmt. Dafür gibt es Signals.
+
+### Aufgabe 4 – Der Zustand als Signal
+
+*Etwa 20 Minuten.*
+
+<TaskBadge>T_4 · Zustand des Boards als Signal halten</TaskBadge>
+
+Ein **Signal** ist ein Behälter für einen Wert, in den Angular hineinschauen kann:
+
+- `signal(startwert)` legt ihn an: `signal(sampleTickets)` ist ein Behälter, der die Beispieltickets enthält.
+- **Lesen** schreibst du wie einen Funktionsaufruf, mit Klammern: `tickets()`. Dabei merkt sich Angular, wer gelesen hat, zum Beispiel das Template.
+- **Schreiben** geht mit `tickets.set(neuerWert)` oder mit `tickets.update((alt) => neu)`. `update` bekommt den alten Wert und liefert den neuen.
+- Ändert sich ein Signal, erneuert Angular genau die Stellen, die es gelesen haben. Auch dann, wenn die Änderung von einem Timer kommt.
+
+Jetzt weißt du auch, warum du in AB 01 `ticket()` mit Klammern geschrieben hast: `input()` liefert ein Signal.
+
+<Task id="t2-ab03-a4-class">Ersetze den gesamten Inhalt von `ticket-board.ts` durch:</Task>
+
+```ts title="src/app/ticket-board/ticket-board.ts" {1,23-24,33,42,46}
+import { Component, signal } from '@angular/core';
+import { sampleTickets } from '../sample-data';
+import { isUrgent } from '../ticket';
+import type { Status } from '../ticket';
+import { sortedByPriority, ticketsWithStatus, withStatus } from '../ticket-list';
+import { TicketCard } from '../ticket-card/ticket-card';
+import { STATUS_LABEL } from '../ticket-labels';
+
+/** Die drei Spalten des Boards, von links nach rechts. */
+const COLUMNS: { status: Status; css: string }[] = [
+  { status: 'offen', css: 'open' },
+  { status: 'in Arbeit', css: 'progress' },
+  { status: 'erledigt', css: 'done' },
+];
+
+@Component({
+  selector: 'app-ticket-board',
+  imports: [TicketCard],
+  templateUrl: './ticket-board.html',
+  styleUrl: './ticket-board.css',
+})
+export class TicketBoard {
+  protected readonly tickets = signal(sampleTickets);
+  protected readonly urgentOnly = signal(false);
+
+  constructor() {
+    // Ein Kollege übernimmt nach fünf Sekunden das Ticket 3.
+    setTimeout(() => this.changeStatus(3, 'in Arbeit'), 5000);
+  }
+
+  /** Je Spalte die Tickets, die dringendsten zuerst. */
+  protected columns() {
+    const tickets = this.urgentOnly() ? this.tickets().filter(isUrgent) : this.tickets();
+    return COLUMNS.map((column) => ({
+      css: column.css,
+      label: STATUS_LABEL[column.status],
+      tickets: sortedByPriority(ticketsWithStatus(tickets, column.status)),
+    }));
+  }
+
+  protected toggleUrgent(): void {
+    this.urgentOnly.update((value) => !value);
+  }
+
+  protected changeStatus(id: number, status: Status): void {
+    this.tickets.update((tickets) => withStatus(tickets, id, status));
+  }
+}
+```
+
+**Das ist neu:**
+
+- `tickets` und `urgentOnly` sind jetzt Signale. Das Feld selbst bekommt nie einen neuen Wert, nur der Behälter ändert seinen Inhalt. Deshalb steht wieder `readonly` da.
+- `columns()` liest die Signale mit Klammern: `this.urgentOnly()`, `this.tickets()`.
+- `toggleUrgent()` und `changeStatus()` schreiben mit `update`. `(value) => !value` ist eine Pfeilfunktion, die den alten Wert bekommt und den umgekehrten zurückgibt.
+
+<Task id="t2-ab03-a4-html">Das Template liest `urgentOnly` jetzt auch als Signal. Ändere in `ticket-board.html` die Zeile mit `[checked]`.</Task>
+
+<details>
+<summary>Lösung: ticket-board.html</summary>
+
+```html title="src/app/ticket-board/ticket-board.html"
+<div class="toolbar">
+  <label class="switch">
+    <input type="checkbox" [checked]="urgentOnly()" (change)="toggleUrgent()" />
+    Nur dringende Tickets zeigen
+  </label>
+</div>
+
+<div class="columns">
+  @for (column of columns(); track column.css) {
+    <section [class]="'column ' + column.css">
+      <h2 class="column-title">
+        <span class="dot" aria-hidden="true"></span>
+        {{ column.label }}
+      </h2>
+
+      @for (ticket of column.tickets; track ticket.id) {
+        <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
+      } @empty {
+        <p class="empty">Keine Tickets</p>
+      }
+    </section>
+  }
+</div>
+```
+
+</details>
+
+<Task id="t2-ab03-a4-run">Lade die Seite neu, fasse nichts an und beobachte Ticket #3 sechs Sekunden lang. Es springt nach fünf Sekunden von selbst nach „In Arbeit“.</Task>
+
+<Task id="t2-ab03-a4-remove">Das Experiment ist beendet. Lösche den Konstruktor mit dem Timer wieder aus `ticket-board.ts`.</Task>
+
+### Aufgabe 5 – Abgeleitete Werte mit `computed`
+
+*Etwa 15 Minuten.*
+
+<TaskBadge>T_5 · Abgeleitete Werte mit `computed` berechnen</TaskBadge>
+
+`columns()` ist ein **abgeleiteter** Wert: Er wird aus `tickets` und `urgentOnly` berechnet. Als Methode rechnet er bei jeder Prüfung des Templates von vorn. Für abgeleitete Werte gibt es `computed`:
+
+- `computed(() => …)` berechnet einen Wert aus Signalen. Es merkt sich, welche Signale darin gelesen wurden, und rechnet nur neu, wenn sich eines davon ändert. Sonst liefert es das gemerkte Ergebnis.
+- Ein `computed` liest du wie ein Signal, mit Klammern. Im Template ändert sich deshalb nichts: `columns()` bleibt `columns()`.
+- Ein `computed` kannst du nur lesen, nicht beschreiben. Sein Wert ergibt sich immer aus den Signalen, von denen er abhängt.
+
+Bei acht Tickets merkst du keinen Unterschied. Bei langen Listen und aufwendigen Berechnungen spart `computed` Arbeit, und der abgeleitete Wert kann nie vom Zustand abweichen, aus dem er entsteht.
+
+<Task id="t2-ab03-a5-class">Ersetze den gesamten Inhalt von `ticket-board.ts` durch:</Task>
+
+```ts title="src/app/ticket-board/ticket-board.ts" {1,26-27,34}
+import { Component, computed, signal } from '@angular/core';
+import { sampleTickets } from '../sample-data';
+import { isUrgent } from '../ticket';
+import type { Status } from '../ticket';
+import { sortedByPriority, ticketsWithStatus, withStatus } from '../ticket-list';
+import { TicketCard } from '../ticket-card/ticket-card';
+import { STATUS_LABEL } from '../ticket-labels';
+
+/** Die drei Spalten des Boards, von links nach rechts. */
+const COLUMNS: { status: Status; css: string }[] = [
+  { status: 'offen', css: 'open' },
+  { status: 'in Arbeit', css: 'progress' },
+  { status: 'erledigt', css: 'done' },
+];
+
+@Component({
+  selector: 'app-ticket-board',
+  imports: [TicketCard],
+  templateUrl: './ticket-board.html',
+  styleUrl: './ticket-board.css',
+})
+export class TicketBoard {
+  protected readonly tickets = signal(sampleTickets);
+  protected readonly urgentOnly = signal(false);
+
+  /** Je Spalte die Tickets, die dringendsten zuerst. Ändert sich ein Signal, rechnet das Board neu. */
+  protected readonly columns = computed(() => {
+    const tickets = this.urgentOnly() ? this.tickets().filter(isUrgent) : this.tickets();
+    return COLUMNS.map((column) => ({
+      css: column.css,
+      label: STATUS_LABEL[column.status],
+      tickets: sortedByPriority(ticketsWithStatus(tickets, column.status)),
+    }));
+  });
+
+  protected toggleUrgent(): void {
+    this.urgentOnly.update((value) => !value);
+  }
+
+  protected changeStatus(id: number, status: Status): void {
+    this.tickets.update((tickets) => withStatus(tickets, id, status));
+  }
+}
+```
+
+`columns` ist jetzt ein Feld mit einem `computed` statt einer Methode. Der Timer aus dem Experiment ist weg.
+
+<Task id="t2-ab03-a5-card">Auch in der Karte sind `urgent`, `priorityText`, `assignee` und `moves` abgeleitete Werte: Sie hängen alle am Signal `ticket()`. Mache sie zu `computed`-Werten. Im Template der Karte ändert sich nichts.</Task>
+
+<details>
+<summary>Lösung: ticket-card.ts</summary>
+
+```ts title="src/app/ticket-card/ticket-card.ts"
+import { Component, computed, input, output } from '@angular/core';
+import { assigneeName, isUrgent } from '../ticket';
+import type { Status, Ticket } from '../ticket';
+import { PRIORITY_LABEL } from '../ticket-labels';
+
+/** Wohin ein Ticket von seinem Stand aus wechseln kann, und wie der Knopf heißt. */
+const MOVES: Record<Status, { to: Status; label: string }[]> = {
+  offen: [{ to: 'in Arbeit', label: 'In Arbeit →' }],
+  'in Arbeit': [
+    { to: 'offen', label: '← Offen' },
+    { to: 'erledigt', label: 'Erledigt →' },
+  ],
+  erledigt: [{ to: 'in Arbeit', label: '← In Arbeit' }],
+};
+
+@Component({
+  selector: 'app-ticket-card',
+  imports: [],
+  templateUrl: './ticket-card.html',
+  styleUrl: './ticket-card.css',
+})
+export class TicketCard {
+  readonly ticket = input.required<Ticket>();
+  readonly statusChange = output<Status>();
+
+  protected readonly urgent = computed(() => isUrgent(this.ticket()));
+  protected readonly priorityText = computed(() => PRIORITY_LABEL[this.ticket().priority]);
+  protected readonly assignee = computed(() => assigneeName(this.ticket()));
+  protected readonly moves = computed(() => MOVES[this.ticket().status]);
+}
+```
+
+</details>
+
+<Task id="t2-ab03-a5-check">Im Browser verhält sich alles wie vorher, und im Terminal steht keine rote Fehlermeldung.</Task>
+
+### Aufgabe 6 – Die Anzahl über jeder Spalte
+
+*Etwa 5 Minuten.*
+
+<TaskBadge>T_6 · Anzahl über jeder Spalte zeigen</TaskBadge>
+
+<Task id="t2-ab03-a6-html">Zeige in `ticket-board.html` hinter der Überschrift jeder Spalte die Anzahl ihrer Tickets an, in einem `<span>` mit der Klasse `count`. Die Anzahl ist die Länge der Liste, über die die innere Schleife läuft.</Task>
+
+<details>
+<summary>Lösung: ticket-board.html</summary>
+
+<CodeFile data={stage} file="src/app/ticket-board/ticket-board.html" />
+
+</details>
+
+<Task id="t2-ab03-a6-css">Ergänze am Ende von `ticket-board.css`:</Task>
+
+```css
+.count {
+  min-width: 26px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+```
+
+<Task id="t2-ab03-a6-check">Prüfe im Browser: Hinter „Offen“ steht 4, hinter „In Arbeit“ 2, hinter „Erledigt“ 2. Wechselt ein Ticket den Stand, ändern sich die Zahlen mit, ohne dass du dafür etwas geschrieben hast.</Task>
+
+### Aufgabe 7 – Testfälle
+
+*Etwa 10 Minuten.*
+
+<TaskBadge>T_7 · Testfälle ausführen</TaskBadge>
+
+<Task id="t2-ab03-a7">Führe die Testfälle aus. Jeder ist einem Akzeptanzkriterium der Stories zugeordnet.</Task>
+
+<TestTable
+  storageKey="t2-ab03-tests"
+  tests={[
+    {
+      id: 'TF-01',
+      beschreibung: '(A_1) Wechsel anbieten',
+      vorbedingung: 'Die Anwendung läuft (npm start), die Seite ist frisch geladen',
+      schritte: ['Die Knöpfe der Karte #3 (Offen), #2 (In Arbeit) und #6 (Erledigt) ansehen'],
+      erwartet: <>#3 hat „In Arbeit →“. #2 hat „← Offen“ und „Erledigt →“. #6 hat „← In Arbeit“.</>,
+    },
+    {
+      id: 'TF-02',
+      beschreibung: '(A_2) Der Stand wechselt sofort',
+      vorbedingung: 'Die Seite ist frisch geladen',
+      schritte: ['Bei #3 auf „In Arbeit →“ klicken'],
+      erwartet: <>#3 steht sofort in „In Arbeit“, zwischen #2 und #7. In „Offen“ stehen noch 4, 8 und 5.</>,
+    },
+    {
+      id: 'TF-03',
+      beschreibung: '(A_2) Zurück in den vorigen Stand',
+      vorbedingung: 'TF-02 wurde ausgeführt',
+      schritte: ['Bei #3 auf „← Offen“ klicken'],
+      erwartet: <>#3 steht wieder in „Offen“, an dritter Stelle nach 4. Die Reihenfolge in „Offen“ ist 4, 3, 8, 5.</>,
+    },
+    {
+      id: 'TF-04',
+      beschreibung: '(A_3) Anzahl über jeder Spalte',
+      vorbedingung: 'Die Seite ist frisch geladen',
+      schritte: ['Die Zahlen hinter den Spaltenüberschriften ansehen'],
+      erwartet: <>„Offen“ zeigt 4, „In Arbeit“ 2, „Erledigt“ 2.</>,
+    },
+    {
+      id: 'TF-05',
+      beschreibung: '(A_4) Die Anzahlen folgen dem Wechsel',
+      vorbedingung: 'Die Seite ist frisch geladen',
+      schritte: ['Bei #3 auf „In Arbeit →“ klicken', 'Die Zahlen ansehen'],
+      erwartet: <>Die Zahlen sind 3, 3 und 2.</>,
+    },
+    {
+      id: 'TF-06',
+      beschreibung: '(A_5) Mit dem Schalter zählen die Anzahlen nur, was zu sehen ist',
+      vorbedingung: 'Die Seite ist frisch geladen',
+      schritte: ['Den Haken „Nur dringende Tickets zeigen“ setzen', 'Die Zahlen ansehen'],
+      erwartet: <>Die Zahlen sind 1, 1 und 0.</>,
+    },
+    {
+      id: 'TF-07',
+      beschreibung: '(A_2, A_5) Ein Wechsel bei gesetztem Schalter',
+      vorbedingung: 'TF-06 wurde ausgeführt, der Haken ist gesetzt',
+      schritte: ['Bei #2 auf „Erledigt →“ klicken', 'Die Zahlen und die Spalten ansehen'],
+      erwartet: <>#2 verschwindet vom Board, weil ein erledigtes Ticket nicht dringend ist. Die Zahlen sind 1, 0 und 0. „In Arbeit“ und „Erledigt“ zeigen „Keine Tickets“.</>,
+    },
+  ]}
+/>
+
+## Das hast du gelernt
+
+- Mit **`output()`** meldet eine Komponente etwas an die Komponente über ihr, mit `.emit(…)`. Die darüber hört mit `(name)="…"` zu und bekommt den Wert als `$event`.
+- Eine Anzeige kann veralten, wenn sich Daten ändern, ohne dass Angular es erfährt, zum Beispiel in einem Timer.
+- **Signals** lösen das: `signal(…)` legt sie an, `x()` liest, `x.set(…)` und `x.update(…)` schreiben. Angular erneuert genau die Stellen, die das Signal gelesen haben.
+- **`computed`** leitet einen Wert aus Signalen ab und rechnet nur neu, wenn sich eines davon ändert. Es liest sich wie ein Signal.
+- `input()` liefert auch ein Signal. Darum schreibst du `ticket()`.
+
+## Selbstkontrolle
+
+1. Was ist der Unterschied zwischen `input()` und `output()`?
+2. Im Experiment war die Liste `tickets` nach fünf Sekunden schon geändert, das Board zeigte es aber nicht. Warum?
+3. Wie liest du ein Signal, und wie schreibst du es?
+4. Wann nimmst du `computed` statt eines `signal`?
+5. Warum stimmen die Zahlen über den Spalten immer, auch wenn der Haken gesetzt ist?
+
+<details>
+<summary>Antworten</summary>
+
+1. Mit `input()` bekommt eine Komponente Daten von der Komponente über ihr. Mit `output()` meldet sie etwas an diese zurück.
+2. Angular zeichnet das Board nur neu, wenn es einen Anlass kennt. Ein Timer ist keiner. Ein Signal sagt Angular Bescheid, sobald es sich ändert.
+3. Lesen mit Klammern, `x()`. Schreiben mit `x.set(neuerWert)` oder `x.update((alt) => neu)`.
+4. Für Werte, die sich aus anderen Signalen berechnen lassen und nicht selbst geschrieben werden, wie `columns`.
+5. Die Zahl ist die Länge der Liste, die die Spalte anzeigt. Diese Liste kommt aus `columns`, und das rechnet sich neu, wenn sich `tickets` oder `urgentOnly` ändert.
+
+</details>

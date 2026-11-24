@@ -93,13 +93,43 @@ Du hast gerade Code umgebaut und weißt in einer Sekunde, dass er noch dasselbe 
 
 *Etwa 15 Minuten.*
 
-**B2** `titles` liefert nur die Titel, in derselben Reihenfolge. Das ist ein Fall für `map`: Es macht aus **jedem** Element etwas anderes und liefert eine Liste **gleicher Länge**.
+**B2** `titles` liefert nur die Titel, in derselben Reihenfolge. Das ist ein Fall für `map`: Es macht aus **jedem** Element etwas anderes und liefert eine Liste **gleicher Länge**. Ein Beispiel mit den Nummern:
+
+```ts
+tickets.map((ticket) => ticket.id);   // eine Nummer pro Ticket, zum Beispiel [1, 2, 3, 4, 5, 6, 7, 8]
+```
 
 <Task id="ts-ab02-a3-titles">Schreibe `titles` mit `map`. Der Test `B2 titles` wird grün.</Task>
 
-**B3** `findTicket` liefert das Ticket mit der Nummer `id`. Gibt es keins, ist das Ergebnis `undefined`. Dafür nimmst du `find`.
+<details>
+<summary>Lösung: titles</summary>
+
+```ts title="src/ticket-list.ts"
+export function titles(tickets: readonly Ticket[]): string[] {
+  return tickets.map((ticket) => ticket.title);
+}
+```
+
+</details>
+
+**B3** `findTicket` liefert das Ticket mit der Nummer `id`. Gibt es keins, ist das Ergebnis `undefined`. Dafür nimmst du `find`: Es liefert das **erste** Element, für das die Funktion `true` liefert, oder `undefined`, wenn keins passt. Ein Beispiel:
+
+```ts
+tickets.find((ticket) => ticket.priority === 1);   // das erste Ticket mit Priorität 1, oder undefined
+```
 
 <Task id="ts-ab02-a3-find">Schreibe `findTicket` mit `find`. Die beiden Tests `B3 findTicket` werden grün.</Task>
+
+<details>
+<summary>Lösung: findTicket</summary>
+
+```ts title="src/ticket-list.ts"
+export function findTicket(tickets: readonly Ticket[], id: number): Ticket | undefined {
+  return tickets.find((ticket) => ticket.id === id);
+}
+```
+
+</details>
 
 <Task id="ts-ab02-a3-type">Fahre in WebStorm mit der Maus über `findTicket`. Der Rückgabetyp ist `Ticket | undefined`, also „ein Ticket oder nichts“.</Task>
 
@@ -110,25 +140,16 @@ Probiere aus, was das bedeutet. Das Ergebnis von `findTicket` lässt sich nicht 
 <details>
 <summary>Auflösung</summary>
 
-Der Compiler meldet `Object is possibly 'undefined'`. Das Ticket könnte ja fehlen. Mit dem optionalen Zugriff `?.` sagst du: „Nur wenn es da ist.“ `findTicket(sampleTickets, 1)?.title` ist dann `string | undefined`. Wenn du einen Ersatzwert willst, hängst du `?? '–'` an. Beides kennst du aus AB 01.
+Der Compiler meldet `Object is possibly 'undefined'`. Das Ticket könnte ja fehlen.
+
+Dafür gibt es den **optionalen Zugriff** `?.`: Er greift nur zu, wenn davor etwas da ist, sonst ist das Ergebnis `undefined`. Mit `??` aus AB 01 kannst du einen Ersatzwert angeben:
+
+```ts
+findTicket(sampleTickets, 1)?.title;          // Typ: string | undefined
+findTicket(sampleTickets, 1)?.title ?? '–';   // Typ: string
+```
 
 </details>
-
-<Task id="ts-ab02-a3-quiz">Welche Methode passt zu welcher Frage? Trage ein und prüfe.</Task>
-
-<FillInTable
-  storageKey="ts-ab02-a3-methoden"
-  spalteLinks="Aufgabe"
-  spalteRechts="Methode"
-  platzhalter="filter, map, find, some oder reduce"
-  zeilen={[
-    {id: 'q1', links: 'Alle Tickets mit Priorität 1 behalten', loesung: 'filter'},
-    {id: 'q2', links: 'Aus jedem Ticket die Nummer herausholen (Liste aller Nummern)', loesung: 'map'},
-    {id: 'q3', links: 'Das Ticket mit der Nummer 5 suchen', loesung: 'find'},
-    {id: 'q4', links: 'Wissen, ob es mindestens ein erledigtes Ticket gibt', loesung: 'some'},
-    {id: 'q5', links: 'Alle Prioritäten zu einer Summe zusammenzählen', loesung: 'reduce'},
-  ]}
-/>
 
 ### Aufgabe 4 – Tickets zählen mit `reduce`
 
@@ -164,7 +185,20 @@ Start `0`, dann `2`, `4`, `5` und zum Schluss `8`. Das Ergebnis ist `8`.
 
 </details>
 
-Bei `countByStatus` ist der Zwischenstand kein Zahlenwert, sondern ein **Objekt**, das mitzählt. Es beginnt so:
+Bei `countByStatus` ist der Zwischenstand kein Zahlenwert, sondern ein **Objekt**, das mitzählt. Um aus dem alten Zwischenstand einen neuen zu bauen, brauchst du zwei Schreibweisen, die du noch nicht kennst. Beide zeigt dir ein Beispiel mit einem anderen Objekt:
+
+```ts
+const a = { x: 1, y: 2 };
+
+const b = { ...a, y: 5 };       // { x: 1, y: 5 }: alle Felder von a kopieren, y überschreiben
+const key = 'z';
+const c = { ...a, [key]: 9 };   // { x: 1, y: 2, z: 9 }: der Name des Feldes kommt aus dem Wert von key
+```
+
+- `{ ...a, y: 5 }` baut ein **neues** Objekt. `...a` kopiert alle Felder von `a`, ein Feld dahinter überschreibt das gleichnamige. Das ändert `a` nicht. Das nennt man den **Spread-Operator**.
+- `[key]: 9` in eckigen Klammern heißt: Der **Name** des Feldes steht nicht fest, er ist der Wert von `key`.
+
+Der Zwischenstand beginnt so:
 
 ```ts
 { offen: 0, 'in Arbeit': 0, erledigt: 0 }
@@ -193,7 +227,7 @@ export function countByStatus(tickets: readonly Ticket[]): Record<Status, number
 <details>
 <summary>Tipp 2: Der neue Zwischenstand</summary>
 
-Du brauchst ein **neues** Objekt, das so aussieht wie `count`, nur dass der Zähler für `ticket.status` um 1 größer ist. Das Spread-Objekt `{ ...count }` kopiert alle Felder, ein weiteres Feld dahinter überschreibt eins davon. Der Schlüssel steht in eckigen Klammern, weil er aus einem Wert kommt: `[ticket.status]: …`.
+Du brauchst ein **neues** Objekt, das so aussieht wie `count`, nur dass der Zähler für `ticket.status` um 1 größer ist. Das geht mit den beiden Schreibweisen von oben: `{ ...count, … }` kopiert alle Zähler, und das Feld dahinter überschreibt einen davon. Der Name dieses Feldes kommt aus einem Wert, steht also in eckigen Klammern: `[ticket.status]: …`.
 
 </details>
 
@@ -209,6 +243,29 @@ Die runden Klammern um das Objekt sind nötig, damit TypeScript die geschweiften
 </details>
 
 <Task id="ts-ab02-a4-test">Die Tests `B4 countByStatus` werden grün.</Task>
+
+Zwei weitere Methoden beantworten Ja-Nein-Fragen zu einer Liste:
+
+```ts
+tickets.some((ticket) => ticket.status === 'erledigt');   // true, wenn mindestens ein Ticket passt
+tickets.every((ticket) => ticket.priority === 1);         // true, wenn alle Tickets passen
+```
+
+<Task id="ts-ab02-a3-quiz">Welche Methode passt zu welcher Frage? Trage ein und prüfe.</Task>
+
+<FillInTable
+  storageKey="ts-ab02-a3-methoden"
+  spalteLinks="Aufgabe"
+  spalteRechts="Methode"
+  platzhalter="filter, map, find, some oder reduce"
+  zeilen={[
+    {id: 'q1', links: 'Alle Tickets mit Priorität 1 behalten', loesung: 'filter'},
+    {id: 'q2', links: 'Aus jedem Ticket die Nummer herausholen (Liste aller Nummern)', loesung: 'map'},
+    {id: 'q3', links: 'Das Ticket mit der Nummer 5 suchen', loesung: 'find'},
+    {id: 'q4', links: 'Wissen, ob es mindestens ein erledigtes Ticket gibt', loesung: 'some'},
+    {id: 'q5', links: 'Alle Prioritäten zu einer Summe zusammenzählen', loesung: 'reduce'},
+  ]}
+/>
 
 ### Aufgabe 5 – Sortieren und das Versprechen der Funktion
 

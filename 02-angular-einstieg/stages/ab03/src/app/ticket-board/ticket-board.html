@@ -1,0 +1,24 @@
+<div class="toolbar">
+  <label class="switch">
+    <input type="checkbox" [checked]="urgentOnly()" (change)="toggleUrgent()" />
+    Nur dringende Tickets zeigen
+  </label>
+</div>
+
+<div class="columns">
+  @for (column of columns(); track column.css) {
+    <section [class]="'column ' + column.css">
+      <h2 class="column-title">
+        <span class="dot" aria-hidden="true"></span>
+        {{ column.label }}
+        <span class="count">{{ column.tickets.length }}</span>
+      </h2>
+
+      @for (ticket of column.tickets; track ticket.id) {
+        <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
+      } @empty {
+        <p class="empty">Keine Tickets</p>
+      }
+    </section>
+  }
+</div>

@@ -1,0 +1,9 @@
+{
+  "name": "ticket-board-e2e",
+  "private": true,
+  "type": "module",
+  "description": "Browser-Test für die Musterlösung von Tutorial 02 (nur für die Lehrkraft)",
+  "devDependencies": {
+    "playwright-core": "^1.50.0"
+  }
+}
