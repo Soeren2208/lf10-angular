@@ -20,7 +20,7 @@ Du arbeitest mit einem Starter-Projekt, in dem fertige Tests auf dich warten. Am
 | | Arbeitsblatt | Darum geht es |
 |---|---|---|
 | **01** | [Ein Ticket beschreiben](01-ein-ticket-beschreiben) | Interface, Union-Typen, optionale Felder, `readonly`, Compilerfehler lesen |
-| **02** | [Mit Ticketlisten arbeiten](02-mit-ticketlisten-arbeiten) | Pfeilfunktionen, `filter`, `map`, `find`, `reduce`, Listen unveränderlich ändern |
+| **02** | [Mit Ticketlisten arbeiten](02-mit-ticketlisten-arbeiten) | Pfeilfunktionen, `filter`, `map`, `find`, Listen unveränderlich ändern |
 | **03** | [Speicher und Daten laden](03-speicher-und-daten-laden) | Klasse mit Konstruktor-Attributen, `async`/`await`, ein Speicher, der Änderungen meldet |
 
 ## Was du am Ende kannst

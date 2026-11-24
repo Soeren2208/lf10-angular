@@ -79,7 +79,7 @@ report(starterTests.passed === 0, `Alle Tests rot (grün: ${starterTests.passed}
 console.log('\n3b. Skripte pro Arbeitsblatt (test:ab01 bis test:ab03)');
 const perWorksheet = [
   ['test:ab01', 9],
-  ['test:ab02', 13],
+  ['test:ab02', 11],
   ['test:ab03', 16],
 ];
 let sumTotal = 0;
@@ -98,7 +98,6 @@ const mutants = [
   ['ticket.ts', "return ticket.priority === 1 && ticket.status !== 'erledigt';", 'return ticket.priority === 1;', 'isUrgent ignoriert erledigt'],
   ['ticket-list.ts', 'return [...tickets].sort(', 'return (tickets as Ticket[]).sort(', 'sortedByPriority sortiert die Eingabe selbst'],
   ['ticket-list.ts', 'ticket.id === id ? { ...ticket, status } : ticket', 'ticket.id === id ? Object.assign(ticket, { status }) : ticket', 'withStatus ändert das Ticket selbst'],
-  ['ticket-list.ts', "    { offen: 0, 'in Arbeit': 0, erledigt: 0 },", "    { offen: 0, 'in Arbeit': 0, erledigt: 1 },", 'countByStatus mit falschem Startwert'],
   ['ticket-store.ts', 'this.tickets = [...this.tickets, ticket];', '(this.tickets as Ticket[]).push(ticket);', 'add ändert die alte Liste'],
   ['ticket-store.ts', 'this.tickets = [...this.tickets, ticket];\n    this.notify();', 'this.tickets = [...this.tickets, ticket];', 'add meldet nichts'],
   ['ticket-store.ts', "    if (!this.tickets.some((ticket) => ticket.id === id)) {\n      return;\n    }\n", '', 'setStatus meldet auch bei unbekannter Nummer'],

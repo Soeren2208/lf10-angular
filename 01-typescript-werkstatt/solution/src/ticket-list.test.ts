@@ -1,7 +1,7 @@
 // Tests zu AB 02 – Mit Ticketlisten arbeiten
 import { describe, expect, it } from 'vitest';
 import { sampleTickets } from './sample-data';
-import { countByStatus, findTicket, openTickets, sortedByPriority, titles, withStatus } from './ticket-list';
+import { findTicket, openTickets, sortedByPriority, titles, withStatus } from './ticket-list';
 import { deepFreeze } from './test-helpers';
 
 // Die Eingabe wird eingefroren: Wer sie ändert, bekommt einen Fehler.
@@ -37,17 +37,7 @@ describe('B3 findTicket', () => {
   });
 });
 
-describe('B4 countByStatus', () => {
-  it('zählt die Tickets je Status', () => {
-    expect(countByStatus(sampleTickets)).toEqual({ offen: 4, 'in Arbeit': 2, erledigt: 2 });
-  });
-
-  it('nennt auch Status ohne Tickets mit 0', () => {
-    expect(countByStatus([])).toEqual({ offen: 0, 'in Arbeit': 0, erledigt: 0 });
-  });
-});
-
-describe('B5 sortedByPriority', () => {
+describe('B4 sortedByPriority', () => {
   it('sortiert die dringendsten zuerst, bei Gleichstand nach Nummer', () => {
     expect(sortedByPriority(sampleTickets).map((t) => t.id)).toEqual([2, 4, 6, 3, 7, 8, 1, 5]);
   });
@@ -59,7 +49,7 @@ describe('B5 sortedByPriority', () => {
   });
 });
 
-describe('B6 withStatus', () => {
+describe('B5 withStatus', () => {
   it('ändert den Status des gewünschten Tickets', () => {
     const updated = withStatus(sampleTickets, 3, 'erledigt');
     expect(findTicket(updated, 3)?.status).toBe('erledigt');

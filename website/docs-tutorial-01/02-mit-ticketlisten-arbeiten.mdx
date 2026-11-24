@@ -13,9 +13,9 @@ import solution from '@site/src/data/solution-ab02.json';
 
 ## Die Situation
 
-> Das Support-Ticket der HiTec GmbH hat jetzt eine feste Form. Die Support-Leitung will daraus **Auswertungen** sehen: Wie viele Tickets sind offen? Welche sind am dringendsten? Wie weit ist Ticket 4?
+> Das Support-Ticket der HiTec GmbH hat jetzt eine feste Form. Die Support-Leitung will daraus **Auswertungen** sehen: Welche Tickets sind offen? Welche sind am dringendsten? Wie weit ist Ticket 4?
 >
-> Bisher hat sie das in der Excel-Tabelle von Hand gemacht: nach „offen“ **filtern**, nach Priorität **sortieren**, mit Strg + F ein Ticket **suchen**, die Zeilen **zählen**. Das soll die Weboberfläche künftig selbst können. Und wenn Jonas Beck ein Ticket erledigt, soll sich die Liste sofort ändern, ohne dass jemand die Tabelle neu öffnet.
+> Bisher hat sie das in der Excel-Tabelle von Hand gemacht: nach „offen“ **filtern**, nach Priorität **sortieren**, mit Strg + F ein Ticket **suchen**. Das soll die Weboberfläche künftig selbst können. Und wenn Jonas Beck ein Ticket erledigt, soll sich die Liste sofort ändern, ohne dass jemand die Tabelle neu öffnet.
 >
 > Dein Auftrag: Schreibe die Funktionen, die Ticketlisten auswerten und ändern.
 
@@ -24,7 +24,7 @@ import solution from '@site/src/data/solution-ab02.json';
 Nach Bearbeitung dieses Arbeitsblatts kannst du:
 
 - **Pfeilfunktionen** lesen und schreiben
-- mit `filter`, `map`, `find` und `reduce` Listen auswerten und für jede Frage die passende Methode wählen
+- mit `filter`, `map` und `find` Listen auswerten und für jede Frage die passende Methode wählen
 - mit einem Ergebnis `undefined` umgehen, wenn `find` nichts findet
 - erklären, warum `sort` eine Liste verändert, und eine **Kopie** davon sortieren
 - ein Objekt in einer Liste **ändern, ohne die Liste zu verändern**
@@ -49,7 +49,7 @@ Die Array-Methoden erklärt das Infoblatt [Listen auswerten: Array-Methoden](/in
 
 <Task id="ts-ab02-a1-data">Öffne `src/sample-data.ts`. Dort stehen acht Beispieltickets, mit denen alle Tests arbeiten. Notiere, wie viele davon den Status `offen` haben.</Task>
 
-<Task id="ts-ab02-a1-test">Führe die Tests dieses Arbeitsblatts aus: `npm run test:ab02`. Alle 13 sind rot, es sind die mit **B**.</Task>
+<Task id="ts-ab02-a1-test">Führe die Tests dieses Arbeitsblatts aus: `npm run test:ab02`. Alle 11 sind rot, es sind die mit **B**.</Task>
 
 Alle Funktionen dieses Arbeitsblatts stehen in `src/ticket-list.ts`. Jede nimmt eine Liste `readonly Ticket[]` entgegen. Das heißt: Die Funktion **verspricht**, die Liste nicht zu verändern. Der Compiler wird sie daran hindern.
 
@@ -174,90 +174,10 @@ findTicket(sampleTickets, 1)?.title ?? '–';   // Typ: string
 
 </details>
 
-### Aufgabe 4 – Tickets zählen mit `reduce`
-
-*Etwa 25 Minuten. Das ist die anspruchsvollste Aufgabe des Arbeitsblatts.*
-
-**B4** `countByStatus` liefert, wie viele Tickets es je Status gibt. Auch ein Status ohne Tickets kommt vor, mit 0:
-
-```ts
-{ offen: 4, 'in Arbeit': 2, erledigt: 2 }
-```
-
-Dafür brauchst du `reduce`: Aus der ganzen Liste wird **ein** Ergebnis, hier ein Objekt. Bevor du loslegst, ein einfacheres Beispiel. Es zählt alle Prioritäten zusammen:
-
-```ts
-tickets.reduce((sum, ticket) => sum + ticket.priority, 0);
-```
-
-`reduce` bekommt zwei Dinge: eine Funktion und einen **Startwert** (hier `0`). Die Funktion bekommt den bisherigen **Zwischenstand** (`sum`) und das nächste Element (`ticket`) und liefert den **neuen Zwischenstand**. So läuft es für die Prioritäten 3, 1 und 2:
-
-| Schritt | Zwischenstand vorher | Priorität | neuer Zwischenstand |
-|---|---|---|---|
-| Start | | | `0` (Startwert) |
-| 1 | `0` | `3` | `3` |
-| 2 | `3` | `1` | `4` |
-| 3 | `4` | `2` | `6` |
-
-<Task id="ts-ab02-a4-trace">Welche Zwischenstände entstehen, wenn du dasselbe mit den Prioritäten 2, 2, 1 und 3 durchrechnest? Schreibe sie auf.</Task>
-
-<details>
-<summary>Auflösung</summary>
-
-Start `0`, dann `2`, `4`, `5` und zum Schluss `8`. Das Ergebnis ist `8`.
-
-</details>
-
-<Task id="ts-ab02-a4-write">Übernimm die Funktion in `src/ticket-list.ts`. Sie ist neu für dich, die Erklärung folgt direkt darunter:</Task>
-
-```ts title="src/ticket-list.ts"
-/** Wie viele Tickets es je Status gibt. Auch ein Status ohne Tickets steht drin (mit 0). */
-export function countByStatus(tickets: readonly Ticket[]): Record<Status, number> {
-  return tickets.reduce<Record<Status, number>>(
-    (count, ticket) => ({ ...count, [ticket.status]: count[ticket.status] + 1 }),
-    { offen: 0, 'in Arbeit': 0, erledigt: 0 },
-  );
-}
-```
-
-<Task id="ts-ab02-a4-test">Starte `npm run test:ab02`. Die Tests `B4 countByStatus` werden grün.</Task>
-
-**Was hier passiert.** Der Aufruf hat zwei Teile, wie bei der Summe oben: eine Funktion und einen Startwert. Der Unterschied ist, dass der Zwischenstand kein Zahlenwert ist, sondern ein **Objekt**, das mitzählt.
-
-- **Der Startwert** `{ offen: 0, 'in Arbeit': 0, erledigt: 0 }` ist der Stand vor dem ersten Ticket: Jeder Status steht schon drin, mit 0. Deshalb kommt am Ende auch ein Status ohne Tickets mit 0 vor. Bei `'in Arbeit'` stehen Anführungszeichen, weil der Feldname ein Leerzeichen enthält. Namen wie `offen` brauchen keine, und ein Feld mit Leerzeichen im Namen liest du mit eckigen Klammern: `count['in Arbeit']`.
-- **Der Typ** `Record<Status, number>` beschreibt ein Objekt, das für **jeden** Status eine Zahl enthält. Mit `reduce<Record<Status, number>>` sagst du dem Compiler ausdrücklich, dass der Zwischenstand diesen Typ hat.
-- **Die Funktion** `(count, ticket) => ({ ... })` bekommt den bisherigen Zwischenstand `count` und das nächste Ticket und liefert den **neuen** Zwischenstand. Der neue Zwischenstand ist eine Kopie des alten, bei der der Zähler für den Status dieses Tickets um 1 größer ist. Dafür stecken in der Zeile zwei Schreibweisen, die du noch nicht kennst. Sie werden gleich erklärt.
-- **Die runden Klammern** um das Objekt sind nötig, damit TypeScript die geschweiften Klammern als Objekt versteht und nicht als Block.
-
-**Die beiden neuen Schreibweisen.** Ein Beispiel mit einem anderen Objekt:
-
-```ts
-const a = { x: 1, y: 2 };
-
-const b = { ...a, y: 5 };       // { x: 1, y: 5 }: alle Felder von a kopieren, y überschreiben
-const key = 'z';
-const c = { ...a, [key]: 9 };   // { x: 1, y: 2, z: 9 }: der Name des Feldes kommt aus dem Wert von key
-```
-
-- `{ ...a, y: 5 }` baut ein **neues** Objekt. `...a` kopiert alle Felder von `a`, ein Feld dahinter überschreibt das gleichnamige. Das ändert `a` nicht. Das nennt man den **Spread-Operator**.
-- `[key]: 9` in eckigen Klammern heißt: Der **Name** des Feldes steht nicht fest, er ist der Wert von `key`.
-
-In `countByStatus` zusammen: `{ ...count, [ticket.status]: count[ticket.status] + 1 }` kopiert alle Zähler und überschreibt den, dessen Name der Status des Tickets ist, mit dem alten Wert plus 1. Für die ersten drei Beispieltickets läuft das so:
-
-| Schritt | Ticket | Zwischenstand danach |
-|---|---|---|
-| Start | | `{ offen: 0, 'in Arbeit': 0, erledigt: 0 }` |
-| 1 | #1 (erledigt) | `{ offen: 0, 'in Arbeit': 0, erledigt: 1 }` |
-| 2 | #2 (in Arbeit) | `{ offen: 0, 'in Arbeit': 1, erledigt: 1 }` |
-| 3 | #3 (offen) | `{ offen: 1, 'in Arbeit': 1, erledigt: 1 }` |
-
-Weil jeder Schritt ein neues Objekt baut und das alte nicht anfasst, bleibt auch hier alles unverändert, wie es `readonly` verspricht.
-
-Zwei weitere Methoden beantworten Ja-Nein-Fragen zu einer Liste:
+Eine Ja-Nein-Frage zu einer Liste beantwortet `some`:
 
 ```ts
 tickets.some((ticket) => ticket.status === 'erledigt');   // true, wenn mindestens ein Ticket passt
-tickets.every((ticket) => ticket.priority === 1);         // true, wenn alle Tickets passen
 ```
 
 <Task id="ts-ab02-a3-quiz">Welche Methode passt zu welcher Frage? Trage ein und prüfe.</Task>
@@ -266,21 +186,20 @@ tickets.every((ticket) => ticket.priority === 1);         // true, wenn alle Tic
   storageKey="ts-ab02-a3-methoden"
   spalteLinks="Aufgabe"
   spalteRechts="Methode"
-  platzhalter="filter, map, find, some oder reduce"
+  platzhalter="filter, map, find oder some"
   zeilen={[
     {id: 'q1', links: 'Alle Tickets mit Priorität 1 behalten', loesung: 'filter'},
     {id: 'q2', links: 'Aus jedem Ticket die Nummer herausholen (Liste aller Nummern)', loesung: 'map'},
     {id: 'q3', links: 'Das Ticket mit der Nummer 5 suchen', loesung: 'find'},
     {id: 'q4', links: 'Wissen, ob es mindestens ein erledigtes Ticket gibt', loesung: 'some'},
-    {id: 'q5', links: 'Alle Prioritäten zu einer Summe zusammenzählen', loesung: 'reduce'},
   ]}
 />
 
-### Aufgabe 5 – Sortieren und das Versprechen der Funktion
+### Aufgabe 4 – Sortieren und das Versprechen der Funktion
 
 *Etwa 15 Minuten.*
 
-**B5** `sortedByPriority` liefert die Tickets mit der höchsten Dringlichkeit zuerst: erst Priorität 1, dann 2, dann 3. Bei gleicher Priorität kommt das Ticket mit der kleineren Nummer zuerst. Die Eingabeliste darf sich **nicht** ändern.
+**B4** `sortedByPriority` liefert die Tickets mit der höchsten Dringlichkeit zuerst: erst Priorität 1, dann 2, dann 3. Bei gleicher Priorität kommt das Ticket mit der kleineren Nummer zuerst. Die Eingabeliste darf sich **nicht** ändern.
 
 Die Vergleichsfunktion für `sort` steht schon da. Sie liefert eine Zahl: kleiner als 0, wenn `a` vor `b` kommt:
 
@@ -316,7 +235,7 @@ Wie ernst das gemeint ist, siehst du, wenn du das Versprechen brichst:
 <details>
 <summary>Auflösung</summary>
 
-Der Test `B5 sortedByPriority › lässt die Eingabeliste unverändert` schlägt fehl, mit `TypeError: Cannot assign to read only property '0' of object '[object Array]'`. Der Test übergibt eine **eingefrorene** Liste: Jeder Versuch, sie zu ändern, löst einen Fehler aus. Genau das ist der Fall, in dem `sort` an der Eingabe scheitert. Hättest du keine eingefrorene Liste gehabt, wäre die Eingabe still durcheinandergeraten.
+Der Test `B4 sortedByPriority › lässt die Eingabeliste unverändert` schlägt fehl, mit `TypeError: Cannot assign to read only property '0' of object '[object Array]'`. Der Test übergibt eine **eingefrorene** Liste: Jeder Versuch, sie zu ändern, löst einen Fehler aus. Genau das ist der Fall, in dem `sort` an der Eingabe scheitert. Hättest du keine eingefrorene Liste gehabt, wäre die Eingabe still durcheinandergeraten.
 
 </details>
 
@@ -329,19 +248,19 @@ export function sortedByPriority(tickets: readonly Ticket[]): Ticket[] {
 }
 ```
 
-`[...tickets]` baut eine **neue** Liste mit denselben Elementen, den Spread kennst du von den Objekten in Aufgabe 4, bei Listen funktioniert er genauso. `sort` ordnet diese Kopie um und gibt sie zurück. Die Liste `tickets`, die die Funktion bekommen hat, bleibt unberührt, und genau das verspricht `readonly`. Der Compiler erlaubt den Aufruf, weil die Kopie eine gewöhnliche, nicht schreibgeschützte Liste ist.
+Die drei Punkte `...` heißen **Spread-Operator**. `[...tickets]` verteilt die Elemente von `tickets` in eine **neue** Liste mit denselben Elementen: eine Kopie. `sort` ordnet diese Kopie um und gibt sie zurück. Die Liste `tickets`, die die Funktion bekommen hat, bleibt unberührt, und genau das verspricht `readonly`. Der Compiler erlaubt den Aufruf, weil die Kopie eine gewöhnliche, nicht schreibgeschützte Liste ist.
 
-<Task id="ts-ab02-a5-test">Starte `npm run test:ab02`. Die Tests `B5 sortedByPriority` werden grün.</Task>
+<Task id="ts-ab02-a5-test">Starte `npm run test:ab02`. Die Tests `B4 sortedByPriority` werden grün.</Task>
 
 :::tip Merke
 `sort`, `reverse` und `push` verändern die Liste selbst. `filter`, `map` und `slice` bauen eine neue. Will eine Funktion ihre Eingabe in Ruhe lassen, kopiert sie vor dem Sortieren. Eine Alternative ist `toSorted`, das gleich eine sortierte Kopie liefert.
 :::
 
-### Aufgabe 6 – Den Status ändern, ohne die Liste zu verändern
+### Aufgabe 5 – Den Status ändern, ohne die Liste zu verändern
 
 *Etwa 15 Minuten.*
 
-**B6** `withStatus` liefert dieselbe Liste, nur mit anderem Status bei dem Ticket mit der Nummer `id`. Die Eingabe bleibt unverändert, und die anderen Tickets sind dieselben Objekte wie vorher.
+**B5** `withStatus` liefert dieselbe Liste, nur mit anderem Status bei dem Ticket mit der Nummer `id`. Die Eingabe bleibt unverändert, und die anderen Tickets sind dieselben Objekte wie vorher.
 
 <Task id="ts-ab02-a6-java">Schreibe die Funktion zuerst „wie in Java“: Ticket in der Liste suchen, den Status setzen und die Liste zurückgeben.</Task>
 
@@ -369,18 +288,26 @@ Der Compiler hat das nicht bemerkt: `readonly Ticket[]` schützt nur die **Liste
 
 Die Lösung: Das geänderte Ticket muss ein **neues Objekt** sein. Mit dem Spread-Operator baust du eine Kopie mit einem überschriebenen Feld:
 
-```ts
-{ ...ticket, status }   // neues Ticket, alle Felder wie ticket, nur status ist neu
+```ts title="src/ticket-list.ts"
+/** Dieselbe Liste, nur mit anderem Status bei Ticket `id`. Die Eingabe bleibt unverändert. */
+export function withStatus(tickets: readonly Ticket[], id: number, status: Status): Ticket[] {
+  return tickets.map((ticket) => (ticket.id === id ? { ...ticket, status } : ticket));
+}
 ```
 
-<Task id="ts-ab02-a6-fix">Schreibe `withStatus` mit `map`: Für das Ticket mit der Nummer `id` lieferst du die Kopie mit neuem Status, für alle anderen das Ticket selbst. Die Tests `B6 withStatus` werden grün.</Task>
+<Task id="ts-ab02-a6-fix">Ersetze deine Funktion durch diese Version. Starte `npm run test:ab02`: Die Tests `B5 withStatus` werden grün.</Task>
 
-<details>
-<summary>Tipp: Bedingung in einer Zeile</summary>
+**Was hier passiert.** `map` geht die Liste durch und ruft die Funktion für jedes Ticket einmal auf, wie bei `titles`. Die Funktion liefert für jedes Ticket genau ein Ticket, und `map` baut daraus die neue Liste. Sie ist so lang wie die alte.
 
-Mit dem Bedingungsoperator `condition ? valueIfTrue : valueIfFalse` kannst du in der Funktion von `map` zwischen den beiden Fällen wählen.
+- **Der Bedingungsoperator** `ticket.id === id ? { ...ticket, status } : ticket` hat die Form `Bedingung ? wenn wahr : wenn falsch`. Ist es das gesuchte Ticket, liefert die Funktion die Kopie mit dem neuen Status. Bei allen anderen liefert sie das Ticket selbst, unverändert und dasselbe Objekt wie vorher.
+- **Das neue Ticket** `{ ...ticket, status }` ist eine Kopie: `...ticket` kopiert alle Felder, und `status` dahinter überschreibt das Feld `status`. `status` ist die Kurzform für `status: status`. Heißen Feldname und Variable gleich, reicht der Name. Ein Beispiel mit einem anderen Objekt:
 
-</details>
+  ```ts
+  const a = { x: 1, y: 2 };
+  const b = { ...a, y: 5 };   // b ist { x: 1, y: 5 }, a bleibt { x: 1, y: 2 }
+  ```
+
+Damit bleibt die Eingabeliste unverändert. Nur das eine Ticket ist ein neues Objekt, alle anderen sind dieselben wie vorher. Genau das prüfen die Tests.
 
 <Solution daten={solution} titel="Musterlösung für src/ticket-list.ts" />
 
@@ -388,7 +315,7 @@ Mit dem Bedingungsoperator `condition ? valueIfTrue : valueIfFalse` kannst du in
 Funktionen, die ihre Eingabe nicht verändern, sind leichter zu verstehen und zu testen: Du weißt, dass die Liste nach dem Aufruf noch dieselbe ist. Außerdem erkennst du Änderungen an einem einfachen Vergleich: Ein neues Objekt ist ein anderes Objekt (`before !== after`). In AB 03 und später in Angular ist genau das wichtig: Dort wird eine Änderung dadurch sichtbar, dass sich der **Verweis** ändert.
 :::
 
-### Aufgabe 7 – Prüfen
+### Aufgabe 6 – Prüfen
 
 *Etwa 5 Minuten.*
 
@@ -400,9 +327,9 @@ Funktionen, die ihre Eingabe nicht verändern, sind leichter zu verstehen und zu
     {
       id: 'TF-01',
       beschreibung: 'Die Tests zu AB 02 sind grün',
-      vorbedingung: 'Aufgaben 2 bis 6 sind erledigt',
+      vorbedingung: 'Aufgaben 2 bis 5 sind erledigt',
       schritte: ['npm run test:ab02 ausführen'],
-      erwartet: <>Alle 13 Tests der Gruppen <code>B1</code> bis <code>B6</code> sind grün.</>
+      erwartet: <>Alle 11 Tests der Gruppen <code>B1</code> bis <code>B5</code> sind grün.</>
     },
     {
       id: 'TF-02',
@@ -423,7 +350,7 @@ Funktionen, die ihre Eingabe nicht verändern, sind leichter zu verstehen und zu
       beschreibung: 'Ein veränderndes withStatus fällt auf',
       vorbedingung: 'TF-01 ist erfüllt',
       schritte: ['withStatus kurz so umschreiben, dass ticket.status = status gesetzt wird', 'npm run test:ab02 ausführen', 'Änderung rückgängig machen'],
-      erwartet: <>Mindestens ein Test der Gruppe <code>B6</code> ist rot, mit einer Meldung zu <code>read only property</code>. Der Compiler sagt dazu nichts.</>
+      erwartet: <>Mindestens ein Test der Gruppe <code>B5</code> ist rot, mit einer Meldung zu <code>read only property</code>. Der Compiler sagt dazu nichts.</>
     }
   ]}
 />
@@ -432,7 +359,7 @@ Funktionen, die ihre Eingabe nicht verändern, sind leichter zu verstehen und zu
 
 :::tip Das hast du gelernt
 - Eine **Pfeilfunktion** `(x) => x.field` ist eine kurze Funktion, die du an Array-Methoden übergibst.
-- **`filter`** behält manche Elemente, **`map`** macht aus jedem etwas anderes, **`find`** liefert das erste passende (oder `undefined`), **`reduce`** macht aus allen einen Wert.
+- **`filter`** behält manche Elemente, **`map`** macht aus jedem etwas anderes, **`find`** liefert das erste passende (oder `undefined`), **`some`** beantwortet, ob mindestens ein Element passt.
 - Das Ergebnis von `find` hat den Typ `Ticket | undefined`. Der Compiler zwingt dich, den Fall „nicht gefunden“ zu behandeln, zum Beispiel mit `?.`.
 - **`sort`** (wie `push` und `reverse`) verändert die Liste selbst. Wer eine Liste nicht verändern will, sortiert eine Kopie: `[...tickets].sort(…)`.
 - **`readonly Ticket[]`** ist das Versprechen, die Liste nicht zu verändern, und der Compiler überwacht es. Die Tickets in der Liste schützt es nicht.
@@ -444,18 +371,16 @@ Funktionen, die ihre Eingabe nicht verändern, sind leichter zu verstehen und zu
 1. Was ist der Unterschied zwischen `filter` und `map`? Wie viele Elemente liefern sie jeweils?
 2. Du willst wissen, wie viele Tickets dringend sind. Welche Methoden brauchst du?
 3. Warum hat das Ergebnis von `find` den Typ `Ticket | undefined`, und wie gehst du damit um?
-4. Was ist bei `reduce` der Zwischenstand (Akkumulator), und wozu dient der Startwert?
-5. Warum schreibt man `[...tickets].sort(…)` und nicht `tickets.sort(…)`?
-6. Was bewirkt `{ ...ticket, status }`? Warum ist das besser als `ticket.status = status`?
+4. Warum schreibt man `[...tickets].sort(…)` und nicht `tickets.sort(…)`?
+5. Was bewirkt `{ ...ticket, status }`? Warum ist das besser als `ticket.status = status`?
 
 <details>
 <summary>Antworten</summary>
 
 1. `filter` behält nur die Elemente, die eine Bedingung erfüllen, und liefert gleich viele oder weniger Elemente, unverändert. `map` macht aus jedem Element etwas anderes und liefert genau so viele Elemente wie die Eingabe.
-2. Erst `filter`, um die dringenden Tickets zu behalten, dann `length` für die Anzahl: `tickets.filter(isUrgent).length`.
+2. Erst `filter`, um die dringenden Tickets zu behalten, dann `length` für die Anzahl: `tickets.filter((ticket) => isUrgent(ticket)).length`.
 3. Weil es sein kann, dass kein Ticket die gesuchte Nummer hat. Du behandelst es mit `?.` und gegebenenfalls einem Ersatzwert (`?? …`), oder du prüfst mit `if`, ob das Ergebnis da ist.
-4. Der Zwischenstand ist der Wert, den `reduce` von Element zu Element mitträgt, und die Funktion macht daraus jeweils den neuen. Der Startwert ist der Zwischenstand vor dem ersten Element. Bei einer leeren Liste ist er auch das Ergebnis.
-5. `sort` verändert die Liste, auf der es aufgerufen wird. Mit der Kopie `[...tickets]` bleibt die Eingabe unverändert, und die Funktion hält ihr `readonly`-Versprechen.
-6. Es baut ein **neues** Objekt mit allen Feldern von `ticket`, nur `status` ist anders. Das Original bleibt unverändert. Mit `ticket.status = status` würdest du das Objekt ändern, das auch an anderer Stelle benutzt wird, und könntest Änderungen nicht mehr erkennen.
+4. `sort` verändert die Liste, auf der es aufgerufen wird. Mit der Kopie `[...tickets]` bleibt die Eingabe unverändert, und die Funktion hält ihr `readonly`-Versprechen.
+5. Es baut ein **neues** Objekt mit allen Feldern von `ticket`, nur `status` ist anders. Das Original bleibt unverändert. Mit `ticket.status = status` würdest du das Objekt ändern, das auch an anderer Stelle benutzt wird, und könntest Änderungen nicht mehr erkennen.
 
 </details>

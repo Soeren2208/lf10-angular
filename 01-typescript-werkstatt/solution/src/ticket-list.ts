@@ -16,14 +16,6 @@ export function findTicket(tickets: readonly Ticket[], id: number): Ticket | und
   return tickets.find((ticket) => ticket.id === id);
 }
 
-/** Wie viele Tickets es je Status gibt. Auch ein Status ohne Tickets steht drin (mit 0). */
-export function countByStatus(tickets: readonly Ticket[]): Record<Status, number> {
-  return tickets.reduce<Record<Status, number>>(
-    (count, ticket) => ({ ...count, [ticket.status]: count[ticket.status] + 1 }),
-    { offen: 0, 'in Arbeit': 0, erledigt: 0 },
-  );
-}
-
 /** Die dringendsten zuerst (Priorität 1 vor 2 vor 3), bei Gleichstand das kleinere `id` zuerst. */
 export function sortedByPriority(tickets: readonly Ticket[]): Ticket[] {
   return [...tickets].sort((a, b) => a.priority - b.priority || a.id - b.id);
