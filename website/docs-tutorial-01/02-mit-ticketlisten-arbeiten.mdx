@@ -229,6 +229,8 @@ Der Zwischenstand beginnt so:
 
 und für jedes Ticket wird der Zähler seines Status um 1 erhöht.
 
+Bei `'in Arbeit'` stehen Anführungszeichen, weil der Feldname ein Leerzeichen enthält. Namen wie `offen` brauchen keine, und ein Feld mit Leerzeichen im Namen liest du mit eckigen Klammern: `count['in Arbeit']`.
+
 <Task id="ts-ab02-a4-write">Schreibe `countByStatus` mit `reduce`. Gehe in Schritten vor, die Tipps helfen dir.</Task>
 
 <details>
