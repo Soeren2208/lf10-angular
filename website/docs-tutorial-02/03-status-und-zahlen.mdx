@@ -266,6 +266,15 @@ export class TicketBoard {
 
 **Das ist neu:** `(statusChange)="changeStatus(ticket.id, $event)"` hört auf den Ausgang der Karte, so wie `(change)` auf den Haken hört. Event-Bindings gibt es für HTML-Elemente und für eigene Komponenten. `$event` ist der Wert, den die Karte mit `emit` geschickt hat, hier der neue Stand.
 
+**Der Weg der Meldung.** Das ist die Gegenrichtung zu AB 01: Dort ist das Ticket von der App (Eltern) nach unten zur Karte (Kind) gewandert, jetzt wandert der neue Stand von der Karte nach oben zum Board. Dieselben Farben gelten: Orange sind die Namen, die gleich sein müssen, blau ist der Wert, der wandert.
+
+<DataFlow variant="output" />
+
+1. Beim Klick schickt die Karte den neuen Stand mit `statusChange.emit(move.to)` ab.
+2. `statusChange` ist der Ausgang der Karte. Sein Name ist der Name, auf den das Board hört.
+3. Das Board hört mit `(statusChange)` und bekommt den abgeschickten Wert als `$event`. Der Name in den runden Klammern muss genau zum Ausgang passen, wie bei `input()` in AB 01.
+4. Das Board reicht den Wert an `changeStatus` weiter, der Parameter `status` hält ihn.
+
 <Task id="t2-ab03-a2-check">Probiere es aus: Klicke bei #3 auf „In Arbeit →“, danach auf „← Offen“. Vergleiche mit deiner Vorhersage.</Task>
 
 <details>

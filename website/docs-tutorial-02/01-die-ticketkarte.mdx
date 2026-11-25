@@ -268,7 +268,7 @@ Die Meldung nennt die Lösung gleich mit: Die Komponente muss in `imports` stehe
 
 ### Aufgabe 5 – Nummer, Titel und Priorität anzeigen
 
-*Etwa 25 Minuten.*
+*Etwa 30 Minuten.*
 
 <TaskBadge>T_5 · Nummer, Titel und Priorität anzeigen</TaskBadge>
 
@@ -371,9 +371,30 @@ export class App {
 
 Jetzt steht die Karte **dreimal** im Browser, jedes Mal mit einem anderen Ticket. Das ist der Vorteil einer Komponente: Du schreibst sie einmal und benutzt sie, so oft du willst.
 
-- `tickets` kommt aus deinen Beispieldaten. `tickets[3]` ist das vierte Ticket, Nummer 4, denn die Zählung beginnt bei 0.
-- `[ticket]="tickets[3]"` reicht das Ticket an den Eingang `ticket` der Karte weiter. Die eckigen Klammern bedeuten wieder: Der Wert wird berechnet.
-- Drei Zeilen für drei Karten sind nur vorläufig. In AB 02 baut `@for` das aus den Daten.
+**Der Weg des Tickets.** Zwei Zeilen gehören zusammen, obwohl sie in verschiedenen Dateien stehen: `[ticket]="tickets[3]"` in der App und `ticket = input.required<Ticket>()` in der Karte. Die App setzt die Karte in ihr Template ein, sie ist deshalb die **Eltern**-Komponente und die Karte das **Kind**. Die Abbildung zeigt, wie das Ticket von der einen zur anderen wandert. Orange sind die Namen, die gleich sein müssen, blau ist der Wert, der wandert. Die Nummern geben die Lesereihenfolge an.
+
+<DataFlow variant="input" />
+
+1. Die App hält die Tickets im Feld `tickets`. Sie kommen aus deinen Beispieldaten.
+2. In `app.html` steht rechts vom Gleichheitszeichen ein Ausdruck, den die **App** auswertet: `tickets[3]` ist das vierte Ticket, Nummer 4, denn die Zählung beginnt bei 0. Links, in eckigen Klammern, steht der **Name des Eingangs**, in den der Wert soll. Die eckigen Klammern bedeuten wieder: Der Wert wird berechnet.
+3. Die Karte hat einen Eingang `ticket`. Nur ein Attribut mit genau diesem Namen passt, wie ein Stecker nur in die passende Steckdose. Weil der Eingang `required` ist, muss ihn jemand versorgen.
+4. Im Template der Karte liest `ticket()` den Wert, den die App übergeben hat.
+
+<Task id="t2-ab01-a5-rename">Untersuche, wie genau der Name stimmen muss: Ändere in `app.html` bei einer Karte `[ticket]` kurz in `[tikket]` und lies die Meldungen. Setze es danach wieder zurück.</Task>
+
+<details>
+<summary>Was die Meldungen sagen</summary>
+
+```text
+NG8002: Can't bind to 'tikket' since it isn't a known property of 'app-ticket-card'.
+NG8008: Required input 'ticket' from component TicketCard must be specified.
+```
+
+Die erste Meldung sagt: Die Karte hat keinen Eingang `tikket`. Die zweite sagt: Der Eingang `ticket` ist `required` und bekommt nichts. Beide Meldungen haben dieselbe Ursache: Der Name vor dem Gleichheitszeichen muss genau zum Eingang passen.
+
+</details>
+
+Drei Zeilen für drei Karten sind nur vorläufig. In AB 02 baut `@for` das aus den Daten.
 
 ### Aufgabe 6 – Dringende Tickets hervorheben
 

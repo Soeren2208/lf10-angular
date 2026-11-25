@@ -1,0 +1,117 @@
+/* Farben: orange = Name, blau = Wert. Hell und dunkel getrennt, damit beides lesbar bleibt. */
+.figure {
+  --flow-name: #c2410c;
+  --flow-name-bg: rgba(234, 88, 12, 0.14);
+  --flow-value: #1d4ed8;
+  --flow-value-bg: rgba(37, 99, 235, 0.14);
+  margin: 1.5rem 0;
+}
+
+:global([data-theme='dark']) .figure {
+  --flow-name: #fb923c;
+  --flow-name-bg: rgba(251, 146, 60, 0.2);
+  --flow-value: #60a5fa;
+  --flow-value-bg: rgba(96, 165, 250, 0.2);
+}
+
+/* Auf schmalen Bildschirmen scrollt die Abbildung waagerecht, statt unlesbar klein zu werden. */
+.scroll {
+  overflow-x: auto;
+}
+
+.svg {
+  display: block;
+  min-width: 640px;
+  width: 100%;
+  height: auto;
+}
+
+.panel {
+  fill: var(--ifm-background-surface-color);
+  stroke: var(--ifm-color-emphasis-400);
+  stroke-width: 1.5;
+}
+
+.wall {
+  stroke: var(--ifm-color-emphasis-500);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 5;
+}
+
+.caption {
+  fill: var(--ifm-color-emphasis-700);
+  font-family: var(--ifm-font-family-base);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.file {
+  fill: var(--ifm-color-emphasis-600);
+  font-size: 12px;
+}
+
+.code {
+  fill: var(--ifm-font-color-base);
+  font-size: 14px;
+}
+
+.badge {
+  fill: var(--ifm-color-emphasis-200);
+  stroke: var(--ifm-color-emphasis-500);
+  stroke-width: 1.2;
+}
+
+.badgeText {
+  fill: var(--ifm-font-color-base);
+  font-family: var(--ifm-font-family-base);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.nameBox {
+  fill: var(--flow-name-bg);
+  stroke: var(--flow-name);
+  stroke-width: 1.2;
+}
+
+.valueBox {
+  fill: var(--flow-value-bg);
+  stroke: var(--flow-value);
+  stroke-width: 1.2;
+}
+
+.nameStroke {
+  stroke: var(--flow-name);
+}
+
+.valueStroke {
+  stroke: var(--flow-value);
+}
+
+.nameFill {
+  fill: var(--flow-name);
+}
+
+.valueFill {
+  fill: var(--flow-value);
+}
+
+.nameLabel,
+.valueLabel {
+  font-family: var(--ifm-font-family-base);
+  font-size: 13px;
+  font-weight: 600;
+  /* Ein Rand in der Hintergrundfarbe hält die Beschriftung lesbar, wo sie die Wand kreuzt. */
+  paint-order: stroke;
+  stroke: var(--ifm-background-color);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+
+.nameLabel {
+  fill: var(--flow-name);
+}
+
+.valueLabel {
+  fill: var(--flow-value);
+}
