@@ -241,7 +241,7 @@ Auf jeder Karte soll ein Link „Öffnen“ zur Ansicht des Tickets führen.
 
 <Task id="t2-ab04-a3-class">Ersetze den gesamten Inhalt von `ticket-card.ts` durch:</Task>
 
-```ts title="src/app/ticket-card/ticket-card.ts" {2,19}
+```ts title="src/app/ticket-card/ticket-card.ts" {2,18}
 import { Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { assigneeName, isUrgent } from '../ticket';
@@ -259,10 +259,10 @@ const MOVES: Record<Status, { to: Status; label: string }[]> = {
 };
 
 @Component({
-  selector: 'app-ticket-card',
   imports: [RouterLink],
-  templateUrl: './ticket-card.html',
+  selector: 'app-ticket-card',
   styleUrl: './ticket-card.css',
+  templateUrl: './ticket-card.html',
 })
 export class TicketCard {
   readonly ticket = input.required<Ticket>();

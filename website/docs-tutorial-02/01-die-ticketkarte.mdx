@@ -12,7 +12,7 @@ import workshopModel from '@site/src/data/t2-workshop-modell.json';
 
 Aus einem Ticket wird eine Kachel: Du legst das Angular-Projekt an und schreibst deine erste Komponente.
 
-*Dauer: etwa eine Doppelstunde.*
+*Dauer: etwas mehr als eine Doppelstunde.*
 
 ## Die Anforderung
 
@@ -73,6 +73,17 @@ Eine Angular-Anwendung besteht aus **Komponenten**. Eine Komponente ist ein Baus
 Das Design-Team hat die Oberfläche im Wireframe in solche Bausteine zerlegt. Mit dem kleinsten fängst du an.
 
 ## Aufgaben
+
+:::info Die vier Arten von Aufträgen
+Ein Verb am Anfang sagt dir, was du bei einer Aufgabe tun sollst:
+
+| Auftrag | Bedeutung |
+|---|---|
+| **Kopiere** | Code, den du nicht selbst schreiben musst, zum Beispiel das Design (CSS). Kopieren und einfügen genügt. |
+| **Tippe ab** | Neuer Stoff. Tippe den Code selbst ab, statt ihn zu kopieren. So prägst du dir Schreibweise und Aufbau ein, und WebStorm hilft dir mit Vorschlägen. |
+| **Ergänze** | Die Datei steht fast da. Schreibe nur die **hervorgehobenen** Zeilen und importiere, was fehlt. WebStorm schlägt den Import mit **Alt + Enter** vor. |
+| **Schreibe** | Das kennst du schon. Schreibe es selbst, die Lösung ist eingeklappt. |
+:::
 
 ### Aufgabe 1 – Das Projekt anlegen
 
@@ -146,11 +157,11 @@ Das ist dein Code aus der Werkstatt: die Typen `Status`, `Priority` und `Ticket`
 
 Das Design-Team hat Farben, Schrift und Knöpfe des Boards festgelegt. Du schreibst dafür kein CSS, du übernimmst es.
 
-<Task id="t2-ab01-a3-styles">Ersetze den gesamten Inhalt von `src/styles.css` durch:</Task>
+<Task id="t2-ab01-a3-styles">**Kopiere** den folgenden Code in `src/styles.css` und ersetze dabei den gesamten Inhalt:</Task>
 
 <CodeFile data={stage} file="src/styles.css" />
 
-<Task id="t2-ab01-a3-appcss">Ersetze den gesamten Inhalt von `src/app/app.css` durch:</Task>
+<Task id="t2-ab01-a3-appcss">**Kopiere** den folgenden Code in `src/app/app.css` und ersetze dabei den gesamten Inhalt:</Task>
 
 <CodeFile data={stage} file="src/app/app.css" />
 
@@ -158,7 +169,7 @@ Die Datei `styles.css` gilt für die ganze Anwendung. Eine Datei wie `app.css` g
 
 ### Aufgabe 4 – Die Komponente anlegen
 
-*Etwa 15 Minuten.*
+*Etwa 20 Minuten.*
 
 <TaskBadge>T_4 · Komponente „Ticketkarte“ anlegen</TaskBadge>
 
@@ -189,7 +200,7 @@ export class TicketCard {}
 - `templateUrl` und `styleUrl` verweisen auf die beiden anderen Dateien.
 - `imports` listet die Komponenten, die **dieses** Template benutzt. Das ist wie `import` in Java: Was nicht dasteht, kennt die Komponente nicht.
 
-<Task id="t2-ab01-a4-app">Setze die Komponente in die App. Ersetze den gesamten Inhalt von `src/app/app.ts` durch:</Task>
+<Task id="t2-ab01-a4-app">Setze die Komponente in die App. **Kopiere** den folgenden Code in `src/app/app.ts` und ersetze dabei den gesamten Inhalt. Neu gegenüber der erzeugten Datei sind der Import von `TicketCard` und der Eintrag in `imports`:</Task>
 
 ```ts title="src/app/app.ts"
 import { Component } from '@angular/core';
@@ -204,7 +215,29 @@ import { TicketCard } from './ticket-card/ticket-card';
 export class App {}
 ```
 
-<Task id="t2-ab01-a4-html">Ersetze den gesamten Inhalt von `src/app/app.html` durch:</Task>
+Jetzt kommt zum ersten Mal HTML dazu. Wenn dir HTML neu ist, klappe die Erklärung auf:
+
+<details>
+<summary>HTML in Kürze (aufklappen, wenn dir HTML neu ist)</summary>
+
+HTML beschreibt, **was** auf einer Seite steht, mit **Elementen**. Ein Element sieht so aus: `<name>Inhalt</name>`, mit einem Anfangs-Tag und einem Ende-Tag. Elemente lassen sich ineinander verschachteln, wie Klammern in Java. Die Einrückung zeigt, was in was steckt.
+
+Ein **Attribut** gibt einem Element eine zusätzliche Angabe, zum Beispiel `class="app-title"`. Die Klasse ist ein Name, auf den sich das CSS bezieht. Ein Element kann mehrere Klassen haben, durch Leerzeichen getrennt.
+
+| Element | Wofür |
+|---|---|
+| `<header>` | der Kopfbereich eines Abschnitts |
+| `<main>` | der Hauptinhalt der Seite, es gibt ihn einmal |
+| `<article>` | ein in sich abgeschlossener Inhalt, hier eine Ticketkarte |
+| `<h1>` bis `<h6>` | Überschriften. `h1` ist die wichtigste, die Zahl gibt die Ebene an. Wie groß die Überschrift aussieht, bestimmt das CSS. |
+| `<div>` | ein neutraler Behälter, der Inhalt in einem **Block** zusammenfasst und auf einer eigenen Zeile steht |
+| `<span>` | eine neutrale Markierung **innerhalb** einer Zeile |
+
+`header`, `main` und `article` sagen etwas über den Inhalt, `div` und `span` nicht. Browser, Screenreader und Suchmaschinen nutzen das. Die Komponente, die du angelegt hast, setzt du wie ein eigenes HTML-Element ein: `<app-ticket-card />`. Ein Element ohne Inhalt schließt sich selbst mit `/>`.
+
+</details>
+
+<Task id="t2-ab01-a4-html">**Tippe** den folgenden Code in `src/app/app.html` **ab** und ersetze dabei den gesamten Inhalt:</Task>
 
 ```html title="src/app/app.html"
 <header class="app-header">
@@ -235,30 +268,30 @@ Die Meldung nennt die Lösung gleich mit: Die Komponente muss in `imports` stehe
 
 ### Aufgabe 5 – Nummer, Titel und Priorität anzeigen
 
-*Etwa 20 Minuten.*
+*Etwa 25 Minuten.*
 
 <TaskBadge>T_5 · Nummer, Titel und Priorität anzeigen</TaskBadge>
 
 Die Karte soll ein Ticket zeigen. Dafür braucht sie von außen ein Ticket und einen Text für die Priorität.
 
-<Task id="t2-ab01-a5-labels">Lege die Datei `src/app/ticket-labels.ts` an:</Task>
+<Task id="t2-ab01-a5-labels">**Tippe** die Datei `src/app/ticket-labels.ts` **ab**. Lege sie dafür im Ordner `src/app` neu an:</Task>
 
 <CodeFile data={stage} file="src/app/ticket-labels.ts" />
 
 `Record<Priority, string>` kennst du aus der Werkstatt. Hier ordnet er jeder Priorität einen Text zu: Aus `1` wird „Hoch“.
 
-<Task id="t2-ab01-a5-class">Ersetze den gesamten Inhalt von `ticket-card.ts` durch:</Task>
+<Task id="t2-ab01-a5-class">**Ergänze** in `ticket-card.ts` die hervorgehobenen Zeilen. Importiere, was fehlt: WebStorm schlägt dir den Import mit **Alt + Enter** vor, sobald du den Namen eintippst.</Task>
 
-```ts title="src/app/ticket-card/ticket-card.ts"
+```ts title="src/app/ticket-card/ticket-card.ts" {1-3,11-17}
 import { Component, input } from '@angular/core';
 import type { Ticket } from '../ticket';
 import { PRIORITY_LABEL } from '../ticket-labels';
 
 @Component({
-  selector: 'app-ticket-card',
   imports: [],
-  templateUrl: './ticket-card.html',
+  selector: 'app-ticket-card',
   styleUrl: './ticket-card.css',
+  templateUrl: './ticket-card.html',
 })
 export class TicketCard {
   readonly ticket = input.required<Ticket>();
@@ -275,7 +308,7 @@ export class TicketCard {
 - Den Wert liest du mit Klammern: `this.ticket()`, nicht `this.ticket`. Warum das so ist, erfährst du in AB 03.
 - `protected` heißt wie in Java: Das Template der Komponente darf die Methode benutzen, andere Klassen nicht.
 
-<Task id="t2-ab01-a5-html">Ersetze den gesamten Inhalt von `ticket-card.html` durch:</Task>
+<Task id="t2-ab01-a5-html">**Tippe** den folgenden Code in `ticket-card.html` **ab** und ersetze dabei den gesamten Inhalt. Die Elemente erklärt die Box „HTML in Kürze“ in Aufgabe 4.</Task>
 
 ```html title="src/app/ticket-card/ticket-card.html"
 <article class="card">
@@ -293,20 +326,48 @@ export class TicketCard {
 
 **So funktioniert das Template:**
 
+- Die Karte ist ein `<article>`. Ihr Titel ist eine Überschrift der Ebene 3 (`<h3>`): Die Spalten des Boards bekommen später `<h2>`, die Karten stehen darunter.
 - `{{ … }}` setzt einen Wert in den Text ein. Zwischen den Klammern steht ein Ausdruck, hier der Zugriff auf ein Feld des Tickets. Das nennt man **Interpolation**.
 - `[attr.data-priority]="…"` setzt ein HTML-Attribut auf den Wert eines Ausdrucks. Die eckigen Klammern bedeuten: Der Wert wird **berechnet**, er ist kein fester Text. Das Attribut steuert die Farbe der Prioritätsmarke im CSS.
 
-<Task id="t2-ab01-a5-css">Ersetze den gesamten Inhalt von `ticket-card.css` durch:</Task>
+<Task id="t2-ab01-a5-css">**Kopiere** den folgenden Code in `ticket-card.css` und ersetze dabei den gesamten Inhalt:</Task>
 
 <CodeFile data={stage} file="src/app/ticket-card/ticket-card.css" />
 
 Das Design der Karte ist vollständig. Einige Teile davon brauchst du erst in den nächsten Aufgaben.
 
-<Task id="t2-ab01-a5-app">Gib der Karte in der App Tickets. Ersetze den gesamten Inhalt von `app.ts` und `app.html` durch:</Task>
+<Task id="t2-ab01-a5-app">Gib der Karte in der App Tickets. **Ergänze** in `app.ts` und `app.html` die hervorgehobenen Zeilen. Importiere, was fehlt.</Task>
 
-<CodeFile data={stage} file="src/app/app.ts" />
+```ts title="src/app/app.ts" {2,11-13}
+import { Component } from '@angular/core';
+import { sampleTickets } from './sample-data';
+import { TicketCard } from './ticket-card/ticket-card';
 
-<CodeFile data={stage} file="src/app/app.html" />
+@Component({
+  selector: 'app-root',
+  imports: [TicketCard],
+  templateUrl: './app.html',
+  styleUrl: './app.css',
+})
+export class App {
+  protected readonly tickets = sampleTickets;
+}
+```
+
+```html title="src/app/app.html" {7-11}
+<header class="app-header">
+  <span class="app-title">Ticket-Board <span class="company">· HiTec GmbH Support</span></span>
+  <span class="user">Angemeldet als Jonas Beck</span>
+</header>
+
+<main class="app-main">
+  <div class="preview">
+    <app-ticket-card [ticket]="tickets[3]" />
+    <app-ticket-card [ticket]="tickets[2]" />
+    <app-ticket-card [ticket]="tickets[5]" />
+  </div>
+</main>
+```
 
 Jetzt steht die Karte **dreimal** im Browser, jedes Mal mit einem anderen Ticket. Das ist der Vorteil einer Komponente: Du schreibst sie einmal und benutzt sie, so oft du willst.
 
@@ -336,10 +397,10 @@ import type { Ticket } from '../ticket';
 import { PRIORITY_LABEL } from '../ticket-labels';
 
 @Component({
-  selector: 'app-ticket-card',
   imports: [],
-  templateUrl: './ticket-card.html',
+  selector: 'app-ticket-card',
   styleUrl: './ticket-card.css',
+  templateUrl: './ticket-card.html',
 })
 export class TicketCard {
   readonly ticket = input.required<Ticket>();
@@ -358,9 +419,9 @@ export class TicketCard {
 
 Jetzt muss das Template die Methode benutzen. Das ist neu.
 
-<Task id="t2-ab01-a6-html">Ersetze den gesamten Inhalt von `ticket-card.html` durch:</Task>
+<Task id="t2-ab01-a6-html">**Ergänze** in `ticket-card.html` die hervorgehobenen Zeilen:</Task>
 
-```html title="src/app/ticket-card/ticket-card.html"
+```html title="src/app/ticket-card/ticket-card.html" {1,4-6}
 <article class="card" [class.urgent]="urgent()">
   <header class="card-head">
     <span class="ticket-id">#{{ ticket().id }}</span>

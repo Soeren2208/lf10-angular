@@ -14,10 +14,10 @@ const MOVES: Record<Status, { to: Status; label: string }[]> = {
 };
 
 @Component({
-  selector: 'app-ticket-card',
   imports: [],
-  templateUrl: './ticket-card.html',
+  selector: 'app-ticket-card',
   styleUrl: './ticket-card.css',
+  templateUrl: './ticket-card.html',
 })
 export class TicketCard {
   readonly ticket = input.required<Ticket>();

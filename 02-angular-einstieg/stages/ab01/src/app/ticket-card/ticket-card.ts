@@ -4,10 +4,10 @@ import type { Ticket } from '../ticket';
 import { PRIORITY_LABEL } from '../ticket-labels';
 
 @Component({
-  selector: 'app-ticket-card',
   imports: [],
-  templateUrl: './ticket-card.html',
+  selector: 'app-ticket-card',
   styleUrl: './ticket-card.css',
+  templateUrl: './ticket-card.html',
 })
 export class TicketCard {
   readonly ticket = input.required<Ticket>();
