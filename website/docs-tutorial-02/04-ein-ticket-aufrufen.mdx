@@ -69,7 +69,7 @@ Bisher besteht die Anwendung aus einer Seite. Jetzt kommt eine zweite dazu. In e
 
 <Task id="t2-ab04-a1-generate">Lege mit der Angular-CLI die Komponente `ticket-detail` an, wie in AB 01 die Karte.</Task>
 
-<Task id="t2-ab04-a1-routes">Das Projekt hat schon eine Datei für die Adressen, `app.routes.ts`, aber noch keine Adresse darin. Ersetze den gesamten Inhalt durch:</Task>
+<Task id="t2-ab04-a1-routes">Das Projekt hat schon eine Datei für die Adressen, `app.routes.ts`, aber noch keine Adresse darin. **Tippe** den folgenden Code ab und ersetze dabei den gesamten Inhalt:</Task>
 
 ```ts title="src/app/app.routes.ts"
 import { Routes } from '@angular/router';
@@ -90,7 +90,7 @@ export const routes: Routes = [
 - `tickets/:id` hat einen Platzhalter: `:id` steht für die Nummer. Die Adresse `/tickets/4` und `/tickets/17` passen beide, die Nummer landet jeweils im Platzhalter.
 - `**` passt auf jede andere Adresse. Der Router geht die Liste von oben nach unten durch, deshalb steht dieser Eintrag zuletzt. `redirectTo: ''` schickt unbekannte Adressen zum Board.
 
-<Task id="t2-ab04-a1-app">Die App zeigt jetzt nicht mehr fest das Board, sondern die Komponente, die zur Adresse passt. Ersetze den gesamten Inhalt von `app.ts` und `app.html` durch:</Task>
+<Task id="t2-ab04-a1-app">Die App zeigt jetzt nicht mehr fest das Board, sondern die Komponente, die zur Adresse passt. **Ergänze** in `app.ts` und `app.html` die hervorgehobenen Zeilen, auch die Importe.</Task>
 
 ```ts title="src/app/app.ts" {2,6}
 import { Component } from '@angular/core';
@@ -131,7 +131,7 @@ export class App {}
 
 Die Ansicht muss wissen, welches Ticket sie zeigen soll. Das steht in der Adresse, im Platzhalter `:id`. Der Router kann diesen Wert an die Komponente weiterreichen, wie das Board der Karte ein Ticket gibt: als Eingang `input()`. Das musst du einmal in der Konfiguration der Anwendung einschalten.
 
-<Task id="t2-ab04-a2-config">Ersetze den gesamten Inhalt von `app.config.ts` durch:</Task>
+<Task id="t2-ab04-a2-config">**Ergänze** in `app.config.ts` die hervorgehobenen Zeilen, auch die Importe.</Task>
 
 ```ts title="src/app/app.config.ts" {2,6}
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
@@ -145,9 +145,9 @@ export const appConfig: ApplicationConfig = {
 
 `withComponentInputBinding()` sorgt dafür, dass der Router Werte aus der Adresse in gleichnamige Eingänge der Komponente schreibt. Aus dem Platzhalter `:id` wird der Eingang `id`.
 
-<Task id="t2-ab04-a2-class">Ersetze den gesamten Inhalt von `ticket-detail.ts` durch:</Task>
+<Task id="t2-ab04-a2-class">**Ergänze** in `ticket-detail.ts` die hervorgehobenen Zeilen, auch die Importe.</Task>
 
-```ts title="src/app/ticket-detail/ticket-detail.ts"
+```ts title="src/app/ticket-detail/ticket-detail.ts" {1-6,9,14-33}
 import { DatePipe } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { sampleTickets } from '../sample-data';
@@ -156,10 +156,10 @@ import { findTicket } from '../ticket-list';
 import { PRIORITY_LABEL, STATUS_LABEL } from '../ticket-labels';
 
 @Component({
-  selector: 'app-ticket-detail',
   imports: [DatePipe],
-  templateUrl: './ticket-detail.html',
+  selector: 'app-ticket-detail',
   styleUrl: './ticket-detail.css',
+  templateUrl: './ticket-detail.html',
 })
 export class TicketDetail {
   /** Die Nummer aus der Adresse (`/tickets/:id`). Der Router liefert sie als Text. */
@@ -191,7 +191,7 @@ export class TicketDetail {
 - `findTicket` ist deine Funktion aus der Werkstatt. Sie sucht hier noch direkt in den Beispieldaten.
 - `DatePipe` steht in `imports`, weil das Template gleich eine Pipe benutzt.
 
-<Task id="t2-ab04-a2-html">Ersetze den gesamten Inhalt von `ticket-detail.html` durch:</Task>
+<Task id="t2-ab04-a2-html">**Tippe** den folgenden Code in `ticket-detail.html` **ab** und ersetze dabei den gesamten Inhalt:</Task>
 
 ```html title="src/app/ticket-detail/ticket-detail.html"
 @if (view(); as v) {
@@ -224,8 +224,9 @@ export class TicketDetail {
 - `@if (view(); as v) { … }` ist ein `@if` mit einem Namen für den Wert: Ist `view()` nicht `undefined`, steht es im Block als `v` zur Verfügung. So rufst du `view()` nur einmal auf.
 - `{{ … | date: 'dd.MM.yyyy' }}` ist eine **Pipe**. Das Zeichen `|` schickt den Wert durch eine Umwandlung, bevor er angezeigt wird. `date` macht aus dem Text `2026-11-04` die Anzeige `04.11.2026`. `dd` ist der Tag, `MM` der Monat, `yyyy` das Jahr.
 - `<dl>` ist die HTML-Liste für Bezeichnung und Wert, `<dt>` die Bezeichnung, `<dd>` der Wert.
+- `<h1>` ist die wichtigste Überschrift der Seite. Auf dieser Seite gibt es nur sie, darum steht sie eine Ebene über den Überschriften des Boards.
 
-<Task id="t2-ab04-a2-css">Ersetze den gesamten Inhalt von `ticket-detail.css` durch:</Task>
+<Task id="t2-ab04-a2-css">**Kopiere** den folgenden Code in `ticket-detail.css` und ersetze dabei den gesamten Inhalt:</Task>
 
 <CodeFile data={stage} file="src/app/ticket-detail/ticket-detail.css" />
 
@@ -239,7 +240,7 @@ export class TicketDetail {
 
 Auf jeder Karte soll ein Link „Öffnen“ zur Ansicht des Tickets führen.
 
-<Task id="t2-ab04-a3-class">Ersetze den gesamten Inhalt von `ticket-card.ts` durch:</Task>
+<Task id="t2-ab04-a3-class">**Ergänze** in `ticket-card.ts` die hervorgehobenen Zeilen, auch die Importe.</Task>
 
 ```ts title="src/app/ticket-card/ticket-card.ts" {2,18}
 import { Component, computed, input, output } from '@angular/core';
@@ -275,7 +276,7 @@ export class TicketCard {
 }
 ```
 
-<Task id="t2-ab04-a3-html">Ersetze den gesamten Inhalt von `ticket-card.html` durch:</Task>
+<Task id="t2-ab04-a3-html">**Ergänze** in `ticket-card.html` die hervorgehobenen Zeilen:</Task>
 
 ```html title="src/app/ticket-card/ticket-card.html" {17}
 <article class="card" [class.urgent]="urgent()">
@@ -326,7 +327,7 @@ Zwei Seiten brauchen dieselben Tickets, also dürfen die Tickets keiner der beid
 - Das kennst du aus Spring: Dort ist es `@Service` und die Instanz kommt über den Konstruktor, das ist **Dependency Injection**. In Angular heißt es `@Injectable` und `inject()`, gemeint ist dasselbe.
 - Hält der Service die Tickets in einem Signal, erneuern sich alle Seiten, die es lesen, wenn sich etwas ändert.
 
-<Task id="t2-ab04-a4-service">Lege die Datei `src/app/ticket.service.ts` an:</Task>
+<Task id="t2-ab04-a4-service">**Tippe** die Datei `src/app/ticket.service.ts` **ab**. Lege sie dafür im Ordner `src/app` neu an:</Task>
 
 ```ts title="src/app/ticket.service.ts"
 import { Injectable, signal } from '@angular/core';
@@ -356,7 +357,7 @@ export class TicketService {
 - `find(id)` sucht ein Ticket. Es liest das Signal, deshalb aktualisiert sich ein `computed`, das `find` benutzt, wenn sich die Tickets ändern.
 - `setStatus` ist das, was bisher `changeStatus` im Board getan hat.
 
-<Task id="t2-ab04-a4-board">Das Board holt sich die Tickets aus dem Service. Ersetze den gesamten Inhalt von `ticket-board.ts` durch:</Task>
+<Task id="t2-ab04-a4-board">Das Board holt sich die Tickets aus dem Service. **Ergänze** in `ticket-board.ts` die hervorgehobenen Zeilen, auch die Importe.</Task>
 
 ```ts title="src/app/ticket-board/ticket-board.ts" {1,4-5,23,29,42}
 import { Component, computed, inject, signal } from '@angular/core';
@@ -375,10 +376,10 @@ const COLUMNS: { status: Status; css: string }[] = [
 ];
 
 @Component({
-  selector: 'app-ticket-board',
   imports: [TicketCard],
-  templateUrl: './ticket-board.html',
+  selector: 'app-ticket-board',
   styleUrl: './ticket-board.css',
+  templateUrl: './ticket-board.html',
 })
 export class TicketBoard {
   private readonly service = inject(TicketService);
@@ -411,7 +412,7 @@ export class TicketBoard {
 - Das Board besitzt keine eigene Liste mehr. Es liest `this.service.tickets()` und ändert sie über `this.service.setStatus(…)`.
 - `urgentOnly` bleibt im Board, denn die Auswahl „Nur dringende“ gehört zu dieser Seite und nicht zu den Tickets.
 
-<Task id="t2-ab04-a4-detail">Die Ansicht soll dieselbe Quelle benutzen. Ändere `ticket-detail.ts`: Hole dir den Service, wie das Board es tut, und suche das Ticket mit `this.service.find(…)` statt direkt in den Beispieldaten.</Task>
+<Task id="t2-ab04-a4-detail">Die Ansicht soll dieselbe Quelle benutzen. **Schreibe** `ticket-detail.ts` um: Hole dir den Service, wie das Board es tut, und suche das Ticket mit `this.service.find(…)` statt direkt in den Beispieldaten.</Task>
 
 <details>
 <summary>Lösung: ticket-detail.ts</summary>
@@ -424,10 +425,10 @@ import { TicketService } from '../ticket.service';
 import { PRIORITY_LABEL, STATUS_LABEL } from '../ticket-labels';
 
 @Component({
-  selector: 'app-ticket-detail',
   imports: [DatePipe],
-  templateUrl: './ticket-detail.html',
+  selector: 'app-ticket-detail',
   styleUrl: './ticket-detail.css',
+  templateUrl: './ticket-detail.html',
 })
 export class TicketDetail {
   private readonly service = inject(TicketService);
@@ -465,9 +466,9 @@ export class TicketDetail {
 
 Die Ansicht braucht noch einen Link zurück zum Board. Und sie soll, wenn es das Ticket nicht gibt, das auch sagen, statt leer zu bleiben.
 
-<Task id="t2-ab04-a5-class">Ersetze den gesamten Inhalt von `ticket-detail.ts` durch:</Task>
+<Task id="t2-ab04-a5-class">**Ergänze** in `ticket-detail.ts` die hervorgehobenen Zeilen, auch die Importe.</Task>
 
-```ts title="src/app/ticket-detail/ticket-detail.ts" {3,10}
+```ts title="src/app/ticket-detail/ticket-detail.ts" {3,9}
 import { DatePipe } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -476,10 +477,10 @@ import { TicketService } from '../ticket.service';
 import { PRIORITY_LABEL, STATUS_LABEL } from '../ticket-labels';
 
 @Component({
-  selector: 'app-ticket-detail',
   imports: [DatePipe, RouterLink],
-  templateUrl: './ticket-detail.html',
+  selector: 'app-ticket-detail',
   styleUrl: './ticket-detail.css',
+  templateUrl: './ticket-detail.html',
 })
 export class TicketDetail {
   private readonly service = inject(TicketService);
@@ -505,7 +506,7 @@ export class TicketDetail {
 }
 ```
 
-<Task id="t2-ab04-a5-html">Ersetze den gesamten Inhalt von `ticket-detail.html` durch:</Task>
+<Task id="t2-ab04-a5-html">**Ergänze** in `ticket-detail.html` die hervorgehobenen Zeilen:</Task>
 
 ```html title="src/app/ticket-detail/ticket-detail.html" {3,24-29}
 @if (view(); as v) {
@@ -540,7 +541,7 @@ export class TicketDetail {
 }
 ```
 
-**Das ist neu:** `@else { … }` hinter einem `@if` wird gezeigt, wenn die Bedingung **nicht** zutrifft. Hier ist das der Fall, wenn `view()` `undefined` ist, also zur Nummer kein Ticket gefunden wurde. Die beiden Links benutzen `routerLink`, wie der Titel in der Kopfzeile.
+**Das ist neu:** `@else { … }` hinter einem `@if` wird gezeigt, wenn die Bedingung **nicht** zutrifft. Hier ist das der Fall, wenn `view()` `undefined` ist, also zur Nummer kein Ticket gefunden wurde. Die beiden Links benutzen `routerLink`, wie der Titel in der Kopfzeile. `<a>` ist das HTML-Element für einen Link, `<p>` für einen Absatz.
 
 <Task id="t2-ab04-a5-check">Öffne `http://localhost:4200/tickets/99` und `http://localhost:4200/tickets/abc`. Beide zeigen „Ticket nicht gefunden“. Bei einem vorhandenen Ticket führt „← Zurück zum Board“ zum Board.</Task>
 
@@ -552,11 +553,11 @@ export class TicketDetail {
 
 Jonas bekommt Rückfragen per Chat mit einer Ticketnummer. Er soll die Nummer direkt auf dem Board eingeben können, ohne eine Adresse zu tippen.
 
-<Task id="t2-ab04-a6-css">Ersetze den gesamten Inhalt von `ticket-board.css` durch:</Task>
+<Task id="t2-ab04-a6-css">**Kopiere** den folgenden Code in `ticket-board.css` und ersetze dabei den gesamten Inhalt:</Task>
 
 <CodeFile data={stage} file="src/app/ticket-board/ticket-board.css" />
 
-<Task id="t2-ab04-a6-class">Ersetze den gesamten Inhalt von `ticket-board.ts` durch:</Task>
+<Task id="t2-ab04-a6-class">**Ergänze** in `ticket-board.ts` die hervorgehobenen Zeilen, auch die Importe.</Task>
 
 ```ts title="src/app/ticket-board/ticket-board.ts" {2,25,47-52}
 import { Component, computed, inject, signal } from '@angular/core';
@@ -576,10 +577,10 @@ const COLUMNS: { status: Status; css: string }[] = [
 ];
 
 @Component({
-  selector: 'app-ticket-board',
   imports: [TicketCard],
-  templateUrl: './ticket-board.html',
+  selector: 'app-ticket-board',
   styleUrl: './ticket-board.css',
+  templateUrl: './ticket-board.html',
 })
 export class TicketBoard {
   private readonly service = inject(TicketService);
@@ -620,7 +621,7 @@ export class TicketBoard {
 - `openTicket(input)` bekommt den eingegebenen Text. `trim()` entfernt Leerzeichen am Rand. Ist nichts eingegeben, passiert nichts.
 - `this.router.navigate(['/tickets', number])` wechselt per Code zur Adresse `/tickets/7`. Das ist das Gegenstück zu `routerLink` im Template. `navigate` liefert ein Promise, das du aus der Werkstatt kennst. `void` sagt, dass du nicht darauf wartest.
 
-<Task id="t2-ab04-a6-html">Ersetze den gesamten Inhalt von `ticket-board.html` durch:</Task>
+<Task id="t2-ab04-a6-html">**Ergänze** in `ticket-board.html` die hervorgehobenen Zeilen:</Task>
 
 ```html title="src/app/ticket-board/ticket-board.html" {7-10}
 <div class="toolbar">
@@ -657,6 +658,7 @@ export class TicketBoard {
 **Das ist neu:**
 
 - `#nr` gibt dem Eingabefeld einen Namen im Template (eine **Template-Referenzvariable**). Mit `nr.value` liest du, was darin steht. Für ein einzelnes Feld brauchst du kein Formular.
+- Am Eingabefeld sind `type="text"` ein Textfeld, `inputmode="numeric"` die Zifferntastatur auf dem Handy, `placeholder` der graue Hinweistext und `aria-label` die Beschriftung für Screenreader.
 - `(keydown.enter)="…"` reagiert nur auf die Eingabetaste. `(click)` auf dem Knopf tut dasselbe, damit man die Nummer mit der Maus oder der Tastatur abschicken kann.
 
 <Task id="t2-ab04-a6-check">Gib im Board `7` ein und drücke Enter: Das Ticket #7 öffnet sich. Gib `99` ein und klicke auf „Ticket öffnen“: „Ticket nicht gefunden“.</Task>

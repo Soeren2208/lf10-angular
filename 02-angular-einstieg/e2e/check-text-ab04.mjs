@@ -82,6 +82,19 @@ const elseAt = detailHtmlFacts.indexOf('} @else {');
 if (elseAt < 0) problems.push('Ableitung nicht möglich: @else im Endstand der Ticket-Ansicht nicht gefunden.');
 detailHtmlFacts = detailHtmlFacts.slice(0, elseAt) + '}\n';
 
+// So legt die Angular-CLI die Komponente an (Aufgabe 1):
+const cliDetailTs = [
+  "import { Component } from '@angular/core';",
+  '',
+  '@Component({',
+  '  imports: [],',
+  "  selector: 'app-ticket-detail',",
+  "  styleUrl: './ticket-detail.css',",
+  "  templateUrl: './ticket-detail.html',",
+  '})',
+  'export class TicketDetail {}',
+].join('\n');
+
 // --- Board ----------------------------------------------------------------------------------------
 const boardTsFinal = final('ticket-board/ticket-board.ts');
 let boardTsService = cut(boardTsFinal, "import { Router } from '@angular/router';\n");
@@ -112,7 +125,7 @@ const expectations = [
   ['src/app/app.ts', 0, final('app.ts'), stageAb03('app.ts'), 'app.ts (Aufgabe 1)'],
   ['src/app/app.html', 0, final('app.html'), stageAb03('app.html'), 'app.html (Aufgabe 1)'],
   ['src/app/app.config.ts', 0, final('app.config.ts'), generated('app.config.ts'), 'app.config.ts (Aufgabe 2)'],
-  ['src/app/ticket-detail/ticket-detail.ts', 0, detailTsOwn, null, 'ticket-detail.ts nach Aufgabe 2'],
+  ['src/app/ticket-detail/ticket-detail.ts', 0, detailTsOwn, cliDetailTs, 'ticket-detail.ts nach Aufgabe 2'],
   ['src/app/ticket-detail/ticket-detail.html', 0, detailHtmlFacts, null, 'ticket-detail.html nach Aufgabe 2'],
   ['src/app/ticket-card/ticket-card.ts', 0, final('ticket-card/ticket-card.ts'), stageAb03('ticket-card/ticket-card.ts'), 'ticket-card.ts (Aufgabe 3)'],
   ['src/app/ticket-card/ticket-card.html', 0, final('ticket-card/ticket-card.html'), stageAb03('ticket-card/ticket-card.html'), 'ticket-card.html (Aufgabe 3)'],

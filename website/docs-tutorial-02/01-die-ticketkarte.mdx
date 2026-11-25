@@ -81,7 +81,7 @@ Ein Verb am Anfang sagt dir, was du bei einer Aufgabe tun sollst:
 |---|---|
 | **Kopiere** | Code, den du nicht selbst schreiben musst, zum Beispiel das Design (CSS). Kopieren und einfügen genügt. |
 | **Tippe ab** | Neuer Stoff. Tippe den Code selbst ab, statt ihn zu kopieren. So prägst du dir Schreibweise und Aufbau ein, und WebStorm hilft dir mit Vorschlägen. |
-| **Ergänze** | Die Datei steht fast da. Schreibe nur die **hervorgehobenen** Zeilen und importiere, was fehlt. WebStorm schlägt den Import mit **Alt + Enter** vor. |
+| **Ergänze** | Die Datei steht fast da. Schreibe nur die **hervorgehobenen** Zeilen (neue und geänderte) und importiere, was fehlt. WebStorm schlägt den Import mit **Alt + Enter** vor. |
 | **Schreibe** | Das kennst du schon. Schreibe es selbst, die Lösung ist eingeklappt. |
 :::
 
@@ -141,7 +141,7 @@ Das ist in diesem Projekt wichtig:
 
 <TaskBadge>T_2 · Ticket-Modell und Beispieldaten übernehmen</TaskBadge>
 
-<Task id="t2-ab01-a2-copy">Kopiere aus deinem Projekt der TypeScript-Werkstatt die Dateien `src/ticket.ts` und `src/sample-data.ts` in den Ordner `src/app` des neuen Projekts.</Task>
+<Task id="t2-ab01-a2-copy">**Kopiere** aus deinem Projekt der TypeScript-Werkstatt die Dateien `src/ticket.ts` und `src/sample-data.ts` in den Ordner `src/app` des neuen Projekts.</Task>
 
 Das ist dein Code aus der Werkstatt: die Typen `Status`, `Priority` und `Ticket`, die Funktionen `isUrgent` und `assigneeName` und acht Beispieltickets. Er ist reines TypeScript und braucht kein Angular. So übernimmt man in der Praxis vorhandenen Code in ein neues Projekt.
 
@@ -385,7 +385,7 @@ Dringend ist, was du in der Werkstatt als `isUrgent` geschrieben hast: Prioritä
 
 <Task id="t2-ab01-a6-predict">Sage voraus: Welche der drei Karten (#4, #3, #6) fällt nach dieser Aufgabe auf? Schreibe es auf. Die Daten stehen in `sample-data.ts`.</Task>
 
-<Task id="t2-ab01-a6-class">Schreibe in `ticket-card.ts` die Methode `urgent()`. Sie gibt zurück, ob das Ticket der Karte dringend ist, und sieht aus wie `priorityText()`, nur mit deiner Funktion `isUrgent` aus der Werkstatt. Vergiss den Import von `isUrgent` nicht.</Task>
+<Task id="t2-ab01-a6-class">**Schreibe** in `ticket-card.ts` die Methode `urgent()`. Sie gibt zurück, ob das Ticket der Karte dringend ist, und sieht aus wie `priorityText()`, nur mit deiner Funktion `isUrgent` aus der Werkstatt. Vergiss den Import von `isUrgent` nicht.</Task>
 
 <details>
 <summary>Lösung: ticket-card.ts</summary>
@@ -460,9 +460,9 @@ Nur Karte #4 fällt auf: Sie hat Priorität hoch und ist offen. Karte #3 hat Pri
 
 <TaskBadge>T_7 · Bearbeiter anzeigen</TaskBadge>
 
-<Task id="t2-ab01-a7-class">Schreibe in `ticket-card.ts` die Methode `assignee()`. Sie gibt den Namen des Bearbeiters zurück und benutzt deine Funktion `assigneeName` aus der Werkstatt, ganz wie `urgent()` die Funktion `isUrgent`.</Task>
+<Task id="t2-ab01-a7-class">**Schreibe** in `ticket-card.ts` die Methode `assignee()`. Sie gibt den Namen des Bearbeiters zurück und benutzt deine Funktion `assigneeName` aus der Werkstatt, ganz wie `urgent()` die Funktion `isUrgent`.</Task>
 
-<Task id="t2-ab01-a7-html">Zeige den Bearbeiter im Template in dem Element mit der Klasse `meta` neben der Priorität an. Gib ihm die Klasse `assignee`.</Task>
+<Task id="t2-ab01-a7-html">**Schreibe** in `ticket-card.html` in das Element mit der Klasse `meta`, neben die Priorität, den Bearbeiter. Gib ihm die Klasse `assignee`.</Task>
 
 Deine Funktion `assigneeName` liefert „nicht zugewiesen“, wenn es keinen Bearbeiter gibt. Dafür musst du in der Karte nichts mehr tun.
 

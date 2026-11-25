@@ -76,7 +76,7 @@ Unten auf jeder Karte stehen Knöpfe für den Wechsel in den benachbarten Stand.
 
 Die Karte zeigt ein Ticket, das ihr das Board gegeben hat. Die Tickets gehören dem Board, deshalb darf die Karte sie nicht selbst ändern. Sie kann dem Board aber **melden**: „Der Benutzer möchte dieses Ticket in den Stand X verschieben.“ Dafür gibt es den **Ausgang** `output()`. Er ist das Gegenstück zum Eingang `input()` aus AB 01: Mit `input()` kommen Daten von oben in die Komponente, mit `output()` gehen Meldungen nach oben hinaus.
 
-<Task id="t2-ab03-a1-class">Ersetze den gesamten Inhalt von `ticket-card.ts` durch:</Task>
+<Task id="t2-ab03-a1-class">**Ergänze** in `ticket-card.ts` die hervorgehobenen Zeilen, auch die Importe.</Task>
 
 ```ts title="src/app/ticket-card/ticket-card.ts" {1,3,6-14,24,38-40}
 import { Component, input, output } from '@angular/core';
@@ -128,7 +128,7 @@ export class TicketCard {
 - `MOVES` legt fest, wohin ein Ticket von jedem Stand aus wechseln kann. `Record<Status, …>` kennst du. Der Wert ist eine Liste von Wechseln, jeder mit dem neuen Stand (`to`) und dem Text auf dem Knopf (`label`).
 - `moves()` gibt die Wechsel für das Ticket der Karte zurück.
 
-<Task id="t2-ab03-a1-html">Ersetze den gesamten Inhalt von `ticket-card.html` durch:</Task>
+<Task id="t2-ab03-a1-html">**Ergänze** in `ticket-card.html` die hervorgehobenen Zeilen:</Task>
 
 ```html title="src/app/ticket-card/ticket-card.html" {16-20}
 <article class="card" [class.urgent]="urgent()">
@@ -158,8 +158,9 @@ export class TicketCard {
 
 - Pro Wechsel entsteht ein Knopf, `@for` kennst du aus AB 02. Als `track` dient der neue Stand: Jeder Knopf einer Karte hat einen anderen.
 - `(click)="statusChange.emit(move.to)"` ist ein Event-Binding wie `(change)` in AB 02. Beim Klick schickt die Karte den neuen Stand über ihren Ausgang ab.
+- `<footer>` ist der Fußbereich der Karte, `<button>` ein Knopf. `type="button"` sagt dem Browser, dass der Knopf nichts abschickt.
 
-<Task id="t2-ab03-a1-css">Ergänze am Ende von `ticket-card.css`:</Task>
+<Task id="t2-ab03-a1-css">**Kopiere** den folgenden Code ans Ende von `ticket-card.css`:</Task>
 
 ```css
 .actions {
@@ -182,7 +183,7 @@ Jetzt hört das Board auf die Meldung der Karte und ändert das Ticket. Dafür h
 
 <Task id="t2-ab03-a2-predict">Sage voraus: Du klickst bei Ticket #3 auf „In Arbeit →“. In welcher Spalte steht es danach, und an welcher Stelle? Schreibe es auf.</Task>
 
-<Task id="t2-ab03-a2-class">Ersetze den gesamten Inhalt von `ticket-board.ts` durch:</Task>
+<Task id="t2-ab03-a2-class">**Ergänze** in `ticket-board.ts` die hervorgehobenen Zeilen, auch die Importe.</Task>
 
 ```ts title="src/app/ticket-board/ticket-board.ts" {5,23,40-42}
 import { Component } from '@angular/core';
@@ -201,10 +202,10 @@ const COLUMNS: { status: Status; css: string }[] = [
 ];
 
 @Component({
-  selector: 'app-ticket-board',
   imports: [TicketCard],
-  templateUrl: './ticket-board.html',
+  selector: 'app-ticket-board',
   styleUrl: './ticket-board.css',
+  templateUrl: './ticket-board.html',
 })
 export class TicketBoard {
   protected tickets = sampleTickets;
@@ -235,7 +236,7 @@ export class TicketBoard {
 - `changeStatus(id, status)` ersetzt die Liste `tickets` durch die Liste, die `withStatus` liefert.
 - Deshalb steht bei `tickets` kein `readonly` mehr: Das Feld bekommt einen neuen Wert.
 
-<Task id="t2-ab03-a2-html">Ersetze den gesamten Inhalt von `ticket-board.html` durch:</Task>
+<Task id="t2-ab03-a2-html">**Ergänze** in `ticket-board.html` die hervorgehobenen Zeilen:</Task>
 
 ```html title="src/app/ticket-board/ticket-board.html" {17}
 <div class="toolbar">
@@ -284,7 +285,7 @@ Im Betrieb ändern nicht nur du, sondern auch deine Kollegen Tickets, und dein B
 
 <Task id="t2-ab03-a3-predict">Lies zuerst den Code unten. Er ruft nach fünf Sekunden `changeStatus(3, 'in Arbeit')` auf, tut also dasselbe wie dein Klick eben. Sage voraus: Was siehst du nach sechs Sekunden im Browser, wenn du nichts anklickst?</Task>
 
-<Task id="t2-ab03-a3-class">Ersetze den gesamten Inhalt von `ticket-board.ts` durch:</Task>
+<Task id="t2-ab03-a3-class">**Ergänze** in `ticket-board.ts` die hervorgehobenen Zeilen:</Task>
 
 ```ts title="src/app/ticket-board/ticket-board.ts" {26-29}
 import { Component } from '@angular/core';
@@ -303,10 +304,10 @@ const COLUMNS: { status: Status; css: string }[] = [
 ];
 
 @Component({
-  selector: 'app-ticket-board',
   imports: [TicketCard],
-  templateUrl: './ticket-board.html',
+  selector: 'app-ticket-board',
   styleUrl: './ticket-board.css',
+  templateUrl: './ticket-board.html',
 })
 export class TicketBoard {
   protected tickets = sampleTickets;
@@ -370,7 +371,7 @@ Ein **Signal** ist ein Behälter für einen Wert, in den Angular hineinschauen k
 
 Jetzt weißt du auch, warum du in AB 01 `ticket()` mit Klammern geschrieben hast: `input()` liefert ein Signal.
 
-<Task id="t2-ab03-a4-class">Ersetze den gesamten Inhalt von `ticket-board.ts` durch:</Task>
+<Task id="t2-ab03-a4-class">**Ergänze** in `ticket-board.ts` die hervorgehobenen Zeilen, auch die Importe. Wo eine hervorgehobene Zeile eine alte ersetzt, ersetzt du sie.</Task>
 
 ```ts title="src/app/ticket-board/ticket-board.ts" {1,23-24,33,42,46}
 import { Component, signal } from '@angular/core';
@@ -389,10 +390,10 @@ const COLUMNS: { status: Status; css: string }[] = [
 ];
 
 @Component({
-  selector: 'app-ticket-board',
   imports: [TicketCard],
-  templateUrl: './ticket-board.html',
+  selector: 'app-ticket-board',
   styleUrl: './ticket-board.css',
+  templateUrl: './ticket-board.html',
 })
 export class TicketBoard {
   protected readonly tickets = signal(sampleTickets);
@@ -429,7 +430,7 @@ export class TicketBoard {
 - `columns()` liest die Signale mit Klammern: `this.urgentOnly()`, `this.tickets()`.
 - `toggleUrgent()` und `changeStatus()` schreiben mit `update`. `(value) => !value` ist eine Pfeilfunktion, die den alten Wert bekommt und den umgekehrten zurückgibt.
 
-<Task id="t2-ab03-a4-html">Das Template liest `urgentOnly` jetzt auch als Signal. Ändere in `ticket-board.html` die Zeile mit `[checked]`.</Task>
+<Task id="t2-ab03-a4-html">Das Template liest `urgentOnly` jetzt auch als Signal. **Schreibe** in `ticket-board.html` die Zeile mit `[checked]` entsprechend um.</Task>
 
 <details>
 <summary>Lösung: ticket-board.html</summary>
@@ -480,7 +481,7 @@ export class TicketBoard {
 
 Bei acht Tickets merkst du keinen Unterschied. Bei langen Listen und aufwendigen Berechnungen spart `computed` Arbeit, und der abgeleitete Wert kann nie vom Zustand abweichen, aus dem er entsteht.
 
-<Task id="t2-ab03-a5-class">Ersetze den gesamten Inhalt von `ticket-board.ts` durch:</Task>
+<Task id="t2-ab03-a5-class">**Ergänze** in `ticket-board.ts` die hervorgehobenen Zeilen, auch die Importe. Wo eine hervorgehobene Zeile eine alte ersetzt, ersetzt du sie.</Task>
 
 ```ts title="src/app/ticket-board/ticket-board.ts" {1,26-27,34}
 import { Component, computed, signal } from '@angular/core';
@@ -499,10 +500,10 @@ const COLUMNS: { status: Status; css: string }[] = [
 ];
 
 @Component({
-  selector: 'app-ticket-board',
   imports: [TicketCard],
-  templateUrl: './ticket-board.html',
+  selector: 'app-ticket-board',
   styleUrl: './ticket-board.css',
+  templateUrl: './ticket-board.html',
 })
 export class TicketBoard {
   protected readonly tickets = signal(sampleTickets);
@@ -530,7 +531,7 @@ export class TicketBoard {
 
 `columns` ist jetzt ein Feld mit einem `computed` statt einer Methode. Der Timer aus dem Experiment ist weg.
 
-<Task id="t2-ab03-a5-card">Auch in der Karte sind `urgent`, `priorityText`, `assignee` und `moves` abgeleitete Werte: Sie hängen alle am Signal `ticket()`. Mache sie zu `computed`-Werten. Im Template der Karte ändert sich nichts.</Task>
+<Task id="t2-ab03-a5-card">Auch in der Karte sind `urgent`, `priorityText`, `assignee` und `moves` abgeleitete Werte: Sie hängen alle am Signal `ticket()`. **Schreibe** sie als `computed`-Werte um. Im Template der Karte ändert sich nichts.</Task>
 
 <details>
 <summary>Lösung: ticket-card.ts</summary>
@@ -578,7 +579,7 @@ export class TicketCard {
 
 <TaskBadge>T_6 · Anzahl über jeder Spalte zeigen</TaskBadge>
 
-<Task id="t2-ab03-a6-html">Zeige in `ticket-board.html` hinter der Überschrift jeder Spalte die Anzahl ihrer Tickets an, in einem `<span>` mit der Klasse `count`. Die Anzahl ist die Länge der Liste, über die die innere Schleife läuft.</Task>
+<Task id="t2-ab03-a6-html">**Schreibe** in `ticket-board.html` hinter der Überschrift jeder Spalte die Anzahl ihrer Tickets, in einem `<span>` mit der Klasse `count`. Die Anzahl ist die Länge der Liste, über die die innere Schleife läuft.</Task>
 
 <details>
 <summary>Lösung: ticket-board.html</summary>
@@ -587,7 +588,7 @@ export class TicketCard {
 
 </details>
 
-<Task id="t2-ab03-a6-css">Ergänze am Ende von `ticket-board.css`:</Task>
+<Task id="t2-ab03-a6-css">**Kopiere** den folgenden Code ans Ende von `ticket-board.css`:</Task>
 
 ```css
 .count {

@@ -14,10 +14,10 @@ const COLUMNS: { status: Status; css: string }[] = [
 ];
 
 @Component({
-  selector: 'app-ticket-board',
   imports: [TicketCard],
-  templateUrl: './ticket-board.html',
+  selector: 'app-ticket-board',
   styleUrl: './ticket-board.css',
+  templateUrl: './ticket-board.html',
 })
 export class TicketBoard {
   protected readonly tickets = signal(sampleTickets);

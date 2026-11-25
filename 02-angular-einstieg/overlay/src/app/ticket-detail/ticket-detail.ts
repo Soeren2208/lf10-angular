@@ -6,10 +6,10 @@ import { TicketService } from '../ticket.service';
 import { PRIORITY_LABEL, STATUS_LABEL } from '../ticket-labels';
 
 @Component({
-  selector: 'app-ticket-detail',
   imports: [DatePipe, RouterLink],
-  templateUrl: './ticket-detail.html',
+  selector: 'app-ticket-detail',
   styleUrl: './ticket-detail.css',
+  templateUrl: './ticket-detail.html',
 })
 export class TicketDetail {
   private readonly service = inject(TicketService);
