@@ -1,0 +1,52 @@
+.figure {
+  margin: 1.5rem 0;
+}
+
+/* Auf schmalen Bildschirmen scrollt das Diagramm waagerecht, statt unlesbar klein zu werden. */
+.scroll {
+  overflow-x: auto;
+}
+
+.svg {
+  display: block;
+  min-width: 420px;
+  width: 100%;
+  height: auto;
+}
+
+.box {
+  fill: var(--ifm-background-surface-color);
+  stroke: var(--ifm-color-emphasis-500);
+  stroke-width: 1.5;
+}
+
+.divider {
+  stroke: var(--ifm-color-emphasis-500);
+  stroke-width: 1.5;
+}
+
+.name {
+  fill: var(--ifm-font-color-base);
+  font-family: var(--ifm-font-family-base);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.member {
+  fill: var(--ifm-font-color-base);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 14px;
+}
+
+.later {
+  fill: var(--ifm-color-emphasis-600);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 14px;
+  font-style: italic;
+}
+
+.note {
+  fill: var(--ifm-color-emphasis-600);
+  font-family: var(--ifm-font-family-base);
+  font-size: 12px;
+}

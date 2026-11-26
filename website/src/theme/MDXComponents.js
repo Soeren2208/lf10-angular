@@ -10,6 +10,7 @@ import TaskBadge from '@site/src/components/TaskBadge';
 import PlanningBox from '@site/src/components/PlanningBox';
 import CodeFile from '@site/src/components/CodeFile';
 import DataFlow from '@site/src/components/DataFlow';
+import ClassDiagram from '@site/src/components/ClassDiagram';
 
 export default {
   // Bestehende Docusaurus-MDX-Komponenten übernehmen ...
@@ -25,4 +26,5 @@ export default {
   PlanningBox,
   CodeFile,
   DataFlow,
+  ClassDiagram,
 };

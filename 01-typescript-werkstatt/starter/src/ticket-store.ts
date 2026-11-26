@@ -9,7 +9,6 @@ export type Listener = (tickets: readonly Ticket[]) => void;
 
 export class TicketStore {
   // TODO C1: Der Speicher soll die Tickets in einem Attribut halten.
-  // Tipp: Ein Konstruktor-Parameter mit `private` davor ist gleich ein Attribut.
   constructor(tickets: readonly Ticket[] = []) {}
 
   all(): readonly Ticket[] {

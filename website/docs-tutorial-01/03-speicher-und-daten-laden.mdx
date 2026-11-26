@@ -51,7 +51,9 @@ Diesmal arbeitest du in der Datei `src/ticket-store.ts`.
 
 ### Aufgabe 2 – Der Speicher
 
-*Etwa 25 Minuten.*
+*Etwa 30 Minuten.*
+
+Bisher hast du Funktionen auf Daten geschrieben. Der Speicher ist etwas anderes: Er **hält** Tickets und behält sie über die Zeit. Zugriff und Änderung laufen nur über seine Methoden, deshalb schreibst du ihn als **Klasse**.
 
 Der **Speicher** (`TicketStore`) hält eine Liste von Tickets und bietet vier Methoden an:
 
@@ -62,7 +64,72 @@ Der **Speicher** (`TicketStore`) hält eine Liste von Tickets und bietet vier Me
 | `setStatus(id, status)` | ändert den Status eines Tickets. Gibt es die Nummer nicht, geschieht nichts. |
 | `replaceAll(tickets)` | ersetzt alle Tickets |
 
-Bevor du den Speicher baust, eine Regel, die den ganzen Entwurf bestimmt: **Eine Liste, die der Speicher einmal herausgegeben hat, ändert er nie mehr.** Warum, zeigt ein Beispiel ohne Speicher. Es geht um dasselbe wie in Java: Zwei Namen können auf **dieselbe** Liste zeigen.
+So sieht die Klasse am Ende des Arbeitsblatts aus. Die grauen Teile kommen erst in Aufgabe 4 dazu:
+
+<ClassDiagram
+  name="TicketStore"
+  attributes={[
+    {text: '- tickets: readonly Ticket[]'},
+    {text: '- listeners: Set<Listener>', later: 'Aufgabe 4'},
+  ]}
+  methods={[
+    {text: '+ constructor(tickets?: readonly Ticket[])'},
+    {text: '+ all(): readonly Ticket[]'},
+    {text: '+ add(ticket: Ticket): void'},
+    {text: '+ setStatus(id: number, status: Status): void'},
+    {text: '+ replaceAll(tickets: readonly Ticket[]): void'},
+    {text: '+ onChange(listener: Listener): () => void', later: 'Aufgabe 4'},
+    {text: '- notify(): void', later: 'Aufgabe 4'},
+  ]}
+/>
+
+<Task id="ts-ab03-a2-field">Der Starter hat schon einen Konstruktor, aber er speichert die übergebene Liste noch nirgends. Gib dem Speicher ein **Attribut** `tickets` (privat, Typ `readonly Ticket[]`) und setze es im Konstruktor. Der Parameter hat einen **Standardwert** (`= []`): Wird der Speicher ohne Argument erzeugt, ist er leer.</Task>
+
+<details>
+<summary>Lösung: Attribut und Konstruktor</summary>
+
+```ts
+export class TicketStore {
+  private tickets: readonly Ticket[];
+
+  constructor(tickets: readonly Ticket[] = []) {
+    this.tickets = tickets;
+  }
+
+  // …die vier Methoden
+}
+```
+
+</details>
+
+<Task id="ts-ab03-a2-all">Schreibe `all()`: Die Methode gibt die Liste zurück. Auf das Attribut greifst du in einer Klasse immer mit `this.` zu.</Task>
+
+<Task id="ts-ab03-a2-test0">Starte `npm run test:ab03`. Zwei Tests der Gruppe `C1` werden jetzt grün: „ist ohne Angabe leer“ und „enthält die Tickets, mit denen er erzeugt wurde“.</Task>
+
+Der Konstruktor lässt sich kürzer schreiben. In TypeScript wird ein Parameter zum Attribut, wenn du `private` davor setzt. Das Attribut und die Zuweisung entfallen dann. Das gibt es nur in TypeScript, in Java geht es nicht:
+
+```ts title="src/ticket-store.ts"
+export class TicketStore {
+  constructor(private tickets: readonly Ticket[] = []) {}
+
+  // …die vier Methoden
+}
+```
+
+Aus fünf Zeilen ist eine geworden.
+
+<Task id="ts-ab03-a2-shorten">Schreibe deinen Konstruktor so um. Die beiden Tests bleiben grün.</Task>
+
+<Task id="ts-ab03-a2-push">Schreibe jetzt `add(ticket)`, und zwar zuerst so, wie man es bei einer Liste gewohnt ist: Hänge das Ticket mit `this.tickets.push(ticket);` an. Starte `npm run check` und lies die Meldung.</Task>
+
+<details>
+<summary>Auflösung</summary>
+
+Der Compiler meldet `Property 'push' does not exist on type 'readonly Ticket[]'`. Er verbietet `push` mit Absicht. Warum, erklärt der nächste Absatz.
+
+</details>
+
+Der Compiler hat `push` verboten, und das ist richtig so: **Eine Liste, die der Speicher einmal herausgegeben hat, ändert er nie mehr.** Warum, zeigt ein Beispiel ohne Speicher. Es geht um dasselbe wie in Java: Zwei Namen können auf **dieselbe** Liste zeigen.
 
 ```ts
 const list = [ticketA, ticketB];   // der Speicher hält diese Liste
@@ -88,23 +155,9 @@ onScreen.length;                   // 2: die Liste auf dem Bildschirm ist unver�
 onScreen === next;                 // false: die Anzeige kann den Unterschied erkennen
 ```
 
-Deshalb entsteht bei jeder Änderung eine **neue** Liste, und das Feld des Speichers verweist danach auf sie. Das ist dasselbe Prinzip wie bei `withStatus` in AB 02.
+Deshalb entsteht bei jeder Änderung eine **neue** Liste, und das Attribut des Speichers verweist danach auf sie. Das ist dasselbe Prinzip wie bei `withStatus` in AB 02.
 
-<Task id="ts-ab03-a2-constructor">Ersetze im Starter den Konstruktor durch einen mit **Konstruktor-Attribut**: Das Wort `private` vor dem Parameter macht aus ihm gleichzeitig ein Feld.</Task>
-
-```ts title="src/ticket-store.ts"
-export class TicketStore {
-  constructor(private tickets: readonly Ticket[] = []) {}
-
-  // …die vier Methoden
-}
-```
-
-Der Parameter hat einen **Standardwert** (`= []`): Wird der Speicher ohne Argument erzeugt, ist er leer.
-
-<Task id="ts-ab03-a2-all">Schreibe `all()`: Die Methode gibt die Liste zurück. Auf das Feld greifst du in einer Klasse immer mit `this.` zu.</Task>
-
-<Task id="ts-ab03-a2-add">Schreibe `add(ticket)`. Du brauchst eine **neue** Liste mit dem Ticket am Ende. Weise sie dem Feld zu: `this.tickets = …`. Ein `push` wäre falsch, weil es die alte Liste verändert.</Task>
+<Task id="ts-ab03-a2-add">Schreibe `add(ticket)` richtig: Du brauchst eine **neue** Liste mit dem Ticket am Ende. Weise sie dem Attribut zu: `this.tickets = …`.</Task>
 
 <details>
 <summary>Tipp</summary>
