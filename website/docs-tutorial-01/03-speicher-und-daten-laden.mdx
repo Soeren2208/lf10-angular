@@ -279,6 +279,19 @@ private readonly listeners = new Set<Listener>();
 
 <Task id="ts-ab03-a4-notify">Schreibe die private Methode `notify()`: Sie ruft **jeden** angemeldeten Listener mit der aktuellen Liste auf.</Task>
 
+<details>
+<summary>Lösung: notify</summary>
+
+```ts title="src/ticket-store.ts"
+private notify(): void {
+  for (const listener of this.listeners) {
+    listener(this.tickets);
+  }
+}
+```
+
+</details>
+
 `onChange` soll als Ergebnis eine **Funktion** liefern, mit der man sich wieder abmeldet. Eine Funktion, die eine Funktion zurückgibt, ist neu. Hier ein Beispiel mit etwas anderem:
 
 ```ts
