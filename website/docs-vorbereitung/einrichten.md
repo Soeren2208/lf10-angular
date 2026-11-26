@@ -96,6 +96,7 @@ Falls `git` nicht erkannt wird: Installiere Git von [git-scm.com/downloads](http
 | `node -v` zeigt eine ungerade Zahl (z. B. `v25`) | Es ist eine „Current"-Version installiert | Die LTS-Version von [nodejs.org](https://nodejs.org) installieren |
 | `git` wird nicht erkannt | Git ist nicht installiert oder das Terminal kennt es noch nicht | Git von [git-scm.com/downloads](https://git-scm.com/downloads) installieren, WebStorm neu starten |
 | `node -v` zeigt eine kleinere Nummer als die LTS-Version | Eine alte Version ist installiert | Die aktuelle LTS-Version installieren, sie ersetzt die alte |
+| WebStorm zeigt rote Linien in Angular-Code („Name expected“, „Only standalone components can use imports“), `npm start` meldet aber nichts | WebStorm benutzt sein eigenes, älteres TypeScript | In einem Angular-Projekt unter **File → Settings → Languages & Frameworks → TypeScript** das TypeScript des Projekts einstellen (`node_modules\typescript\lib`) |
 
 ## So kommt das Projekt auf deinen Rechner
 

@@ -112,6 +112,12 @@ Bricht der Befehl mit einer Meldung ab, die Angular brauche mindestens Node.js v
 
 <Task id="t2-ab01-a1-open">Öffne den neuen Ordner `ticket-board` in WebStorm (**File → Open**).</Task>
 
+<Task id="t2-ab01-a1-ts">Stelle ein, dass WebStorm das TypeScript **deines Projekts** benutzt. Öffne **File → Settings → Languages & Frameworks → TypeScript**. Im Feld **TypeScript** muss ein Pfad stehen, der auf `node_modules\typescript\lib` im Ordner `ticket-board` zeigt, und der TypeScript-Sprachdienst muss eingeschaltet sein.</Task>
+
+:::info Rote Linien, obwohl alles stimmt
+Benutzt WebStorm sein eigenes, älteres TypeScript, zeigt es bei Angular-Code rote Linien mit Meldungen wie „Name expected“ oder „Only standalone components can use imports“. Der Code ist dann in Ordnung. Ob wirklich ein Fehler vorliegt, entscheidet der Compiler: Läuft die Anwendung (`npm start`) ohne Meldung im Terminal, ist es nur die IDE. Dann hilft die Einstellung oben. Fehlt der Ordner `node_modules`, führe im Terminal `npm install` aus.
+:::
+
 <Task id="t2-ab01-a1-start">Starte die Anwendung im Terminal von WebStorm:</Task>
 
 ```bash
