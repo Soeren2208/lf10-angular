@@ -201,13 +201,31 @@ tickets.some((ticket) => ticket.status === 'erledigt');   // true, wenn mindeste
 
 **B4** `sortedByPriority` liefert die Tickets mit der höchsten Dringlichkeit zuerst: erst Priorität 1, dann 2, dann 3. Bei gleicher Priorität kommt das Ticket mit der kleineren Nummer zuerst. Die Eingabeliste darf sich **nicht** ändern.
 
-Die Vergleichsfunktion für `sort` steht schon da. Sie liefert eine Zahl: kleiner als 0, wenn `a` vor `b` kommt:
+**So arbeitet `sort`.** `sort` bekommt eine Vergleichsfunktion `(a, b) => …` und ruft sie mit Paaren von Elementen auf. Die Funktion antwortet mit einer **Zahl**, nicht mit wahr oder falsch:
+
+| Ergebnis | Bedeutung |
+|---|---|
+| kleiner als 0 | `a` kommt vor `b` |
+| größer als 0 | `a` kommt nach `b` |
+| genau 0 | beide gelten als gleich, ihre Reihenfolge bleibt |
+
+Auf die Größe der Zahl kommt es nicht an, nur auf das Vorzeichen. Ein Vergleich mit `<` oder `>` genügt deshalb nicht: Er liefert nur `true` oder `false`, `sort` braucht aber drei Antworten. Wer `(a, b) => a.priority < b.priority` schreibt, bekommt keine Fehlermeldung, aber eine falsche Reihenfolge.
+
+Bei Zahlen ist die **Subtraktion** genau so eine Antwort: Das Vorzeichen des Unterschieds sagt, wer vor wem kommt. Priorität 1 ist die höchste und soll zuerst stehen:
+
+| a | b | Rechnung `a.priority - b.priority` | Ergebnis | Folge |
+|---|---|---|---|---|
+| Priorität 1 | Priorität 3 | 1 − 3 | −2 | a kommt zuerst |
+| Priorität 3 | Priorität 1 | 3 − 1 | 2 | a kommt danach |
+| Priorität 2 | Priorität 2 | 2 − 2 | 0 | gleich |
+
+Die Vergleichsfunktion für `sortedByPriority` steht schon da:
 
 ```ts
 (a, b) => a.priority - b.priority || a.id - b.id
 ```
 
-(Der zweite Teil nach `||` greift, wenn der erste 0 ist, also bei gleicher Priorität. Anders als in Java darf `||` hier Zahlen verknüpfen: `0` zählt als „nicht vorhanden“, dann gilt der rechte Teil. Das Kästchen „Warum nicht `||`?“ in AB 01 erklärt es näher.)
+Der erste Teil sortiert nach Priorität. Bei gleicher Priorität ist sein Ergebnis 0, und `0` zählt in JavaScript als „nicht vorhanden“. Dann gilt der Teil hinter `||`: Die kleinere Nummer kommt zuerst. Ein Beispiel: #3 und #8 haben beide Priorität 2. Die Rechnung `2 - 2` ergibt 0, also entscheidet `3 - 8`, das ist −5, und #3 kommt vor #8. Warum `||` bei 0 den rechten Teil nimmt, erklärt das Kästchen „Warum nicht `||`?“ in AB 01.
 
 <Task id="ts-ab02-a5-predict">Vorhersage: Du schreibst die Funktion so. Was meldet der Compiler?</Task>
 
