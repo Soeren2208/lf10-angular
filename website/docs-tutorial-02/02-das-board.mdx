@@ -332,6 +332,8 @@ Die Reihenfolge in „Offen“ ist #4 (Priorität hoch), #3 und #8 (beide mittel
 
 Bisher zeigt das Board nur an. Jetzt reagiert es auf den Benutzer: Ein Haken schaltet um, ob alle Tickets oder nur die dringenden zu sehen sind.
 
+Was „dringend“ heißt, sagt deine Funktion `isUrgent` aus der Werkstatt: Priorität Hoch **und noch nicht erledigt**. Ein Ticket in „In Arbeit“ mit Priorität Hoch ist also dringend, ein erledigtes mit Priorität Hoch nicht, denn um das kümmert sich niemand mehr.
+
 <Task id="t2-ab02-a6-class">**Ergänze** in `ticket-board.ts` die hervorgehobenen Zeilen, auch die Importe.</Task>
 
 ```ts title="src/app/ticket-board/ticket-board.ts" {3,16,20-21,24-26}
