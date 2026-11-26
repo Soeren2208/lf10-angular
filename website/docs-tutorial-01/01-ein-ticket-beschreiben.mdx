@@ -261,7 +261,7 @@ Darum ist das Datum hier ein Text im Format `'JJJJ-MM-TT'` (ISO 8601, zum Beispi
 npm run check
 ```
 
-Statt neun Meldungen sind jetzt nur noch **vier** übrig. Öffne `src/types.check.ts` und suche die Zeilen. In dieser Datei steht über jeder Meldung, was der Compiler dort **melden müsste**:
+Statt acht Meldungen sind jetzt nur noch **drei** übrig. Öffne `src/types.check.ts` und suche die Zeilen. In dieser Datei steht über jeder Meldung, was der Compiler dort **melden müsste**:
 
 ```ts
 // @ts-expect-error A2: Als Status ist nur "offen", "in Arbeit" oder "erledigt" erlaubt
@@ -270,7 +270,7 @@ const invalidStatus: Ticket = { ...valid, status: 'wartet' };
 
 Die Zeile sagt: „Hier MUSS ein Fehler kommen.“ Kommt keiner, meldet der Compiler `Unused '@ts-expect-error' directive`: Dein Typ ist an dieser Stelle noch zu locker. Du siehst also genau, was deine Typen noch nicht verbieten.
 
-<Task id="ts-ab01-a3-read">Lies die vier übrigen Kommentare. Welche beginnen mit `A2`, welche mit `C4`? Die mit `A2` löst du in Aufgabe 4, die mit `C4` erst in AB 03.</Task>
+<Task id="ts-ab01-a3-read">Lies die drei übrigen Kommentare. Sie beginnen alle mit `A2`: Sie warten darauf, dass du in Aufgabe 4 die erlaubten Werte festlegst.</Task>
 
 <details>
 <summary>Probiere: Was macht readonly?</summary>
@@ -296,7 +296,7 @@ export type Priority = 1 | 2 | 3;
 
 <Task id="ts-ab01-a4-use">Benutze die neuen Typen im Interface: `status: Status;` und `priority: Priority;`.</Task>
 
-<Task id="ts-ab01-a4-check">Starte `npm run check`. Es bleibt **eine** Meldung übrig, die mit `C4`.</Task>
+<Task id="ts-ab01-a4-check">Starte `npm run check`. Es bleibt **keine** Meldung übrig: Der Compiler ist zufrieden.</Task>
 
 <Task id="ts-ab01-a4-editor">Probiere den Editor aus: Tippe irgendwo in `ticket.ts` die Zeile `const s: Status = '` und warte kurz. WebStorm schlägt dir jetzt die drei erlaubten Werte vor. Lösche die Zeile wieder.</Task>
 
@@ -424,7 +424,7 @@ Für optionale Felder ist meistens `??` richtig, weil es nur ersetzt, wenn wirkl
       beschreibung: 'Die Typen zu AB 01 stimmen',
       vorbedingung: 'Aufgaben 3 und 4 sind erledigt',
       schritte: ['npm run check ausführen'],
-      erwartet: <>Es bleibt genau <b>eine</b> Meldung übrig. Sie steht in <code>src/types.check.ts</code> bei dem Kommentar mit <code>C4</code> und gehört zu AB 03.</>
+      erwartet: <>Der Compiler meldet nichts mehr.</>
     },
     {
       id: 'TF-03',

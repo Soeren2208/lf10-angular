@@ -8,7 +8,6 @@
 import { sampleTickets } from './sample-data';
 import type { Status, Ticket } from './ticket';
 import { findTicket } from './ticket-list';
-import type { Result } from './ticket-store';
 
 // A1: ein gültiges Ticket – assignee darf fehlen
 const valid: Ticket = { id: 1, title: 'Test', status: 'offen', priority: 1, createdAt: '2026-11-02' };
@@ -36,16 +35,5 @@ valid.id = 2;
 
 // @ts-expect-error B3: findTicket kann undefined liefern, deshalb darf man nicht einfach .title lesen
 const title = findTicket(sampleTickets, 1).title;
-
-// C4: Erst wenn "ok" geprüft ist, weiß der Compiler, ob es data oder error gibt
-export function render(result: Result<Ticket[]>): string {
-  if (result.ok) {
-    return `${result.data.length} Tickets`;
-  }
-  return result.error;
-}
-
-// @ts-expect-error C4: Ohne Prüfung von "ok" darf man nicht auf data zugreifen
-export const withoutCheck = (result: Result<Ticket[]>) => result.data;
 
 export { invalidStatus, invalidPriority, invalidTitle, withoutTitle, typo, statusAsNumber, title };

@@ -21,13 +21,13 @@ Du arbeitest mit einem Starter-Projekt, in dem fertige Tests auf dich warten. Am
 |---|---|---|
 | **01** | [Ein Ticket beschreiben](01-ein-ticket-beschreiben) | Interface, Union-Typen, optionale Felder, `readonly`, Compilerfehler lesen |
 | **02** | [Mit Ticketlisten arbeiten](02-mit-ticketlisten-arbeiten) | Pfeilfunktionen, `filter`, `map`, `find`, Listen unveränderlich ändern |
-| **03** | [Speicher und Daten laden](03-speicher-und-daten-laden) | Klasse mit Konstruktor-Attributen, `async`/`await`, ein Speicher, der Änderungen meldet |
+| **03** | [Ein Speicher, der Änderungen meldet](03-speicher-und-daten-laden) | Klasse mit Konstruktor-Attributen, Funktionen als Werte, Beobachter-Muster |
 
 ## Was du am Ende kannst
 
 - Daten mit Interfaces und Union-Typen beschreiben
 - Listen mit Array-Methoden auswerten und unveränderlich ändern
-- eine Klasse und einen asynchronen Datenabruf in TypeScript schreiben
+- eine Klasse mit Zustand schreiben, die ihre Änderungen meldet
 - Compilerfehler lesen und als Hilfe nutzen
 
 :::tip Vorbereitung

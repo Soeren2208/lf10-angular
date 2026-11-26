@@ -17,7 +17,6 @@ export const sharedFiles = [
   'src/ticket-store.test.ts',
   'explore/type-errors.ts',
   'explore/display.ts',
-  'explore/load.ts',
 ];
 
 // Nur im Starter (Platzhalter statt Lösung) bzw. nur in der Lösung:

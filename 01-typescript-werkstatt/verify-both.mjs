@@ -80,7 +80,7 @@ console.log('\n3b. Skripte pro Arbeitsblatt (test:ab01 bis test:ab03)');
 const perWorksheet = [
   ['test:ab01', 9],
   ['test:ab02', 11],
-  ['test:ab03', 16],
+  ['test:ab03', 10],
 ];
 let sumTotal = 0;
 for (const [script, count] of perWorksheet) {
@@ -102,8 +102,6 @@ const mutants = [
   ['ticket-store.ts', 'this.tickets = [...this.tickets, ticket];\n    this.notify();', 'this.tickets = [...this.tickets, ticket];', 'add meldet nichts'],
   ['ticket-store.ts', "    if (!this.tickets.some((ticket) => ticket.id === id)) {\n      return;\n    }\n", '', 'setStatus meldet auch bei unbekannter Nummer'],
   ['ticket-store.ts', 'return () => {\n      this.listeners.delete(listener);\n    };', 'return () => {};', 'Abmelden tut nichts'],
-  ['ticket-store.ts', "  if (!response.ok) {\n    throw new Error(`HTTP ${response.status}`);\n  }\n", '', 'loadTickets prüft die Antwort nicht'],
-  ['ticket-store.ts', 'error: error instanceof Error ? error.message : String(error)', 'error: String(error)', 'loadTicketsSafe liefert "Error: …" statt des Textes'],
 ];
 for (const [file, from, to, name] of mutants) {
   const path = join(solution, 'src', file);

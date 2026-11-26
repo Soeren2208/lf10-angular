@@ -17,8 +17,7 @@
     "verify": "node scripts/verify.mjs",
     "errors": "tsc --noEmit -p tsconfig.errors.json",
     "errors:run": "tsx explore/type-errors.ts",
-    "display": "tsx explore/display.ts",
-    "load": "tsx explore/load.ts"
+    "display": "tsx explore/display.ts"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",

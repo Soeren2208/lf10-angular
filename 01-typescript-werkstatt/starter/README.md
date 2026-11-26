@@ -41,7 +41,6 @@ Du arbeitest in den drei Dateien im Ordner `src`:
 | `npm run errors` | Zeigt die Compiler-Fehler aus `explore/type-errors.ts` (AB 01). |
 | `npm run errors:run` | Startet `explore/type-errors.ts` trotz der Fehler (AB 01). |
 | `npm run display` | Startet das Experiment aus AB 03. |
-| `npm run load` | Lädt echte Tickets aus dem Netz (Zusatz in AB 03). |
 
 Am Anfang sind alle Tests rot, ein Arbeitsblatt macht jeweils seine eigenen grün. Das ist richtig so. Du bist fertig, wenn `npm run verify` am Ende „Typen: grün“ und „Tests: grün“ meldet.
 

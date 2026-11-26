@@ -14,5 +14,5 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["src/**/*.ts", "explore/display.ts", "explore/load.ts", "vitest.config.ts"]
+  "include": ["src/**/*.ts", "explore/display.ts", "vitest.config.ts"]
 }

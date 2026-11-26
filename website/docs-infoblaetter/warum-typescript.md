@@ -58,7 +58,7 @@ Die Sprache entwickelt sich weiter. Im **Juli 2026** erschien TypeScript 7: Der 
 
 ## 6. Was TypeScript nicht kann
 
-TypeScript prüft **nur beim Schreiben**. Zur Laufzeit gibt es keine Typen mehr. Besonders wichtig: Daten, die von außen kommen (zum Beispiel eine JSON-Antwort einer Schnittstelle), prüft TypeScript nicht. Ein Interface *behauptet*, wie die Daten aussehen. Ob die Schnittstelle sich daran hält, weiß erst das laufende Programm. Wie du damit umgehst, kommt in AB 03.
+TypeScript prüft **nur beim Schreiben**. Zur Laufzeit gibt es keine Typen mehr. Besonders wichtig: Daten, die von außen kommen (zum Beispiel eine JSON-Antwort einer Schnittstelle), prüft TypeScript nicht. Ein Interface *behauptet*, wie die Daten aussehen. Ob die Schnittstelle sich daran hält, weiß erst das laufende Programm. Wie du damit umgehst, lernst du später, wenn du Daten von einem Server holst.
 
 Weiter geht es mit dem Infoblatt [Typen: Daten beschreiben](/infoblaetter/typen).
 

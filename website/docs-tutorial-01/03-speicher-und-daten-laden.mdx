@@ -1,21 +1,21 @@
 ---
-title: "AB 03 – Speicher und Daten laden"
-sidebar_label: "03 – Speicher und Daten laden"
+title: "AB 03 – Ein Speicher, der Änderungen meldet"
+sidebar_label: "03 – Ein Speicher, der Änderungen meldet"
 slug: 03-speicher-und-daten-laden
 sidebar_position: 3
 ---
 
 import solution from '@site/src/data/solution-ab03.json';
 
-# AB 03 – Speicher und Daten laden
+# AB 03 – Ein Speicher, der Änderungen meldet
 
 *Dauer: etwa eine Doppelstunde.*
 
 ## Die Situation
 
-> Die Auswertungen der Support-Tickets funktionieren. Bisher lagen die Tickets in einer Excel-Datei auf dem Netzlaufwerk: Wer eine Änderung sehen wollte, musste die Datei neu öffnen. Künftig kommen die Tickets von einem **Server**, und die Oberfläche soll **sofort** aktuell sein, wenn sich ein Ticket ändert: in der Liste, im Zähler, überall.
+> Die Auswertungen der Support-Tickets funktionieren. Bisher lagen die Tickets in einer Excel-Datei auf dem Netzlaufwerk: Wer eine Änderung sehen wollte, musste die Datei neu öffnen. Künftig ändern mehrere Kollegen gleichzeitig Tickets, und die Oberfläche soll **sofort** aktuell sein, wenn sich ein Ticket ändert: in der Liste, im Zähler, überall.
 >
-> Dein Auftrag: Baue einen **Speicher**, der die Tickets hält, Änderungen meldet und Tickets aus dem Netz laden kann.
+> Dein Auftrag: Baue einen **Speicher**, der die Tickets hält und jede Änderung meldet.
 
 ## Lernziele
 
@@ -24,8 +24,6 @@ Nach Bearbeitung dieses Arbeitsblatts kannst du:
 - eine **Klasse** mit Konstruktor-Attributen und privatem Zustand schreiben
 - erklären, warum ein Speicher **neue Listen** statt Änderungen an der alten braucht
 - **Änderungen melden**, indem du Funktionen anmeldest und wieder abmeldest (Beobachter-Muster)
-- Daten mit `async` und `await` laden und Fehler abfangen
-- das Ergebnis mit einem **`Result`-Typ** darstellen, sodass der Compiler die Prüfung erzwingt
 
 ## Vorbereitung
 
@@ -36,7 +34,7 @@ Du brauchst das Projekt aus AB 01 und AB 02 mit den fertigen Funktionen in `src/
 :::
 
 :::info Zum Nachschlagen
-Klassen erklärt das Infoblatt [Klassen in TypeScript](/infoblaetter/klassen). Das Laden von Daten steht im Infoblatt [Daten laden: async und await](/infoblaetter/async-await). Lies sie, wenn du nicht weiterkommst.
+Klassen erklärt das Infoblatt [Klassen in TypeScript](/infoblaetter/klassen). Lies es, wenn du nicht weiterkommst.
 :::
 
 ## Aufgaben
@@ -45,7 +43,7 @@ Klassen erklärt das Infoblatt [Klassen in TypeScript](/infoblaetter/klassen). D
 
 *Etwa 5 Minuten.*
 
-<Task id="ts-ab03-a1-test">Führe die Tests dieses Arbeitsblatts aus: `npm run test:ab03`. Alle 16 sind rot, es sind die mit **C**. Wie viele davon gehören zu `C1`, `C2`, `C3` und `C4`? Notiere sie.</Task>
+<Task id="ts-ab03-a1-test">Führe die Tests dieses Arbeitsblatts aus: `npm run test:ab03`. Alle 10 sind rot, es sind die mit **C**. Wie viele davon gehören zu `C1` und `C2`? Notiere sie.</Task>
 
 Diesmal arbeitest du in der Datei `src/ticket-store.ts`.
 
@@ -400,111 +398,9 @@ Du hast gerade ein Muster gebaut, das in der Programmierung überall vorkommt: E
 In Angular löst das ein fertiger Baustein. Im nächsten Tutorial lernst du **Signals** kennen, mit denen die Oberfläche von selbst aktuell bleibt. `HttpClient` und viele andere Teile von Angular liefern **Observables**, die ähnlich funktionieren wie dein `onChange`: Man meldet sich an (`subscribe`) und bekommt einen Weg, sich abzumelden (`unsubscribe`). Ein Unterschied: Ein Observable startet seine Arbeit erst, wenn sich jemand anmeldet.
 :::
 
-### Aufgabe 5 – Daten laden
-
-*Etwa 20 Minuten.*
-
-Bisher kommen die Tickets aus dem Programm selbst. Echte Daten liegen auf einem Server, und dorthin muss man eine Anfrage schicken. Das dauert, und währenddessen darf das Programm nicht stehen bleiben. Dafür gibt es `async` und `await`.
-
-**C3** `loadTickets(url)` ruft die Adresse ab und liefert die Tickets. Bei einer Fehlerantwort wirft sie einen Fehler mit dem Text `HTTP <status>`.
-
-<Task id="ts-ab03-a5-predict">Vorhersage: Du rufst mit `fetch` eine Adresse ab, die es nicht gibt. Der Server antwortet mit **404**. Löst `fetch` dann einen Fehler aus? Notiere deine Vermutung.</Task>
-
-<details>
-<summary>Auflösung</summary>
-
-Nein. `fetch` meldet einen Fehler nur, wenn das **Netz** scheitert (kein Internet, Adresse unbekannt). Eine Antwort mit 404 oder 500 ist für `fetch` eine ganz normale Antwort. Ob sie gut war, musst du selbst prüfen, mit `response.ok`.
-
-</details>
-
-So sieht die Funktion `loadTickets` aus. Sie ist neu, deshalb steht sie hier vollständig:
-
-```ts title="src/ticket-store.ts"
-export async function loadTickets(url: string): Promise<Ticket[]> {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}`);
-  }
-  return (await response.json()) as Ticket[];
-}
-```
-
-- `async` kennzeichnet eine Funktion, die auf etwas wartet. Ihr Ergebnis ist immer ein **`Promise`**, eine Zusage auf einen Wert, der später da ist. `Promise<Ticket[]>` heißt: später liegt hier eine Liste von Tickets.
-- `await fetch(url)` ruft die Adresse ab und **wartet** auf die Antwort: Nur **diese Funktion** pausiert an dieser Stelle und macht danach weiter. Das übrige Programm (zum Beispiel die Oberfläche) läuft in der Zwischenzeit weiter. In Java wäre es anders: `future.get()` blockiert den ganzen Thread. `await` darfst du in einer `async`-Funktion benutzen. Auf oberster Ebene einer Datei, wie in `explore/load.ts`, geht es auch ohne `async`.
-- `response.ok` ist wahr, wenn der Server mit Erfolg geantwortet hat. Sonst wirft die Funktion einen Fehler mit dem Text `HTTP 404` (oder die jeweilige Nummer).
-- `await response.json()` liest den Inhalt der Antwort als Daten, und `as Ticket[]` sagt dem Compiler, welche Form sie haben.
-
-<Task id="ts-ab03-a5-load">Übernimm die Funktion in `src/ticket-store.ts`. Sie ersetzt den Platzhalter `loadTickets`.</Task>
-
-<Task id="ts-ab03-a5-test1">Starte `npm run test:ab03`. Die zwei Tests `loadTickets` in der Gruppe `C3` werden grün. Sie benutzen ein **vorgegebenes** `fetch` und brauchen kein Netz.</Task>
-
-:::warning Der Compiler glaubt dir
-Mit `as Ticket[]` **behauptest** du, dass die Daten die Form von Tickets haben. Der Compiler prüft das nicht, und zur Laufzeit gibt es keine Typen mehr. Liefert der Server ein Ticket ohne `title`, merkst du es erst, wenn dein Code darauf zugreift. Typen am Rand der Anwendung sind Behauptungen.
-:::
-
-Jetzt der Blick auf die Fehlerfälle. Eine Funktion, die wirft, überlässt es dem Aufrufer, ob er den Fehler behandelt. Der Compiler erzwingt es nicht. Besser: Die Funktion liefert ein Ergebnis, das **entweder** die Daten **oder** den Fehler enthält und das du **nicht ignorieren** kannst.
-
-<Task id="ts-ab03-a5-type">Ersetze `export type Result<T> = any;` durch einen **Union-Typ**:</Task>
-
-```ts
-export type Result<T> = { ok: true; data: T } | { ok: false; error: string };
-```
-
-Lies ihn so: Ein `Result<T>` ist **entweder** ein Objekt mit `ok: true` und den Daten **oder** ein Objekt mit `ok: false` und einem Fehlertext.
-
-<Task id="ts-ab03-a5-check">Starte `npm run check`. Die letzte offene Meldung (die mit `C4`) ist verschwunden. Der Compiler ist jetzt vollständig zufrieden. Lies den Kommentar über der Zeile in `src/types.check.ts`: Was verlangt der Compiler jetzt von jedem, der ein `Result` benutzt?</Task>
-
-<details>
-<summary>Auflösung</summary>
-
-Wer ein `Result` benutzt, **muss** zuerst prüfen, ob `ok` wahr ist. Erst dann weiß der Compiler, ob es `data` oder `error` gibt. Greift man ohne Prüfung auf `data` zu, meldet er `Property 'data' does not exist on type 'Result<Ticket[]>'`.
-
-</details>
-
-**C4** `loadTicketsSafe(url)` ruft `loadTickets` auf, wirft aber **nie**, sondern liefert ein `Result`.
-
-Eine Neuerung gibt es noch beim Fehlertext. Der Fehler im `catch` hat den Typ `unknown`, denn in JavaScript kann man alles werfen, nicht nur Fehlerobjekte. Prüfe, ob es ein Fehlerobjekt ist, bevor du den Text benutzt. Ein Beispiel mit etwas anderem:
-
-```ts
-try {
-  riskyCall();
-} catch (error: unknown) {
-  const text = error instanceof Error ? error.message : String(error);
-}
-```
-
-`error instanceof Error` kennst du aus Java: Es prüft, ob der Wert ein Fehlerobjekt ist. Dann steht sein Text in `error.message`. Sonst macht `String(error)` aus jedem beliebigen Wert einen Text.
-
-<Task id="ts-ab03-a5-safe">Schreibe `loadTicketsSafe` mit `try` und `catch`. Im `try` liefert die Funktion `{ ok: true, data: … }`, im `catch` `{ ok: false, error: … }`. `loadTickets(url)` liefert ein `Promise`, deshalb brauchst du vor dem Aufruf `await`. Den Text im `catch` holst du wie im Beispiel oben.</Task>
-
-:::tip Eine Meldung, die du jetzt kennen solltest
-`Type 'Promise<Ticket[]>' is missing the following properties from type 'Ticket[]' …` heißt fast immer: Du hast `await` vergessen. Der Compiler hat ein `Promise` bekommen, wo er die Liste selbst erwartet.
-:::
-
-<details>
-<summary>Lösung: loadTicketsSafe</summary>
-
-```ts title="src/ticket-store.ts"
-export async function loadTicketsSafe(url: string): Promise<Result<Ticket[]>> {
-  try {
-    return { ok: true, data: await loadTickets(url) };
-  } catch (error: unknown) {
-    return { ok: false, error: error instanceof Error ? error.message : String(error) };
-  }
-}
-```
-
-</details>
-
-<Task id="ts-ab03-a5-test2">Starte `npm run test:ab03`. Die vier Tests der Gruppe `C4` (`loadTicketsSafe`) werden grün. Damit sind alle 16 Tests dieses Arbeitsblatts grün.</Task>
-
-<Task id="ts-ab03-a5-all">Zum Abschluss lässt du **alle** Tests auf einmal laufen: `npm test`. Alle 36 Tests aus AB 01 bis AB 03 sind grün.</Task>
-
 <Solution daten={solution} titel="Musterlösung für src/ticket-store.ts" />
 
-<Task id="ts-ab03-a5-live">Zusatz, mit Internet: Starte `npm run load`. Das Programm lädt die Tickets von der Kursseite. Funktioniert es, stehen acht Tickets in der Ausgabe. Wenn nicht, steht dort eine Fehlermeldung, und das Programm stürzt nicht ab, dafür sorgt das `Result`.</Task>
-
-### Aufgabe 6 – Prüfen
+### Aufgabe 5 – Prüfen
 
 *Etwa 5 Minuten.*
 
@@ -516,9 +412,9 @@ export async function loadTicketsSafe(url: string): Promise<Result<Ticket[]>> {
     {
       id: 'TF-01',
       beschreibung: 'Alles ist grün',
-      vorbedingung: 'Aufgaben 2 bis 5 sind erledigt',
+      vorbedingung: 'Aufgaben 2 bis 4 sind erledigt',
       schritte: ['npm run verify ausführen'],
-      erwartet: <>Am Ende steht <code>Typen: grün</code> und <code>Tests: grün</code>. Alle 36 Tests sind grün, der Compiler meldet nichts.</>
+      erwartet: <>Am Ende steht <code>Typen: grün</code> und <code>Tests: grün</code>. Alle 30 Tests sind grün, der Compiler meldet nichts.</>
     },
     {
       id: 'TF-02',
@@ -533,13 +429,6 @@ export async function loadTicketsSafe(url: string): Promise<Result<Ticket[]>> {
       vorbedingung: 'TF-02 ist erfüllt',
       schritte: ['In display.ts unsubscribe() vor store.add(...) aufrufen', 'npm run display ausführen'],
       erwartet: <>Es erscheint nur <b>eine</b> Ticketliste mit acht Einträgen.</>
-    },
-    {
-      id: 'TF-04',
-      beschreibung: 'Der Compiler erzwingt die Prüfung von ok',
-      vorbedingung: 'TF-01 ist erfüllt',
-      schritte: ['In explore/load.ts vor dem if kurz die Zeile console.log(result.data); einfügen', 'npm run check ausführen', 'Zeile wieder entfernen'],
-      erwartet: <>Der Compiler meldet <code>Property 'data' does not exist on type 'Result&lt;Ticket[]&gt;'</code>.</>
     }
   ]}
 />
@@ -550,26 +439,21 @@ export async function loadTicketsSafe(url: string): Promise<Result<Ticket[]>> {
 - Eine **Klasse** hält Zustand und Verhalten zusammen. Ein Konstruktor-Parameter mit `private` ist gleichzeitig ein Feld.
 - Ein Speicher gibt bei jeder Änderung eine **neue Liste** aus. Wer eine alte Liste hat, behält sie unverändert.
 - **Beobachter-Muster:** Der Speicher merkt sich angemeldete Funktionen und ruft sie bei jeder Änderung auf. `onChange` liefert eine Funktion zum Abmelden.
-- **`async` und `await`** laden Daten, ohne das übrige Programm anzuhalten. Eine `async`-Funktion liefert ein `Promise`.
-- **`fetch` wirft nicht bei 404:** Die Antwort musst du mit `response.ok` selbst prüfen.
-- Ein **`Result<T>`** stellt Erfolg oder Fehler als Union-Typ dar. Der Compiler zwingt jeden, zuerst `ok` zu prüfen.
-- Typen am Rand der Anwendung (JSON vom Server) sind **Behauptungen**, die niemand prüft.
+- **Funktionen sind Werte.** Du kannst sie in einer Menge (`Set`) ablegen und später aufrufen. `onChange` liefert als Ergebnis selbst wieder eine Funktion, die sich an ihre Umgebung „erinnert“ (Closure).
 :::
 
 ## Was du jetzt kannst – und wie es weitergeht
 
-Mit diesem Arbeitsblatt ist die TypeScript-Werkstatt fertig. Du hast ein Datenmodell mit Typen beschrieben, Listen ausgewertet und geändert, einen Speicher gebaut, der Änderungen meldet, und Daten aus dem Netz geladen.
+Mit diesem Arbeitsblatt ist die TypeScript-Werkstatt fertig. Du hast ein Datenmodell mit Typen beschrieben, Listen ausgewertet und geändert und einen Speicher gebaut, der jede Änderung meldet.
 
-Im nächsten Tutorial baust du daraus eine **Angular-Oberfläche**. Das Ticket-Modell aus AB 01 und die Funktionen aus AB 02 nimmst du mit. Das Problem aus Aufgabe 3 („Wer erfährt von der Änderung?“) löst dort ein fertiger Baustein: das **Signal**.
+Im nächsten Tutorial baust du daraus eine **Angular-Oberfläche**. Das Ticket-Modell aus AB 01 und die Funktionen aus AB 02 nimmst du mit. Das Problem aus Aufgabe 3 („Wer erfährt von der Änderung?“) löst dort ein fertiger Baustein: das **Signal**. Wie Daten von einem Server kommen, lernst du im Tutorial zu den TV-Serien.
 
 ## Selbstkontrolle
 
 1. Was bewirkt das Wort `private` vor einem Konstruktor-Parameter?
 2. Warum ersetzt `add` die Liste, statt mit `push` ein Element anzuhängen?
 3. Wozu liefert `onChange` eine Funktion zurück? Was passiert, wenn man sie aufruft?
-4. Was macht `await`, und was liefert eine Funktion, die mit `async` gekennzeichnet ist?
-5. Der Server antwortet mit 404. Warum wirft `fetch` trotzdem keinen Fehler, und was musst du tun?
-6. Was behauptest du mit `as Ticket[]`, und was prüft der Compiler dabei nicht?
+4. Der Speicher legt seine Zuhörer in einem `Set` ab. Was sind das für Dinge, und wie ruft `notify` sie auf?
 
 <details>
 <summary>Antworten</summary>
@@ -577,8 +461,6 @@ Im nächsten Tutorial baust du daraus eine **Angular-Oberfläche**. Das Ticket-M
 1. Der Parameter wird gleichzeitig zu einem **privaten Feld** der Klasse, und der übergebene Wert wird ihm zugewiesen. Dafür braucht der Konstruktor keinen eigenen Inhalt.
 2. `push` würde die Liste verändern, die ein anderer schon in der Hand hält. Mit einer neuen Liste bleibt die alte unverändert, und jeder, der gemeldet bekommt, erhält die neue.
 3. Die zurückgegebene Funktion **meldet den Listener wieder ab**. Nach dem Aufruf bekommt er keine Änderungen mehr. So räumt man auf, wenn eine Anzeige nicht mehr gebraucht wird.
-4. `await` wartet auf ein `Promise` und liefert seinen Wert, ohne das Programm insgesamt anzuhalten. Es ist nur in einer `async`-Funktion erlaubt. Eine `async`-Funktion liefert selbst immer ein `Promise`.
-5. Für `fetch` ist eine Antwort mit Status 404 eine ganz normale Antwort. Ein Fehler tritt nur ein, wenn das Netz selbst scheitert. Du musst `response.ok` (oder `response.status`) prüfen und selbst einen Fehler werfen.
-6. Du behauptest, dass die Daten aus dem Netz die Form eines `Ticket`-Arrays haben. Der Compiler glaubt dir. Er prüft **nicht**, ob die Daten das wirklich tun, und zur Laufzeit gibt es keine Typen, die es prüfen könnten.
+4. Es sind **Funktionen**, die sich angemeldet haben. `notify` geht sie in einer Schleife durch und ruft jede mit der aktuellen Liste auf: `listener(this.tickets)`.
 
 </details>

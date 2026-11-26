@@ -619,7 +619,7 @@ export class TicketBoard {
 
 - `inject(Router)` holt den Router, der auch die Adressen verwaltet, genauso wie den Service.
 - `openTicket(input)` bekommt den eingegebenen Text. `trim()` entfernt Leerzeichen am Rand. Ist nichts eingegeben, passiert nichts.
-- `this.router.navigate(['/tickets', number])` wechselt per Code zur Adresse `/tickets/7`. Das ist das Gegenstück zu `routerLink` im Template. `navigate` liefert ein Promise, das du aus der Werkstatt kennst. `void` sagt, dass du nicht darauf wartest.
+- `this.router.navigate(['/tickets', number])` wechselt per Code zur Adresse `/tickets/7`. Das ist das Gegenstück zu `routerLink` im Template. `navigate` braucht etwas Zeit und liefert deshalb ein **Promise**, eine Zusage auf ein Ergebnis, das später da ist. Du wartest hier nicht darauf, und `void` sagt das ausdrücklich.
 
 <Task id="t2-ab04-a6-html">**Ergänze** in `ticket-board.html` die hervorgehobenen Zeilen:</Task>
 

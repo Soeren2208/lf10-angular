@@ -1,7 +1,7 @@
-// Tests zu AB 03 – Speicher und Daten laden
-import { afterEach, describe, expect, it, vi } from 'vitest';
+// Tests zu AB 03 – Ein Speicher, der Änderungen meldet
+import { describe, expect, it, vi } from 'vitest';
 import { sampleTickets } from './sample-data';
-import { loadTickets, loadTicketsSafe, TicketStore } from './ticket-store';
+import { TicketStore } from './ticket-store';
 import type { Ticket } from './ticket';
 
 const newTicket: Ticket = { id: 9, title: 'Beamer startet nicht', status: 'offen', priority: 2, createdAt: '2026-11-10' };
@@ -86,47 +86,5 @@ describe('C2 TicketStore: Änderungen melden', () => {
     unsubscribe();
     store.add({ ...newTicket, id: 10 });
     expect(listener).toHaveBeenCalledTimes(1);
-  });
-});
-
-afterEach(() => {
-  vi.unstubAllGlobals();
-});
-
-const jsonResponse = (status: number, body: unknown) => new Response(JSON.stringify(body), { status });
-
-describe('C3 Daten laden', () => {
-  it('loadTickets ruft die Adresse ab und liefert die Tickets', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(200, sampleTickets));
-    vi.stubGlobal('fetch', fetchMock);
-    await expect(loadTickets('https://beispiel.test/tickets.json')).resolves.toEqual(sampleTickets);
-    expect(fetchMock).toHaveBeenCalledWith('https://beispiel.test/tickets.json');
-  });
-
-  it('loadTickets wirft bei einer Fehlerantwort den Fehler "HTTP <status>"', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse(404, {})));
-    await expect(loadTickets('https://beispiel.test/fehlt.json')).rejects.toThrow('HTTP 404');
-  });
-});
-
-describe('C4 Result: loadTicketsSafe', () => {
-  it('loadTicketsSafe liefert bei Erfolg ok: true mit den Tickets', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse(200, sampleTickets)));
-    await expect(loadTicketsSafe('https://beispiel.test/tickets.json')).resolves.toEqual({ ok: true, data: sampleTickets });
-  });
-
-  it('loadTicketsSafe liefert bei einer Fehlerantwort ok: false mit dem Fehlertext', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse(500, {})));
-    await expect(loadTicketsSafe('https://beispiel.test/tickets.json')).resolves.toEqual({ ok: false, error: 'HTTP 500' });
-  });
-
-  it('loadTicketsSafe liefert bei einem Netzwerkfehler ok: false mit dem Fehlertext', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')));
-    await expect(loadTicketsSafe('https://beispiel.test/tickets.json')).resolves.toEqual({ ok: false, error: 'Failed to fetch' });
-  });
-
-  it('loadTicketsSafe macht auch aus einem Wert, der kein Error ist, einen Text', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockRejectedValue('kaputt'));
-    await expect(loadTicketsSafe('https://beispiel.test/tickets.json')).resolves.toEqual({ ok: false, error: 'kaputt' });
   });
 });

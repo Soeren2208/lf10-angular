@@ -123,5 +123,5 @@ Der Compiler glaubt dir. Ob die Schnittstelle sich wirklich daran hält, weiß e
 | `catch (Exception e)` | `catch (error: unknown)`, danach prüfen |
 
 :::info Ausblick: Angular
-Die Anfragen in Angular (`HttpClient`) liefern kein `Promise`, sondern ein **Observable**. Es ist verwandt: ein Wert, der sich über die Zeit ändert, und jemand, der Bescheid bekommt. In AB 03 baust du dafür eine einfache Fassung selbst.
+Die Anfragen in Angular (`HttpClient`) liefern kein `Promise`, sondern ein **Observable**. Es ist verwandt: ein Wert, der sich über die Zeit ändert, und jemand, der Bescheid bekommt. In AB 03 der Werkstatt baust du dafür eine einfache Fassung selbst (`onChange`).
 :::
