@@ -9,6 +9,7 @@ import { loadTicketsSafe } from '../src/ticket-store';
 
 const TICKETS_URL = 'https://soeren2208.github.io/lf10-angular/data/tickets.json';
 
+// Auf oberster Ebene einer Datei (einem Modul) darf `await` ohne `async` stehen. Innerhalb einer Funktion brauchst du `async`.
 const result = await loadTicketsSafe(TICKETS_URL);
 
 if (result.ok) {

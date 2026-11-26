@@ -54,7 +54,7 @@ In diesem Tutorial hast du zwei Prüfer, die dir Rückmeldung geben. Sie prüfen
 |---|---|---|
 | **Compiler** | `npm run check` | ob die **Typen** zusammenpassen |
 | **Tests** | `npm run test:ab01` | ob dein Code das **Richtige tut** (nur die Tests dieses Arbeitsblatts) |
-| beide | `npm run verify` | beides nacheinander, mit Zusammenfassung |
+| beide | `npm run verify` | beides nacheinander, mit Zusammenfassung. Ganz grün wird es erst nach AB 03, weil die Tests der späteren Arbeitsblätter bis dahin rot sind. |
 
 :::info Der Editor zeigt Typfehler schon beim Tippen
 WebStorm fragt im Hintergrund denselben Compiler wie `npm run check` und unterstreicht Typfehler rot. Fährst du mit der Maus darüber, steht die Meldung da. Im Alltag reicht das oft.
@@ -111,9 +111,9 @@ Sie ist **harmlos**. Neuere npm-Versionen führen die Installationsskripte von P
 npm run test:ab01
 ```
 
-Jede Zeile der Ausgabe ist ein Test mit seinem Namen. Alle sind rot, am Ende steht, wie viele es sind. **Notiere die Zahl.**
+Die Ausgabe hat drei Teile: **Oben** stehen die Namen der Tests, jeder mit einem ×, **darunter** die Fehlermeldungen der einzelnen Tests, und **ganz unten** stehen die Zahlen (`Tests … failed`). Alle Tests sind rot. **Notiere die Zahl** aus der letzten Zeile.
 
-Die Namen beginnen mit einem Buchstaben und einer Nummer, zum Beispiel `A3`. Der Buchstabe sagt dir, zu welchem Arbeitsblatt der Test gehört: `A` zu AB 01, `B` zu AB 02, `C` zu AB 03. Mit `npm run test:ab01` laufen nur die Tests mit **A**. Für die nächsten Arbeitsblätter gibt es `npm run test:ab02` und `npm run test:ab03`. Mit `npm test` laufen alle auf einmal, die Ausgabe ist dann sehr lang.
+Die Namen beginnen mit einem Buchstaben und einer Nummer, zum Beispiel `A3`. Der Buchstabe sagt dir, zu welchem Arbeitsblatt der Test gehört: `A` zu AB 01, `B` zu AB 02, `C` zu AB 03. Mit `npm run test:ab01` laufen nur die Tests mit **A**. Für die nächsten Arbeitsblätter gibt es `npm run test:ab02` und `npm run test:ab03`. Mit `npm test` laufen alle auf einmal, die Ausgabe ist dann sehr lang. `A1` und `A2` gibt es nur als Prüfungen des Compilers (in `src/types.check.ts`, mehr dazu in Aufgabe 3). Tests sind erst `A3` bis `A5`.
 
 <Task id="ts-ab01-a1-check">Lass jetzt den Compiler prüfen:</Task>
 
@@ -145,6 +145,8 @@ type Status = 'offen' | 'erledigt';
 const status: Status = 'wartet'; // (4)
 console.log('status:', status);
 ```
+
+Zwei Dinge in diesem Code sind neu für dich. `const` ist wie `final` in Java: Der Name zeigt danach immer auf denselben Wert, du schreibst fast immer `const`. Am Ende der Datei steht noch `export {};` mit einem Kommentar. Das macht die Datei zu einem eigenen Modul, mehr musst du dazu nicht wissen.
 
 <Task id="ts-ab01-a2-predict">Der Compiler beanstandet alle vier Zeilen. **Bevor du etwas ausführst:** Überlege, was das Programm auf der Konsole ausgäbe, wenn man es trotz der Fehler starten würde. Trage deine Vermutung für die Zeilen `(1)` bis `(4)` ein und prüfe sie.</Task>
 
@@ -203,7 +205,11 @@ Ein Ticket besteht aus diesen Feldern:
 | `assignee` | Wer sich kümmert, kann noch niemand sein | `'Mara Voss'` | **nein** |
 | `createdAt` | Datum der Meldung | `'2026-11-02'` | ja |
 
-<Task id="ts-ab01-a3-open">Öffne `src/ticket.ts`. Dort steht als Platzhalter `export type Ticket = any;` (was `any` bedeutet, erfährst du gleich unter dem Gerüst). Ersetze die Zeile durch ein **Interface**, das die Form eines Tickets beschreibt, und ergänze die vier fehlenden Felder. Vorerst ist `status` ein Text (`string`) und `priority` eine Zahl (`number`). `assignee` und `createdAt` sind ebenfalls Texte, auch das Datum (Begründung unten).</Task>
+<Task id="ts-ab01-a3-open">Öffne `src/ticket.ts`. Dort steht als Platzhalter `export type Ticket = any;` (was `any` bedeutet, erfährst du gleich unter dem Gerüst). Ersetze die Zeile durch ein **Interface**, das die Form eines Tickets beschreibt, und ergänze die vier fehlenden Felder. Vorerst ist `status` ein Text (`string`) und `priority` eine Zahl (`number`). `assignee` und `createdAt` sind ebenfalls Texte, auch das Datum (Begründung unten). Der Block unten ersetzt die alte Zeile **ganz**, lösche sie also.</Task>
+
+:::info Meldet der Compiler „Duplicate …“?
+Dann steht derselbe Name zweimal in der Datei, zum Beispiel `Duplicate identifier 'Ticket'` oder `Duplicate function implementation`. Du hast die alte Version nicht gelöscht. Entferne sie: Was im Block steht, ersetzt sie **vollständig**. Das gilt in diesem Arbeitsblatt für jeden Block, der eine ganze Funktion oder ein ganzes Interface zeigt.
+:::
 
 ```ts title="src/ticket.ts"
 export interface Ticket {
@@ -279,7 +285,7 @@ Entferne in `src/ticket.ts` kurz das Wort `readonly` vor `id` und starte `npm ru
 
 Ein Text darf alles sein, auch `'wartet'` oder ein Tippfehler wie `'ofen'`. Für den Status gibt es aber nur drei gültige Werte. Der Compiler kann das prüfen, wenn du ihm die erlaubten Werte nennst.
 
-<Task id="ts-ab01-a4-predict">Vorhersage: Das Ticket `{ ...valid, status: 'wartet' }` steht in `types.check.ts`. Meldet der Compiler dafür **im Moment** einen Fehler? Schau nach, ob deine Vermutung stimmt.</Task>
+<Task id="ts-ab01-a4-predict">Vorhersage: Das Ticket `{ ...valid, status: 'wartet' }` steht in `types.check.ts` (`...valid` heißt: alle Felder von `valid` übernehmen und `status` überschreiben, mehr dazu in AB 02). Meldet der Compiler dafür **im Moment** einen Fehler? Schau nach, ob deine Vermutung stimmt.</Task>
 
 <Task id="ts-ab01-a4-types">Ersetze in `src/ticket.ts` die beiden Zeilen mit `any` durch zwei **Union-Typen**: Ein Union-Typ listet die erlaubten Werte auf, getrennt durch `|` (gesprochen „oder“).</Task>
 
@@ -314,7 +320,7 @@ Die Funktion bekommt ein Ticket und **gibt einen Text zurück**, eine Zeile für
 
 Diese Funktion bekommst du als Vorlage zum Übernehmen. Die Erklärung dazu folgt direkt darunter.
 
-<Task id="ts-ab01-a5-describe">Öffne `src/ticket.ts`. Ersetze in `describeTicket` die Zeile `throw new Error('TODO A3: describeTicket');` durch die Zeile mit `return`. Die Funktion sieht danach so aus:</Task>
+<Task id="ts-ab01-a5-describe">Öffne `src/ticket.ts`. Ersetze in `describeTicket` **nur** die Zeile `throw new Error('TODO A3: describeTicket');` durch die Zeile mit `return`. Die Zeile mit `export function` bleibt stehen. Die Funktion sieht danach so aus:</Task>
 
 ```ts title="src/ticket.ts"
 export function describeTicket(ticket: Ticket): string {
@@ -357,7 +363,7 @@ Die Funktion liefert den Namen der bearbeitenden Person als Text. Gibt es keine,
 
 Das Feld `assignee` ist optional (Aufgabe 3). Fehlt es, ist sein Wert `undefined`. Auch diese Funktion bekommst du als Vorlage zum Übernehmen, die Erklärung folgt direkt darunter.
 
-<Task id="ts-ab01-a5-assignee">Ersetze in `assigneeName` die Zeile `throw new Error('TODO A5: assigneeName');` durch die Zeile mit `return`. Die Funktion sieht danach so aus:</Task>
+<Task id="ts-ab01-a5-assignee">Ersetze in `assigneeName` **nur** die Zeile `throw new Error('TODO A5: assigneeName');` durch die Zeile mit `return`. Die Zeile mit `export function` bleibt stehen. Die Funktion sieht danach so aus:</Task>
 
 ```ts title="src/ticket.ts"
 export function assigneeName(ticket: Ticket): string {

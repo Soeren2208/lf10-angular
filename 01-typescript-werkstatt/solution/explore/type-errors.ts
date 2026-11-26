@@ -21,4 +21,5 @@ type Status = 'offen' | 'erledigt';
 const status: Status = 'wartet'; // (4)
 console.log('status:', status);
 
+// Diese Zeile macht die Datei zu einem Modul: Die Namen darüber (count, ticket, status) gelten nur hier.
 export {};

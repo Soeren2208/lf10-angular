@@ -89,13 +89,13 @@ describe('C2 TicketStore: Änderungen melden', () => {
   });
 });
 
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+
+const jsonResponse = (status: number, body: unknown) => new Response(JSON.stringify(body), { status });
+
 describe('C3 Daten laden', () => {
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
-  const jsonResponse = (status: number, body: unknown) => new Response(JSON.stringify(body), { status });
-
   it('loadTickets ruft die Adresse ab und liefert die Tickets', async () => {
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse(200, sampleTickets));
     vi.stubGlobal('fetch', fetchMock);
@@ -107,7 +107,9 @@ describe('C3 Daten laden', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse(404, {})));
     await expect(loadTickets('https://beispiel.test/fehlt.json')).rejects.toThrow('HTTP 404');
   });
+});
 
+describe('C4 Result: loadTicketsSafe', () => {
   it('loadTicketsSafe liefert bei Erfolg ok: true mit den Tickets', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse(200, sampleTickets)));
     await expect(loadTicketsSafe('https://beispiel.test/tickets.json')).resolves.toEqual({ ok: true, data: sampleTickets });

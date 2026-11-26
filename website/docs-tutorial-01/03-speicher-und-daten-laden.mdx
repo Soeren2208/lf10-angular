@@ -45,7 +45,7 @@ Klassen erklärt das Infoblatt [Klassen in TypeScript](/infoblaetter/klassen). D
 
 *Etwa 5 Minuten.*
 
-<Task id="ts-ab03-a1-test">Führe die Tests dieses Arbeitsblatts aus: `npm run test:ab03`. Alle 16 sind rot, es sind die mit **C**. Wie viele davon gehören zu `C1`, `C2` und `C3`? Notiere sie.</Task>
+<Task id="ts-ab03-a1-test">Führe die Tests dieses Arbeitsblatts aus: `npm run test:ab03`. Alle 16 sind rot, es sind die mit **C**. Wie viele davon gehören zu `C1`, `C2`, `C3` und `C4`? Notiere sie.</Task>
 
 Diesmal arbeitest du in der Datei `src/ticket-store.ts`.
 
@@ -77,7 +77,7 @@ onScreen === list;                 // true: es gibt keinen Unterschied zwischen 
 Daraus folgen zwei Probleme:
 
 1. **Heimliche Änderung.** Jeder, der die Liste bekommen hat (die Ticketliste, der Zähler, die Statistik der Teamleiterin), sieht sie sich unter den Händen ändern. Der Zähler hat vielleicht schon „2 Tickets“ ausgerechnet, die Liste zeigt jetzt drei. Das ist ein Fehler, den niemand meldet.
-2. **Keine Änderung erkennbar.** Eine Anzeige kann nur fragen: „Ist das noch dieselbe Liste wie vorhin?“ Wurde die Liste selbst verändert, lautet die Antwort immer „ja“, und die Anzeige bemerkt nichts. Genau das brauchst du in Aufgabe 4: Der Speicher meldet jede Änderung, und die Anzeige erkennt an der **neuen** Liste, dass sie neu zeichnen muss. Das gilt später auch in Angular.
+2. **Keine Änderung erkennbar.** Eine Anzeige kann nur fragen: „Ist das noch dieselbe Liste wie vorhin?“ Wurde die Liste selbst verändert, lautet die Antwort immer „ja“, und die Anzeige bemerkt nichts. Genau das brauchst du in Aufgabe 4: Der Speicher meldet jede Änderung, und die Anzeige erkennt an der **neuen** Liste, dass sie neu zeichnen muss. Das gilt später auch in Angular, wenn du dort mit Signals arbeitest.
 
 Baut der Speicher stattdessen eine **neue** Liste, bleiben beide Probleme aus:
 
@@ -267,7 +267,7 @@ export async function loadTickets(url: string): Promise<Ticket[]> {
 ```
 
 - `async` kennzeichnet eine Funktion, die auf etwas wartet. Ihr Ergebnis ist immer ein **`Promise`**, eine Zusage auf einen Wert, der später da ist. `Promise<Ticket[]>` heißt: später liegt hier eine Liste von Tickets.
-- `await fetch(url)` ruft die Adresse ab und **wartet** auf die Antwort, ohne das Programm anzuhalten. Das geht nur in einer `async`-Funktion.
+- `await fetch(url)` ruft die Adresse ab und **wartet** auf die Antwort: Nur **diese Funktion** pausiert an dieser Stelle und macht danach weiter. Das übrige Programm (zum Beispiel die Oberfläche) läuft in der Zwischenzeit weiter. In Java wäre es anders: `future.get()` blockiert den ganzen Thread. `await` darfst du in einer `async`-Funktion benutzen. Auf oberster Ebene einer Datei, wie in `explore/load.ts`, geht es auch ohne `async`.
 - `response.ok` ist wahr, wenn der Server mit Erfolg geantwortet hat. Sonst wirft die Funktion einen Fehler mit dem Text `HTTP 404` (oder die jeweilige Nummer).
 - `await response.json()` liest den Inhalt der Antwort als Daten, und `as Ticket[]` sagt dem Compiler, welche Form sie haben.
 
@@ -312,7 +312,11 @@ try {
 
 `error instanceof Error` kennst du aus Java: Es prüft, ob der Wert ein Fehlerobjekt ist. Dann steht sein Text in `error.message`. Sonst macht `String(error)` aus jedem beliebigen Wert einen Text.
 
-<Task id="ts-ab03-a5-safe">Schreibe `loadTicketsSafe` mit `try` und `catch`. Im `try` liefert die Funktion `{ ok: true, data: … }`, im `catch` `{ ok: false, error: … }`.</Task>
+<Task id="ts-ab03-a5-safe">Schreibe `loadTicketsSafe` mit `try` und `catch`. Im `try` liefert die Funktion `{ ok: true, data: … }`, im `catch` `{ ok: false, error: … }`. `loadTickets(url)` liefert ein `Promise`, deshalb brauchst du vor dem Aufruf `await`. Den Text im `catch` holst du wie im Beispiel oben.</Task>
+
+:::tip Eine Meldung, die du jetzt kennen solltest
+`Type 'Promise<Ticket[]>' is missing the following properties from type 'Ticket[]' …` heißt fast immer: Du hast `await` vergessen. Der Compiler hat ein `Promise` bekommen, wo er die Liste selbst erwartet.
+:::
 
 <details>
 <summary>Lösung: loadTicketsSafe</summary>
@@ -329,7 +333,7 @@ export async function loadTicketsSafe(url: string): Promise<Result<Ticket[]>> {
 
 </details>
 
-<Task id="ts-ab03-a5-test2">Starte `npm run test:ab03`. Die vier Tests `loadTicketsSafe` werden grün. Damit sind alle 16 Tests dieses Arbeitsblatts grün.</Task>
+<Task id="ts-ab03-a5-test2">Starte `npm run test:ab03`. Die vier Tests der Gruppe `C4` (`loadTicketsSafe`) werden grün. Damit sind alle 16 Tests dieses Arbeitsblatts grün.</Task>
 
 <Task id="ts-ab03-a5-all">Zum Abschluss lässt du **alle** Tests auf einmal laufen: `npm test`. Alle 36 Tests aus AB 01 bis AB 03 sind grün.</Task>
 
@@ -383,7 +387,7 @@ export async function loadTicketsSafe(url: string): Promise<Result<Ticket[]>> {
 - Eine **Klasse** hält Zustand und Verhalten zusammen. Ein Konstruktor-Parameter mit `private` ist gleichzeitig ein Feld.
 - Ein Speicher gibt bei jeder Änderung eine **neue Liste** aus. Wer eine alte Liste hat, behält sie unverändert.
 - **Beobachter-Muster:** Der Speicher merkt sich angemeldete Funktionen und ruft sie bei jeder Änderung auf. `onChange` liefert eine Funktion zum Abmelden.
-- **`async` und `await`** laden Daten, ohne das Programm anzuhalten. Eine `async`-Funktion liefert ein `Promise`.
+- **`async` und `await`** laden Daten, ohne das übrige Programm anzuhalten. Eine `async`-Funktion liefert ein `Promise`.
 - **`fetch` wirft nicht bei 404:** Die Antwort musst du mit `response.ok` selbst prüfen.
 - Ein **`Result<T>`** stellt Erfolg oder Fehler als Union-Typ dar. Der Compiler zwingt jeden, zuerst `ok` zu prüfen.
 - Typen am Rand der Anwendung (JSON vom Server) sind **Behauptungen**, die niemand prüft.

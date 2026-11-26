@@ -8,6 +8,7 @@ export const sharedFiles = [
   'vitest.config.ts',
   '.gitignore',
   'scripts/verify.mjs',
+  'scripts/hint.mjs',
   'src/sample-data.ts',
   'src/test-helpers.ts',
   'src/types.check.ts',

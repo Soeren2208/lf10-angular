@@ -51,7 +51,7 @@ Die Array-Methoden erklärt das Infoblatt [Listen auswerten: Array-Methoden](/in
 
 <Task id="ts-ab02-a1-test">Führe die Tests dieses Arbeitsblatts aus: `npm run test:ab02`. Alle 11 sind rot, es sind die mit **B**.</Task>
 
-Alle Funktionen dieses Arbeitsblatts stehen in `src/ticket-list.ts`. Jede nimmt eine Liste `readonly Ticket[]` entgegen. Das heißt: Die Funktion **verspricht**, die Liste nicht zu verändern. Der Compiler wird sie daran hindern.
+Alle Funktionen dieses Arbeitsblatts stehen in `src/ticket-list.ts`. Jede nimmt eine Liste `readonly Ticket[]` entgegen. `Ticket[]` ist eine Liste von Tickets, wie `List<Ticket>` in Java, und `readonly` davor heißt: Die Funktion **verspricht**, die Liste nicht zu verändern. Der Compiler wird sie daran hindern.
 
 ### Aufgabe 2 – Offene Tickets: erst mit Schleife, dann mit `filter`
 
@@ -85,7 +85,7 @@ Zwei Dinge sind neu: die Methode `filter` und die Schreibweise `(ticket) => …`
 
 **Was `filter` tut.** `filter` ist eine Methode jeder Liste. Sie bekommt eine **Funktion** übergeben und ruft diese Funktion **für jedes Element der Liste einmal** auf. Liefert die Funktion `true`, kommt das Element in die Ergebnisliste. Liefert sie `false`, bleibt es draußen. Am Ende gibt `filter` die neue Ergebnisliste zurück. Die ursprüngliche Liste bleibt unverändert.
 
-**Was die Funktion in der Klammer ist.** `(ticket) => ticket.status === 'offen'` ist eine **Pfeilfunktion**, also eine Funktion ohne Namen, die man direkt dort hinschreibt, wo man sie braucht. In Java heißt das Lambda: `ticket -> ticket.getStatus().equals("offen")`.
+**Was die Funktion in der Klammer ist.** `(ticket) => ticket.status === 'offen'` ist eine **Pfeilfunktion**, also eine Funktion ohne Namen, die man direkt dort hinschreibt, wo man sie braucht. In Java heißt das Lambda: `ticket -> ticket.getStatus().equals("offen")`. Der ganze Aufruf entspricht `stream().filter(…)`, nur ohne `stream()` und `collect()`.
 
 | Teil | Bedeutung |
 |---|---|
@@ -207,7 +207,7 @@ Die Vergleichsfunktion für `sort` steht schon da. Sie liefert eine Zahl: kleine
 (a, b) => a.priority - b.priority || a.id - b.id
 ```
 
-(Der zweite Teil nach `||` greift, wenn der erste 0 ist, also bei gleicher Priorität.)
+(Der zweite Teil nach `||` greift, wenn der erste 0 ist, also bei gleicher Priorität. Anders als in Java darf `||` hier Zahlen verknüpfen: `0` zählt als „nicht vorhanden“, dann gilt der rechte Teil. Das Kästchen „Warum nicht `||`?“ in AB 01 erklärt es näher.)
 
 <Task id="ts-ab02-a5-predict">Vorhersage: Du schreibst die Funktion so. Was meldet der Compiler?</Task>
 
@@ -230,7 +230,7 @@ Der Compiler hält das Versprechen der Funktion: `readonly` heißt, dass die Lis
 
 Wie ernst das gemeint ist, siehst du, wenn du das Versprechen brichst:
 
-<Task id="ts-ab02-a5-break">Ändere den Parameter in `tickets: Ticket[]` (ohne `readonly`). Der Compiler ist zufrieden. Starte `npm run test:ab02`. Welcher Test wird rot, und was steht in der Fehlermeldung?</Task>
+<Task id="ts-ab02-a5-break">Ändere den Parameter in `tickets: Ticket[]` (ohne `readonly`). Der Compiler ist zufrieden. Starte `npm run test:ab02`. Welcher Test der Gruppe `B4` wird rot, und was steht in der Fehlermeldung? Die Tests der Gruppe `B5` sind noch rot, weil du `withStatus` noch nicht geschrieben hast.</Task>
 
 <details>
 <summary>Auflösung</summary>
@@ -312,7 +312,7 @@ Damit bleibt die Eingabeliste unverändert. Nur das eine Ticket ist ein neues Ob
 <Solution daten={solution} titel="Musterlösung für src/ticket-list.ts" />
 
 :::info Warum der ganze Aufwand?
-Funktionen, die ihre Eingabe nicht verändern, sind leichter zu verstehen und zu testen: Du weißt, dass die Liste nach dem Aufruf noch dieselbe ist. Außerdem erkennst du Änderungen an einem einfachen Vergleich: Ein neues Objekt ist ein anderes Objekt (`before !== after`). In AB 03 und später in Angular ist genau das wichtig: Dort wird eine Änderung dadurch sichtbar, dass sich der **Verweis** ändert.
+Funktionen, die ihre Eingabe nicht verändern, sind leichter zu verstehen und zu testen: Du weißt, dass die Liste nach dem Aufruf noch dieselbe ist. Außerdem erkennst du Änderungen an einem einfachen Vergleich: Ein neues Objekt ist ein anderes Objekt (`before !== after`). In AB 03 und später in Angular ist genau das wichtig: Dort wird eine Änderung bei Signals dadurch sichtbar, dass sich der **Verweis** ändert.
 :::
 
 ### Aufgabe 6 – Prüfen
