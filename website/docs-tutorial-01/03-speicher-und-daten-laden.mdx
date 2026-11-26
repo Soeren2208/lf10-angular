@@ -292,7 +292,19 @@ Der Speicher legt seine Funktionen in einer **Menge** (`Set`) ab statt in einer 
 private readonly listeners = new Set<Listener>();
 ```
 
-- `Set<Listener>` ist eine Menge von Funktionen vom Typ `Listener`. Der Typ steht schon in der Datei: eine Funktion, die die neue Liste bekommt und nichts zurückgibt.
+`Set<Listener>` ist eine Menge, in die nur Funktionen von **diesem** Typ passen. Wie diese Funktion aussieht, steht schon oben in deiner Datei `src/ticket-store.ts`:
+
+```ts
+/** Eine Funktion, die der Speicher aufruft, wenn sich die Tickets geändert haben. */
+export type Listener = (tickets: readonly Ticket[]) => void;
+```
+
+- `type Listener = …` gibt einem Typ einen Namen, so wie `type Status = …` in AB 01.
+- Rechts vom Gleichheitszeichen steht ein **Funktionstyp**. `(tickets: readonly Ticket[]) => void` beschreibt eine Funktion mit **einem Parameter** `tickets`, einer Liste von Tickets, die nur gelesen werden darf, und dem Ergebnis `void`, also **nichts**. Der Pfeil ist hier kein Code, der etwas tut. Er beschreibt nur, wie eine passende Funktion aussieht.
+- Die Funktion `showTickets` aus Aufgabe 3 passt dazu: Sie bekommt eine Liste von Tickets und gibt nichts zurück. Deshalb kannst du sie später mit `store.onChange(showTickets)` anmelden. Eine Funktion, die zum Beispiel einen Text als Parameter erwartet, würde der Compiler ablehnen.
+
+Zur Menge selbst:
+
 - Ein `Set` enthält jedes Element nur einmal. Mit `add` kommt etwas hinein, mit `delete` geht es wieder heraus, und mit `for (const x of set)` gehst du alle durch.
 - `readonly` steht hier, weil die Menge selbst nie ersetzt wird, nur ihr **Inhalt** ändert sich. Bei `tickets` war es anders: Dort wird die Liste bei jeder Änderung durch eine neue ersetzt.
 
