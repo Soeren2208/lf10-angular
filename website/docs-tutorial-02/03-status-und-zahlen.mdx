@@ -185,21 +185,13 @@ Jetzt hört das Board auf die Meldung der Karte und ändert das Ticket. Dafür h
 
 <Task id="t2-ab03-a2-class">**Ergänze** in `ticket-board.ts` die hervorgehobenen Zeilen, auch die Importe.</Task>
 
-```ts title="src/app/ticket-board/ticket-board.ts" {5,23,40-42}
+```ts title="src/app/ticket-board/ticket-board.ts" {5,15,28-30}
 import { Component } from '@angular/core';
 import { sampleTickets } from '../sample-data';
 import { isUrgent } from '../ticket';
 import type { Status } from '../ticket';
 import { sortedByPriority, ticketsWithStatus, withStatus } from '../ticket-list';
 import { TicketCard } from '../ticket-card/ticket-card';
-import { STATUS_LABEL } from '../ticket-labels';
-
-/** Die drei Spalten des Boards, von links nach rechts. */
-const COLUMNS: { status: Status; css: string }[] = [
-  { status: 'offen', css: 'open' },
-  { status: 'in Arbeit', css: 'progress' },
-  { status: 'erledigt', css: 'done' },
-];
 
 @Component({
   imports: [TicketCard],
@@ -211,14 +203,10 @@ export class TicketBoard {
   protected tickets = sampleTickets;
   protected urgentOnly = false;
 
-  /** Je Spalte die Tickets, die dringendsten zuerst. */
-  protected columns() {
+  /** Die Tickets eines Standes, die dringendsten zuerst. */
+  protected ticketsOf(status: Status) {
     const tickets = this.urgentOnly ? this.tickets.filter(isUrgent) : this.tickets;
-    return COLUMNS.map((column) => ({
-      css: column.css,
-      label: STATUS_LABEL[column.status],
-      tickets: sortedByPriority(ticketsWithStatus(tickets, column.status)),
-    }));
+    return sortedByPriority(ticketsWithStatus(tickets, status));
   }
 
   protected toggleUrgent(): void {
@@ -236,9 +224,9 @@ export class TicketBoard {
 - `changeStatus(id, status)` ersetzt die Liste `tickets` durch die Liste, die `withStatus` liefert.
 - Deshalb steht bei `tickets` kein `readonly` mehr: Das Feld bekommt einen neuen Wert.
 
-<Task id="t2-ab03-a2-html">**Ergänze** in `ticket-board.html` die hervorgehobenen Zeilen:</Task>
+<Task id="t2-ab03-a2-html">**Ergänze** in `ticket-board.html` die hervorgehobenen Zeilen. Die Karte steht in jeder der drei Spalten, also ergänzt du die Zeile dreimal:</Task>
 
-```html title="src/app/ticket-board/ticket-board.html" {17}
+```html title="src/app/ticket-board/ticket-board.html" {16,29,42}
 <div class="toolbar">
   <label class="switch">
     <input type="checkbox" [checked]="urgentOnly" (change)="toggleUrgent()" />
@@ -247,20 +235,44 @@ export class TicketBoard {
 </div>
 
 <div class="columns">
-  @for (column of columns(); track column.css) {
-    <section [class]="'column ' + column.css">
-      <h2 class="column-title">
-        <span class="dot" aria-hidden="true"></span>
-        {{ column.label }}
-      </h2>
+  <section class="column open">
+    <h2 class="column-title">
+      <span class="dot" aria-hidden="true"></span>
+      Offen
+    </h2>
 
-      @for (ticket of column.tickets; track ticket.id) {
-        <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
-      } @empty {
-        <p class="empty">Keine Tickets</p>
-      }
-    </section>
-  }
+    @for (ticket of ticketsOf('offen'); track ticket.id) {
+      <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
+    } @empty {
+      <p class="empty">Keine Tickets</p>
+    }
+  </section>
+
+  <section class="column progress">
+    <h2 class="column-title">
+      <span class="dot" aria-hidden="true"></span>
+      In Arbeit
+    </h2>
+
+    @for (ticket of ticketsOf('in Arbeit'); track ticket.id) {
+      <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
+    } @empty {
+      <p class="empty">Keine Tickets</p>
+    }
+  </section>
+
+  <section class="column done">
+    <h2 class="column-title">
+      <span class="dot" aria-hidden="true"></span>
+      Erledigt
+    </h2>
+
+    @for (ticket of ticketsOf('erledigt'); track ticket.id) {
+      <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
+    } @empty {
+      <p class="empty">Keine Tickets</p>
+    }
+  </section>
 </div>
 ```
 
@@ -296,21 +308,13 @@ Im Betrieb ändern nicht nur du, sondern auch deine Kollegen Tickets, und dein B
 
 <Task id="t2-ab03-a3-class">**Ergänze** in `ticket-board.ts` die hervorgehobenen Zeilen:</Task>
 
-```ts title="src/app/ticket-board/ticket-board.ts" {26-29}
+```ts title="src/app/ticket-board/ticket-board.ts" {18-21}
 import { Component } from '@angular/core';
 import { sampleTickets } from '../sample-data';
 import { isUrgent } from '../ticket';
 import type { Status } from '../ticket';
 import { sortedByPriority, ticketsWithStatus, withStatus } from '../ticket-list';
 import { TicketCard } from '../ticket-card/ticket-card';
-import { STATUS_LABEL } from '../ticket-labels';
-
-/** Die drei Spalten des Boards, von links nach rechts. */
-const COLUMNS: { status: Status; css: string }[] = [
-  { status: 'offen', css: 'open' },
-  { status: 'in Arbeit', css: 'progress' },
-  { status: 'erledigt', css: 'done' },
-];
 
 @Component({
   imports: [TicketCard],
@@ -327,14 +331,10 @@ export class TicketBoard {
     setTimeout(() => this.changeStatus(3, 'in Arbeit'), 5000);
   }
 
-  /** Je Spalte die Tickets, die dringendsten zuerst. */
-  protected columns() {
+  /** Die Tickets eines Standes, die dringendsten zuerst. */
+  protected ticketsOf(status: Status) {
     const tickets = this.urgentOnly ? this.tickets.filter(isUrgent) : this.tickets;
-    return COLUMNS.map((column) => ({
-      css: column.css,
-      label: STATUS_LABEL[column.status],
-      tickets: sortedByPriority(ticketsWithStatus(tickets, column.status)),
-    }));
+    return sortedByPriority(ticketsWithStatus(tickets, status));
   }
 
   protected toggleUrgent(): void {
@@ -382,21 +382,13 @@ Jetzt weißt du auch, warum du in AB 01 `ticket()` mit Klammern geschrieben hast
 
 <Task id="t2-ab03-a4-class">**Ergänze** in `ticket-board.ts` die hervorgehobenen Zeilen, auch die Importe. Wo eine hervorgehobene Zeile eine alte ersetzt, ersetzt du sie.</Task>
 
-```ts title="src/app/ticket-board/ticket-board.ts" {1,23-24,33,42,46}
+```ts title="src/app/ticket-board/ticket-board.ts" {1,15-16,25,30,34}
 import { Component, signal } from '@angular/core';
 import { sampleTickets } from '../sample-data';
 import { isUrgent } from '../ticket';
 import type { Status } from '../ticket';
 import { sortedByPriority, ticketsWithStatus, withStatus } from '../ticket-list';
 import { TicketCard } from '../ticket-card/ticket-card';
-import { STATUS_LABEL } from '../ticket-labels';
-
-/** Die drei Spalten des Boards, von links nach rechts. */
-const COLUMNS: { status: Status; css: string }[] = [
-  { status: 'offen', css: 'open' },
-  { status: 'in Arbeit', css: 'progress' },
-  { status: 'erledigt', css: 'done' },
-];
 
 @Component({
   imports: [TicketCard],
@@ -413,14 +405,10 @@ export class TicketBoard {
     setTimeout(() => this.changeStatus(3, 'in Arbeit'), 5000);
   }
 
-  /** Je Spalte die Tickets, die dringendsten zuerst. */
-  protected columns() {
+  /** Die Tickets eines Standes, die dringendsten zuerst. */
+  protected ticketsOf(status: Status) {
     const tickets = this.urgentOnly() ? this.tickets().filter(isUrgent) : this.tickets();
-    return COLUMNS.map((column) => ({
-      css: column.css,
-      label: STATUS_LABEL[column.status],
-      tickets: sortedByPriority(ticketsWithStatus(tickets, column.status)),
-    }));
+    return sortedByPriority(ticketsWithStatus(tickets, status));
   }
 
   protected toggleUrgent(): void {
@@ -436,7 +424,7 @@ export class TicketBoard {
 **Das ist neu:**
 
 - `tickets` und `urgentOnly` sind jetzt Signale. Das Feld selbst bekommt nie einen neuen Wert, nur der Behälter ändert seinen Inhalt. Deshalb steht wieder `readonly` da.
-- `columns()` liest die Signale mit Klammern: `this.urgentOnly()`, `this.tickets()`.
+- `ticketsOf` liest die Signale mit Klammern: `this.urgentOnly()`, `this.tickets()`.
 - `toggleUrgent()` und `changeStatus()` schreiben mit `update`. `(value) => !value` ist eine Pfeilfunktion, die den alten Wert bekommt und den umgekehrten zurückgibt.
 
 <Task id="t2-ab03-a4-html">Das Template liest `urgentOnly` jetzt auch als Signal. **Schreibe** in `ticket-board.html` die Zeile mit `[checked]` entsprechend um.</Task>
@@ -453,20 +441,44 @@ export class TicketBoard {
 </div>
 
 <div class="columns">
-  @for (column of columns(); track column.css) {
-    <section [class]="'column ' + column.css">
-      <h2 class="column-title">
-        <span class="dot" aria-hidden="true"></span>
-        {{ column.label }}
-      </h2>
+  <section class="column open">
+    <h2 class="column-title">
+      <span class="dot" aria-hidden="true"></span>
+      Offen
+    </h2>
 
-      @for (ticket of column.tickets; track ticket.id) {
-        <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
-      } @empty {
-        <p class="empty">Keine Tickets</p>
-      }
-    </section>
-  }
+    @for (ticket of ticketsOf('offen'); track ticket.id) {
+      <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
+    } @empty {
+      <p class="empty">Keine Tickets</p>
+    }
+  </section>
+
+  <section class="column progress">
+    <h2 class="column-title">
+      <span class="dot" aria-hidden="true"></span>
+      In Arbeit
+    </h2>
+
+    @for (ticket of ticketsOf('in Arbeit'); track ticket.id) {
+      <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
+    } @empty {
+      <p class="empty">Keine Tickets</p>
+    }
+  </section>
+
+  <section class="column done">
+    <h2 class="column-title">
+      <span class="dot" aria-hidden="true"></span>
+      Erledigt
+    </h2>
+
+    @for (ticket of ticketsOf('erledigt'); track ticket.id) {
+      <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
+    } @empty {
+      <p class="empty">Keine Tickets</p>
+    }
+  </section>
 </div>
 ```
 
@@ -482,31 +494,23 @@ export class TicketBoard {
 
 <TaskBadge>T_5 · Abgeleitete Werte mit `computed` berechnen</TaskBadge>
 
-`columns()` ist ein **abgeleiteter** Wert: Er wird aus `tickets` und `urgentOnly` berechnet. Als Methode rechnet er bei jeder Prüfung des Templates von vorn. Für abgeleitete Werte gibt es `computed`:
+Die erste Zeile von `ticketsOf` wählt, welche Tickets das Board zeigt: alle oder nur die dringenden. Das ist ein **abgeleiteter** Wert: Er wird aus `tickets` und `urgentOnly` berechnet, und er ist für alle drei Spalten derselbe. Trotzdem rechnet ihn jeder der drei Aufrufe bei jeder Prüfung des Templates von vorn. Für abgeleitete Werte gibt es `computed`:
 
 - `computed(() => …)` berechnet einen Wert aus Signalen. Es merkt sich, welche Signale darin gelesen wurden, und rechnet nur neu, wenn sich eines davon ändert. Sonst liefert es das gemerkte Ergebnis.
-- Ein `computed` liest du wie ein Signal, mit Klammern. Im Template ändert sich deshalb nichts: `columns()` bleibt `columns()`.
+- Ein `computed` liest du wie ein Signal, mit Klammern. Im Template ändert sich deshalb nichts: `ticketsOf('offen')` bleibt `ticketsOf('offen')`.
 - Ein `computed` kannst du nur lesen, nicht beschreiben. Sein Wert ergibt sich immer aus den Signalen, von denen er abhängt.
 
 Bei acht Tickets merkst du keinen Unterschied. Bei langen Listen und aufwendigen Berechnungen spart `computed` Arbeit, und der abgeleitete Wert kann nie vom Zustand abweichen, aus dem er entsteht.
 
 <Task id="t2-ab03-a5-class">**Ergänze** in `ticket-board.ts` die hervorgehobenen Zeilen, auch die Importe. Wo eine hervorgehobene Zeile eine alte ersetzt, ersetzt du sie.</Task>
 
-```ts title="src/app/ticket-board/ticket-board.ts" {1,26-27,34}
+```ts title="src/app/ticket-board/ticket-board.ts" {1,18-19,23}
 import { Component, computed, signal } from '@angular/core';
 import { sampleTickets } from '../sample-data';
 import { isUrgent } from '../ticket';
 import type { Status } from '../ticket';
 import { sortedByPriority, ticketsWithStatus, withStatus } from '../ticket-list';
 import { TicketCard } from '../ticket-card/ticket-card';
-import { STATUS_LABEL } from '../ticket-labels';
-
-/** Die drei Spalten des Boards, von links nach rechts. */
-const COLUMNS: { status: Status; css: string }[] = [
-  { status: 'offen', css: 'open' },
-  { status: 'in Arbeit', css: 'progress' },
-  { status: 'erledigt', css: 'done' },
-];
 
 @Component({
   imports: [TicketCard],
@@ -518,15 +522,13 @@ export class TicketBoard {
   protected readonly tickets = signal(sampleTickets);
   protected readonly urgentOnly = signal(false);
 
-  /** Je Spalte die Tickets, die dringendsten zuerst. Ändert sich ein Signal, rechnet das Board neu. */
-  protected readonly columns = computed(() => {
-    const tickets = this.urgentOnly() ? this.tickets().filter(isUrgent) : this.tickets();
-    return COLUMNS.map((column) => ({
-      css: column.css,
-      label: STATUS_LABEL[column.status],
-      tickets: sortedByPriority(ticketsWithStatus(tickets, column.status)),
-    }));
-  });
+  /** Die Tickets, die das Board zeigt: alle oder nur die dringenden. Ändert sich ein Signal, rechnet es neu. */
+  private readonly visible = computed(() => (this.urgentOnly() ? this.tickets().filter(isUrgent) : this.tickets()));
+
+  /** Die Tickets eines Standes, die dringendsten zuerst. */
+  protected ticketsOf(status: Status) {
+    return sortedByPriority(ticketsWithStatus(this.visible(), status));
+  }
 
   protected toggleUrgent(): void {
     this.urgentOnly.update((value) => !value);
@@ -538,7 +540,7 @@ export class TicketBoard {
 }
 ```
 
-`columns` ist jetzt ein Feld mit einem `computed` statt einer Methode. Der Timer aus dem Experiment ist weg.
+`visible` ist ein Feld mit einem `computed`. Es wird einmal berechnet und von allen drei Aufrufen von `ticketsOf` benutzt, bis sich `tickets` oder `urgentOnly` ändert. Der Timer aus dem Experiment ist weg.
 
 <Task id="t2-ab03-a5-card">Auch in der Karte sind `urgent`, `priorityText`, `assignee` und `moves` abgeleitete Werte: Sie hängen alle am Signal `ticket()`. **Schreibe** sie als `computed`-Werte um. Im Template der Karte ändert sich nichts.</Task>
 
@@ -588,7 +590,7 @@ export class TicketCard {
 
 <TaskBadge>T_6 · Anzahl über jeder Spalte zeigen</TaskBadge>
 
-<Task id="t2-ab03-a6-html">**Schreibe** in `ticket-board.html` hinter der Überschrift jeder Spalte die Anzahl ihrer Tickets, in einem `<span>` mit der Klasse `count`. Die Anzahl ist die Länge der Liste, über die die innere Schleife läuft.</Task>
+<Task id="t2-ab03-a6-html">**Schreibe** in `ticket-board.html` hinter der Überschrift jeder der drei Spalten die Anzahl ihrer Tickets, in einem `<span>` mit der Klasse `count`. Die Anzahl ist die Länge der Liste, über die die Schleife der Spalte läuft: `ticketsOf('offen').length`.</Task>
 
 <details>
 <summary>Lösung: ticket-board.html</summary>
@@ -677,6 +679,93 @@ export class TicketCard {
   ]}
 />
 
+### Zusatzaufgabe – Dreimal derselbe Abschnitt
+
+*Freiwillig, etwa 10 Minuten.*
+
+In `ticket-board.html` steht der Abschnitt einer Spalte dreimal da, und bei jeder Änderung musstest du ihn dreimal anfassen: den `@empty`-Block, die Anzahl, die Karte mit `(statusChange)`. Für drei feste Spalten ist das in Ordnung. Bei mehr Spalten wäre es mühsam, und ein vergessener Abschnitt würde sich anders verhalten als die anderen. Die Abhilfe kennst du: eine Schleife.
+
+<Task id="t2-ab03-extra">**Schreibe** das Board so um, dass `ticket-board.html` den Abschnitt nur noch einmal enthält. Die drei Spalten stehen dafür als Liste in der Klasse. Jeder Eintrag braucht den Stand, die zweite CSS-Klasse und die Überschrift. Eine äußere `@for`-Schleife über diese Liste ersetzt die drei Abschnitte. Statt `class="column open"` brauchst du `[class]="'column ' + column.css"`, denn die Klasse ist jetzt ein berechneter Wert.</Task>
+
+<details>
+<summary>Lösung</summary>
+
+```ts title="src/app/ticket-board/ticket-board.ts"
+import { Component, computed, signal } from '@angular/core';
+import { sampleTickets } from '../sample-data';
+import { isUrgent } from '../ticket';
+import type { Status } from '../ticket';
+import { sortedByPriority, ticketsWithStatus, withStatus } from '../ticket-list';
+import { TicketCard } from '../ticket-card/ticket-card';
+
+@Component({
+  imports: [TicketCard],
+  selector: 'app-ticket-board',
+  styleUrl: './ticket-board.css',
+  templateUrl: './ticket-board.html',
+})
+export class TicketBoard {
+  protected readonly tickets = signal(sampleTickets);
+  protected readonly urgentOnly = signal(false);
+
+  /** Die drei Spalten des Boards, von links nach rechts. */
+  protected readonly columns: { status: Status; css: string; label: string }[] = [
+    { status: 'offen', css: 'open', label: 'Offen' },
+    { status: 'in Arbeit', css: 'progress', label: 'In Arbeit' },
+    { status: 'erledigt', css: 'done', label: 'Erledigt' },
+  ];
+
+  /** Die Tickets, die das Board zeigt: alle oder nur die dringenden. Ändert sich ein Signal, rechnet es neu. */
+  private readonly visible = computed(() => (this.urgentOnly() ? this.tickets().filter(isUrgent) : this.tickets()));
+
+  /** Die Tickets eines Standes, die dringendsten zuerst. */
+  protected ticketsOf(status: Status) {
+    return sortedByPriority(ticketsWithStatus(this.visible(), status));
+  }
+
+  protected toggleUrgent(): void {
+    this.urgentOnly.update((value) => !value);
+  }
+
+  protected changeStatus(id: number, status: Status): void {
+    this.tickets.update((tickets) => withStatus(tickets, id, status));
+  }
+}
+```
+
+```html title="src/app/ticket-board/ticket-board.html"
+<div class="toolbar">
+  <label class="switch">
+    <input type="checkbox" [checked]="urgentOnly()" (change)="toggleUrgent()" />
+    Nur dringende Tickets zeigen
+  </label>
+</div>
+
+<div class="columns">
+  @for (column of columns; track column.css) {
+    <section [class]="'column ' + column.css">
+      <h2 class="column-title">
+        <span class="dot" aria-hidden="true"></span>
+        {{ column.label }}
+        <span class="count">{{ ticketsOf(column.status).length }}</span>
+      </h2>
+
+      @for (ticket of ticketsOf(column.status); track ticket.id) {
+        <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
+      } @empty {
+        <p class="empty">Keine Tickets</p>
+      }
+    </section>
+  }
+</div>
+```
+
+Die Liste `columns` beschreibt die Spalten, das Template schreibt sie aus. Eine vierte Spalte wäre eine Zeile in der Liste. Dafür liegt jetzt mehr Wissen in der Klasse: ein Objekttyp und eine Liste. Welche der beiden Fassungen besser ist, hängt davon ab, wie viele Spalten du erwartest und wie oft sich der Abschnitt ändert.
+
+</details>
+
+<Task id="t2-ab03-extra-check">Im Browser verhält sich alles wie vorher. Wenn nicht, vergleiche mit der Lösung.</Task>
+
 ## Das hast du gelernt
 
 - Mit **`output()`** meldet eine Komponente etwas an die Komponente über ihr, mit `.emit(…)`. Die darüber hört mit `(name)="…"` zu und bekommt den Wert als `$event`.
@@ -699,7 +788,7 @@ export class TicketCard {
 1. Mit `input()` bekommt eine Komponente Daten von der Komponente über ihr. Mit `output()` meldet sie etwas an diese zurück.
 2. Angular zeichnet das Board nur neu, wenn es einen Anlass kennt. Ein Timer ist keiner. Ein Signal sagt Angular Bescheid, sobald es sich ändert.
 3. Lesen mit Klammern, `x()`. Schreiben mit `x.set(neuerWert)` oder `x.update((alt) => neu)`.
-4. Für Werte, die sich aus anderen Signalen berechnen lassen und nicht selbst geschrieben werden, wie `columns`.
-5. Die Zahl ist die Länge der Liste, die die Spalte anzeigt. Diese Liste kommt aus `columns`, und das rechnet sich neu, wenn sich `tickets` oder `urgentOnly` ändert.
+4. Für Werte, die sich aus anderen Signalen berechnen lassen und nicht selbst geschrieben werden, wie `visible`.
+5. Die Zahl ist die Länge der Liste, die die Spalte anzeigt. Diese Liste kommt aus `ticketsOf`, und die liest die Signale `tickets` und `urgentOnly` über `visible`. Ändert sich eines davon, erneuert Angular auch die Zahl.
 
 </details>

@@ -102,11 +102,23 @@ const timer = [
   '  }',
 ].join('\n');
 
+// Zustand nach Aufgabe 4: Signale, aber noch ohne computed. Die Auswahl „alle oder nur die dringenden“ steht in ticketsOf.
 let boardSignals = cut(boardTsFinal, "import { Component, computed, signal } from '@angular/core';", "import { Component, signal } from '@angular/core';");
+boardSignals = cut(
+  boardSignals,
+  [
+    '  /** Die Tickets, die das Board zeigt: alle oder nur die dringenden. Ändert sich ein Signal, rechnet es neu. */',
+    '  private readonly visible = computed(() => (this.urgentOnly() ? this.tickets().filter(isUrgent) : this.tickets()));',
+    '',
+    '',
+  ].join('\n'),
+);
+boardSignals = cut(
+  boardSignals,
+  '    return sortedByPriority(ticketsWithStatus(this.visible(), status));',
+  '    const tickets = this.urgentOnly() ? this.tickets().filter(isUrgent) : this.tickets();\n    return sortedByPriority(ticketsWithStatus(tickets, status));',
+);
 boardSignals = cut(boardSignals, '  protected readonly urgentOnly = signal(false);\n', '  protected readonly urgentOnly = signal(false);\n' + timer + '\n');
-boardSignals = cut(boardSignals, ' Ändert sich ein Signal, rechnet das Board neu. */', ' */');
-boardSignals = cut(boardSignals, '  protected readonly columns = computed(() => {', '  protected columns() {');
-boardSignals = cut(boardSignals, '    }));\n  });\n', '    }));\n  }\n');
 
 let boardPlainTimer = cut(boardSignals, "import { Component, signal } from '@angular/core';", "import { Component } from '@angular/core';");
 boardPlainTimer = cut(boardPlainTimer, 'protected readonly tickets = signal(sampleTickets);', 'protected tickets = sampleTickets;');
@@ -117,7 +129,9 @@ boardPlainTimer = cut(boardPlainTimer, 'this.tickets.update((tickets) => withSta
 const boardPlain = cut(boardPlainTimer, timer + '\n', '');
 
 const boardHtmlFinal = read('ab03', 'ticket-board/ticket-board.html');
-let boardHtmlPlain = cut(boardHtmlFinal, '        <span class="count">{{ column.tickets.length }}</span>\n');
+const countLine = /      <span class="count">\{\{ ticketsOf\('[^']+'\)\.length \}\}<\/span>\n/g;
+if ((boardHtmlFinal.match(countLine) ?? []).length !== 3) problems.push('Ableitung nicht möglich: Die Zähler stehen nicht dreimal im Endstand.');
+let boardHtmlPlain = boardHtmlFinal.replace(countLine, '');
 boardHtmlPlain = cut(boardHtmlPlain, '[checked]="urgentOnly()"', '[checked]="urgentOnly"');
 const boardHtmlSignals = cut(boardHtmlPlain, '[checked]="urgentOnly"', '[checked]="urgentOnly()"');
 

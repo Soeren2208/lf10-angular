@@ -6,18 +6,42 @@
 </div>
 
 <div class="columns">
-  @for (column of columns(); track column.css) {
-    <section [class]="'column ' + column.css">
-      <h2 class="column-title">
-        <span class="dot" aria-hidden="true"></span>
-        {{ column.label }}
-      </h2>
+  <section class="column open">
+    <h2 class="column-title">
+      <span class="dot" aria-hidden="true"></span>
+      Offen
+    </h2>
 
-      @for (ticket of column.tickets; track ticket.id) {
-        <app-ticket-card [ticket]="ticket" />
-      } @empty {
-        <p class="empty">Keine Tickets</p>
-      }
-    </section>
-  }
+    @for (ticket of ticketsOf('offen'); track ticket.id) {
+      <app-ticket-card [ticket]="ticket" />
+    } @empty {
+      <p class="empty">Keine Tickets</p>
+    }
+  </section>
+
+  <section class="column progress">
+    <h2 class="column-title">
+      <span class="dot" aria-hidden="true"></span>
+      In Arbeit
+    </h2>
+
+    @for (ticket of ticketsOf('in Arbeit'); track ticket.id) {
+      <app-ticket-card [ticket]="ticket" />
+    } @empty {
+      <p class="empty">Keine Tickets</p>
+    }
+  </section>
+
+  <section class="column done">
+    <h2 class="column-title">
+      <span class="dot" aria-hidden="true"></span>
+      Erledigt
+    </h2>
+
+    @for (ticket of ticketsOf('erledigt'); track ticket.id) {
+      <app-ticket-card [ticket]="ticket" />
+    } @empty {
+      <p class="empty">Keine Tickets</p>
+    }
+  </section>
 </div>

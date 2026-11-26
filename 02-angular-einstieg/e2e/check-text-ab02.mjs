@@ -66,21 +66,22 @@ const tsFinal = stageFile('ticket-board/ticket-board.ts');
 let tsSorted = tsFinal; // Zustand nach Aufgabe 5: sortiert, noch ohne Schalter
 tsSorted = cut(tsSorted, "import { isUrgent } from '../ticket';\n");
 tsSorted = cut(tsSorted, '  protected urgentOnly = false;\n');
-tsSorted = cut(tsSorted, '    const tickets = this.urgentOnly ? this.tickets.filter(isUrgent) : this.tickets;\n');
-tsSorted = cut(tsSorted, 'ticketsWithStatus(tickets, column.status)', 'ticketsWithStatus(this.tickets, column.status)');
+tsSorted = cut(
+  tsSorted,
+  '    const tickets = this.urgentOnly ? this.tickets.filter(isUrgent) : this.tickets;\n    return sortedByPriority(ticketsWithStatus(tickets, status));',
+  '    return sortedByPriority(ticketsWithStatus(this.tickets, status));',
+);
 tsSorted = cut(tsSorted, '\n  protected toggleUrgent(): void {\n    this.urgentOnly = !this.urgentOnly;\n  }\n');
 
 let tsUnsorted = tsSorted; // Zustand nach Aufgabe 4: drei Spalten, noch ohne Sortierung
 tsUnsorted = cut(tsUnsorted, "import { sortedByPriority, ticketsWithStatus } from '../ticket-list';", "import { ticketsWithStatus } from '../ticket-list';");
-tsUnsorted = cut(tsUnsorted, 'sortedByPriority(ticketsWithStatus(this.tickets, column.status))', 'ticketsWithStatus(this.tickets, column.status)');
-tsUnsorted = cut(tsUnsorted, '/** Je Spalte die Tickets, die dringendsten zuerst. */', '/** Je Spalte die Tickets mit dem passenden Stand. */');
+tsUnsorted = cut(tsUnsorted, 'sortedByPriority(ticketsWithStatus(this.tickets, status))', 'ticketsWithStatus(this.tickets, status)');
+tsUnsorted = cut(tsUnsorted, '/** Die Tickets eines Standes, die dringendsten zuerst. */', '/** Die Tickets mit dem passenden Stand. */');
 
 let tsPlain = tsUnsorted; // Zustand nach Aufgabe 3: alle Tickets in einer Spalte
 tsPlain = cut(tsPlain, "import type { Status } from '../ticket';\n");
 tsPlain = cut(tsPlain, "import { ticketsWithStatus } from '../ticket-list';\n");
-tsPlain = cut(tsPlain, "import { STATUS_LABEL } from '../ticket-labels';\n");
-tsPlain = tsPlain.replace(/\/\*\* Die drei Spalten[\s\S]*?\];\n\n/, '');
-tsPlain = tsPlain.replace(/\n  \/\*\* Je Spalte[\s\S]*?\n  }\n/, '');
+tsPlain = tsPlain.replace(/\n  \/\*\* Die Tickets mit[\s\S]*?\n  }\n/, '');
 
 // So legt die Angular-CLI die Komponente an (Aufgabe 1):
 const cliBoardTs = [
@@ -97,9 +98,14 @@ const cliBoardTs = [
 
 // --- ticket-board.html ------------------------------------------------------------------------------
 const htmlFinal = stageFile('ticket-board/ticket-board.html');
-const htmlSwitch = cut(htmlFinal, '      } @empty {\n        <p class="empty">Keine Tickets</p>\n      }\n', '      }\n');
+const emptyBlock = '    } @empty {\n      <p class="empty">Keine Tickets</p>\n    }\n';
+if (htmlFinal.split(emptyBlock).length !== 4) problems.push('Ableitung nicht möglich: Der @empty-Block steht nicht dreimal im Endstand.');
+const htmlSwitch = htmlFinal.split(emptyBlock).join('    }\n');
 const toolbar = htmlSwitch.slice(0, htmlSwitch.indexOf('<div class="columns">'));
-const htmlColumns = htmlSwitch.replace(toolbar, '');
+const htmlColumns = htmlSwitch.replace(toolbar, ''); // Aufgabe 4: drei Spalten, noch ohne Schalter
+const secondSection = htmlColumns.indexOf('\n  <section class="column progress">');
+if (secondSection < 0) problems.push('Ableitung nicht möglich: Die zweite Spalte steht nicht im Endstand.');
+const htmlOne = htmlColumns.slice(0, secondSection).trimEnd() + '\n</div>\n'; // Aufgabe 4, erster Schritt: nur die Spalte „Offen“
 const htmlPlain = ['<div class="column">', '  @for (ticket of tickets; track ticket.id) {', '    <app-ticket-card [ticket]="ticket" />', '  }', '</div>'].join('\n');
 
 // --- Blöcke des Arbeitsblatts -----------------------------------------------------------------------
@@ -115,11 +121,12 @@ const expectations = [
   [T, 0, tsPlain, cliBoardTs, 'ticket-board.ts nach Aufgabe 3 (Ergänze)'],
   [H, 0, htmlPlain, null, 'ticket-board.html nach Aufgabe 3 (Tippe ab)'],
   [T, 1, tsUnsorted, tsPlain, 'ticket-board.ts nach Aufgabe 4 (Ergänze)'],
-  [H, 1, htmlColumns, htmlPlain, 'ticket-board.html nach Aufgabe 4 (Ergänze)'],
+  [H, 1, htmlOne, htmlPlain, 'ticket-board.html nach Aufgabe 4, Schritt 1: eine Spalte (Ergänze)'],
+  [H, 2, htmlColumns, null, 'ticket-board.html nach Aufgabe 4, Schritt 2: drei Spalten (Lösung)'],
   [T, 2, tsSorted, null, 'ticket-board.ts nach Aufgabe 5 (Lösung)'],
   [T, 3, tsFinal, tsSorted, 'ticket-board.ts nach Aufgabe 6 (Ergänze)'],
-  [H, 2, htmlSwitch, htmlColumns, 'ticket-board.html nach Aufgabe 6 (Ergänze)'],
-  [H, 3, htmlFinal, htmlSwitch, 'ticket-board.html nach Aufgabe 7 (Ergänze)'],
+  [H, 3, htmlSwitch, htmlColumns, 'ticket-board.html nach Aufgabe 6 (Ergänze)'],
+  [H, 4, htmlFinal, htmlSwitch, 'ticket-board.html nach Aufgabe 7 (Ergänze)'],
 ];
 
 for (const [title, index, expected, previous, description] of expectations) {

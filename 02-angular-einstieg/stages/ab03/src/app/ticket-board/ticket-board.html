@@ -6,19 +6,45 @@
 </div>
 
 <div class="columns">
-  @for (column of columns(); track column.css) {
-    <section [class]="'column ' + column.css">
-      <h2 class="column-title">
-        <span class="dot" aria-hidden="true"></span>
-        {{ column.label }}
-        <span class="count">{{ column.tickets.length }}</span>
-      </h2>
+  <section class="column open">
+    <h2 class="column-title">
+      <span class="dot" aria-hidden="true"></span>
+      Offen
+      <span class="count">{{ ticketsOf('offen').length }}</span>
+    </h2>
 
-      @for (ticket of column.tickets; track ticket.id) {
-        <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
-      } @empty {
-        <p class="empty">Keine Tickets</p>
-      }
-    </section>
-  }
+    @for (ticket of ticketsOf('offen'); track ticket.id) {
+      <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
+    } @empty {
+      <p class="empty">Keine Tickets</p>
+    }
+  </section>
+
+  <section class="column progress">
+    <h2 class="column-title">
+      <span class="dot" aria-hidden="true"></span>
+      In Arbeit
+      <span class="count">{{ ticketsOf('in Arbeit').length }}</span>
+    </h2>
+
+    @for (ticket of ticketsOf('in Arbeit'); track ticket.id) {
+      <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
+    } @empty {
+      <p class="empty">Keine Tickets</p>
+    }
+  </section>
+
+  <section class="column done">
+    <h2 class="column-title">
+      <span class="dot" aria-hidden="true"></span>
+      Erledigt
+      <span class="count">{{ ticketsOf('erledigt').length }}</span>
+    </h2>
+
+    @for (ticket of ticketsOf('erledigt'); track ticket.id) {
+      <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
+    } @empty {
+      <p class="empty">Keine Tickets</p>
+    }
+  </section>
 </div>

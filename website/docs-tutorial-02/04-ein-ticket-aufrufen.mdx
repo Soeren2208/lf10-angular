@@ -125,7 +125,7 @@ export class App {}
 
 ### Aufgabe 2 – Die Angaben eines Tickets
 
-*Etwa 25 Minuten.*
+*Etwa 30 Minuten.*
 
 <TaskBadge>T_2 · Die Angaben eines Tickets anzeigen</TaskBadge>
 
@@ -144,6 +144,17 @@ export const appConfig: ApplicationConfig = {
 ```
 
 `withComponentInputBinding()` sorgt dafür, dass der Router Werte aus der Adresse in gleichnamige Eingänge der Komponente schreibt. Aus dem Platzhalter `:id` wird der Eingang `id`.
+
+Die Ansicht schreibt auch den Stand des Tickets aus, so wie die Karte die Priorität. Dafür braucht sie die Texte für die Stände.
+
+<Task id="t2-ab04-a2-labels">**Schreibe** in `ticket-labels.ts` die Tabelle `STATUS_LABEL`. Sie ordnet jedem Stand den Text zu: „Offen“, „In Arbeit“ und „Erledigt“. Sie ist aufgebaut wie `PRIORITY_LABEL`. Den Typ `Status` importierst du aus `./ticket`, wie dort `Priority`.</Task>
+
+<details>
+<summary>Lösung: ticket-labels.ts</summary>
+
+<CodeFile data={stage} file="src/app/ticket-labels.ts" />
+
+</details>
 
 <Task id="t2-ab04-a2-class">**Ergänze** in `ticket-detail.ts` die hervorgehobenen Zeilen, auch die Importe.</Task>
 
@@ -359,21 +370,13 @@ export class TicketService {
 
 <Task id="t2-ab04-a4-board">Das Board holt sich die Tickets aus dem Service. **Ergänze** in `ticket-board.ts` die hervorgehobenen Zeilen, auch die Importe.</Task>
 
-```ts title="src/app/ticket-board/ticket-board.ts" {1,4-5,23,29,42}
+```ts title="src/app/ticket-board/ticket-board.ts" {1,4-5,15,20,32}
 import { Component, computed, inject, signal } from '@angular/core';
 import { isUrgent } from '../ticket';
 import type { Status } from '../ticket';
 import { sortedByPriority, ticketsWithStatus } from '../ticket-list';
 import { TicketService } from '../ticket.service';
 import { TicketCard } from '../ticket-card/ticket-card';
-import { STATUS_LABEL } from '../ticket-labels';
-
-/** Die drei Spalten des Boards, von links nach rechts. */
-const COLUMNS: { status: Status; css: string }[] = [
-  { status: 'offen', css: 'open' },
-  { status: 'in Arbeit', css: 'progress' },
-  { status: 'erledigt', css: 'done' },
-];
 
 @Component({
   imports: [TicketCard],
@@ -386,15 +389,13 @@ export class TicketBoard {
 
   protected readonly urgentOnly = signal(false);
 
-  /** Je Spalte die Tickets, die dringendsten zuerst. Ändert sich ein Signal, rechnet das Board neu. */
-  protected readonly columns = computed(() => {
-    const tickets = this.urgentOnly() ? this.service.tickets().filter(isUrgent) : this.service.tickets();
-    return COLUMNS.map((column) => ({
-      css: column.css,
-      label: STATUS_LABEL[column.status],
-      tickets: sortedByPriority(ticketsWithStatus(tickets, column.status)),
-    }));
-  });
+  /** Die Tickets, die das Board zeigt: alle oder nur die dringenden. Ändert sich ein Signal, rechnet es neu. */
+  private readonly visible = computed(() => (this.urgentOnly() ? this.service.tickets().filter(isUrgent) : this.service.tickets()));
+
+  /** Die Tickets eines Standes, die dringendsten zuerst. */
+  protected ticketsOf(status: Status) {
+    return sortedByPriority(ticketsWithStatus(this.visible(), status));
+  }
 
   protected toggleUrgent(): void {
     this.urgentOnly.update((value) => !value);
@@ -559,7 +560,7 @@ Jonas bekommt Rückfragen per Chat mit einer Ticketnummer. Er soll die Nummer di
 
 <Task id="t2-ab04-a6-class">**Ergänze** in `ticket-board.ts` die hervorgehobenen Zeilen, auch die Importe.</Task>
 
-```ts title="src/app/ticket-board/ticket-board.ts" {2,25,47-52}
+```ts title="src/app/ticket-board/ticket-board.ts" {2,17,37-42}
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { isUrgent } from '../ticket';
@@ -567,14 +568,6 @@ import type { Status } from '../ticket';
 import { sortedByPriority, ticketsWithStatus } from '../ticket-list';
 import { TicketService } from '../ticket.service';
 import { TicketCard } from '../ticket-card/ticket-card';
-import { STATUS_LABEL } from '../ticket-labels';
-
-/** Die drei Spalten des Boards, von links nach rechts. */
-const COLUMNS: { status: Status; css: string }[] = [
-  { status: 'offen', css: 'open' },
-  { status: 'in Arbeit', css: 'progress' },
-  { status: 'erledigt', css: 'done' },
-];
 
 @Component({
   imports: [TicketCard],
@@ -588,15 +581,13 @@ export class TicketBoard {
 
   protected readonly urgentOnly = signal(false);
 
-  /** Je Spalte die Tickets, die dringendsten zuerst. Ändert sich ein Signal, rechnet das Board neu. */
-  protected readonly columns = computed(() => {
-    const tickets = this.urgentOnly() ? this.service.tickets().filter(isUrgent) : this.service.tickets();
-    return COLUMNS.map((column) => ({
-      css: column.css,
-      label: STATUS_LABEL[column.status],
-      tickets: sortedByPriority(ticketsWithStatus(tickets, column.status)),
-    }));
-  });
+  /** Die Tickets, die das Board zeigt: alle oder nur die dringenden. Ändert sich ein Signal, rechnet es neu. */
+  private readonly visible = computed(() => (this.urgentOnly() ? this.service.tickets().filter(isUrgent) : this.service.tickets()));
+
+  /** Die Tickets eines Standes, die dringendsten zuerst. */
+  protected ticketsOf(status: Status) {
+    return sortedByPriority(ticketsWithStatus(this.visible(), status));
+  }
 
   protected toggleUrgent(): void {
     this.urgentOnly.update((value) => !value);
@@ -637,21 +628,47 @@ export class TicketBoard {
 </div>
 
 <div class="columns">
-  @for (column of columns(); track column.css) {
-    <section [class]="'column ' + column.css">
-      <h2 class="column-title">
-        <span class="dot" aria-hidden="true"></span>
-        {{ column.label }}
-        <span class="count">{{ column.tickets.length }}</span>
-      </h2>
+  <section class="column open">
+    <h2 class="column-title">
+      <span class="dot" aria-hidden="true"></span>
+      Offen
+      <span class="count">{{ ticketsOf('offen').length }}</span>
+    </h2>
 
-      @for (ticket of column.tickets; track ticket.id) {
-        <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
-      } @empty {
-        <p class="empty">Keine Tickets</p>
-      }
-    </section>
-  }
+    @for (ticket of ticketsOf('offen'); track ticket.id) {
+      <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
+    } @empty {
+      <p class="empty">Keine Tickets</p>
+    }
+  </section>
+
+  <section class="column progress">
+    <h2 class="column-title">
+      <span class="dot" aria-hidden="true"></span>
+      In Arbeit
+      <span class="count">{{ ticketsOf('in Arbeit').length }}</span>
+    </h2>
+
+    @for (ticket of ticketsOf('in Arbeit'); track ticket.id) {
+      <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
+    } @empty {
+      <p class="empty">Keine Tickets</p>
+    }
+  </section>
+
+  <section class="column done">
+    <h2 class="column-title">
+      <span class="dot" aria-hidden="true"></span>
+      Erledigt
+      <span class="count">{{ ticketsOf('erledigt').length }}</span>
+    </h2>
+
+    @for (ticket of ticketsOf('erledigt'); track ticket.id) {
+      <app-ticket-card [ticket]="ticket" (statusChange)="changeStatus(ticket.id, $event)" />
+    } @empty {
+      <p class="empty">Keine Tickets</p>
+    }
+  </section>
 </div>
 ```
 
