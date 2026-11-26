@@ -176,6 +176,40 @@ import { withStatus } from './ticket-list';
 
 <Task id="ts-ab03-a2-test">Starte `npm run test:ab03`. Die fünf Tests `C1 TicketStore: Inhalt` werden grün.</Task>
 
+<details>
+<summary>Lösung: die vier Methoden</summary>
+
+```ts title="src/ticket-store.ts"
+import { withStatus } from './ticket-list';
+
+export class TicketStore {
+  constructor(private tickets: readonly Ticket[] = []) {}
+
+  all(): readonly Ticket[] {
+    return this.tickets;
+  }
+
+  add(ticket: Ticket): void {
+    this.tickets = [...this.tickets, ticket];
+  }
+
+  setStatus(id: number, status: Status): void {
+    if (!this.tickets.some((ticket) => ticket.id === id)) {
+      return;
+    }
+    this.tickets = withStatus(this.tickets, id, status);
+  }
+
+  replaceAll(tickets: readonly Ticket[]): void {
+    this.tickets = [...tickets];
+  }
+
+  // …onChange folgt in Aufgabe 4
+}
+```
+
+</details>
+
 ### Aufgabe 3 – Das Experiment: Wer erfährt von der Änderung?
 
 *Etwa 15 Minuten.*
