@@ -70,7 +70,7 @@ Unten auf jeder Karte stehen Knöpfe für den Wechsel in den benachbarten Stand.
 
 ### Aufgabe 1 – Die Karte bietet den Wechsel an
 
-*Etwa 20 Minuten.*
+*Etwa 15 Minuten.*
 
 <TaskBadge>T_1 · Karte: Wechsel anbieten und dem Board melden</TaskBadge>
 
@@ -78,21 +78,11 @@ Die Karte zeigt ein Ticket, das ihr das Board gegeben hat. Die Tickets gehören 
 
 <Task id="t2-ab03-a1-class">**Ergänze** in `ticket-card.ts` die hervorgehobenen Zeilen, auch die Importe.</Task>
 
-```ts title="src/app/ticket-card/ticket-card.ts" {1,3,6-14,24,38-40}
+```ts title="src/app/ticket-card/ticket-card.ts" {1,3,14}
 import { Component, input, output } from '@angular/core';
 import { assigneeName, isUrgent } from '../ticket';
 import type { Status, Ticket } from '../ticket';
 import { PRIORITY_LABEL } from '../ticket-labels';
-
-/** Wohin ein Ticket von seinem Stand aus wechseln kann, und wie der Knopf heißt. */
-const MOVES: Record<Status, { to: Status; label: string }[]> = {
-  offen: [{ to: 'in Arbeit', label: 'In Arbeit →' }],
-  'in Arbeit': [
-    { to: 'offen', label: '← Offen' },
-    { to: 'erledigt', label: 'Erledigt →' },
-  ],
-  erledigt: [{ to: 'in Arbeit', label: '← In Arbeit' }],
-};
 
 @Component({
   imports: [],
@@ -115,22 +105,14 @@ export class TicketCard {
   protected assignee(): string {
     return assigneeName(this.ticket());
   }
-
-  protected moves(): { to: Status; label: string }[] {
-    return MOVES[this.ticket().status];
-  }
 }
 ```
 
-**Das ist neu:**
+**Das ist neu:** `output<Status>()` legt den Ausgang `statusChange` an. Der Typ in den spitzen Klammern sagt, was die Karte mitschickt: den neuen Stand. Mit `statusChange.emit(…)` schickt sie die Meldung ab.
 
-- `output<Status>()` legt den Ausgang `statusChange` an. Der Typ in den spitzen Klammern sagt, was die Karte mitschickt: den neuen Stand. Mit `statusChange.emit(…)` schickt sie die Meldung ab.
-- `MOVES` legt fest, wohin ein Ticket von jedem Stand aus wechseln kann. `Record<Status, …>` kennst du. Der Wert ist eine Liste von Wechseln, jeder mit dem neuen Stand (`to`) und dem Text auf dem Knopf (`label`).
-- `moves()` gibt die Wechsel für das Ticket der Karte zurück.
+<Task id="t2-ab03-a1-html">**Ergänze** in `ticket-card.html` die hervorgehobenen Zeilen. Welche Knöpfe eine Karte bekommt, hängt von ihrem Stand ab:</Task>
 
-<Task id="t2-ab03-a1-html">**Ergänze** in `ticket-card.html` die hervorgehobenen Zeilen:</Task>
-
-```html title="src/app/ticket-card/ticket-card.html" {16-20}
+```html title="src/app/ticket-card/ticket-card.html" {16-29}
 <article class="card" [class.urgent]="urgent()">
   <header class="card-head">
     <span class="ticket-id">#{{ ticket().id }}</span>
@@ -147,8 +129,17 @@ export class TicketCard {
   </div>
 
   <footer class="actions">
-    @for (move of moves(); track move.to) {
-      <button type="button" class="btn" (click)="statusChange.emit(move.to)">{{ move.label }}</button>
+    @switch (ticket().status) {
+      @case ('offen') {
+        <button type="button" class="btn" (click)="statusChange.emit('in Arbeit')">In Arbeit →</button>
+      }
+      @case ('in Arbeit') {
+        <button type="button" class="btn" (click)="statusChange.emit('offen')">← Offen</button>
+        <button type="button" class="btn" (click)="statusChange.emit('erledigt')">Erledigt →</button>
+      }
+      @case ('erledigt') {
+        <button type="button" class="btn" (click)="statusChange.emit('in Arbeit')">← In Arbeit</button>
+      }
     }
   </footer>
 </article>
@@ -156,8 +147,8 @@ export class TicketCard {
 
 **Das ist neu:**
 
-- Pro Wechsel entsteht ein Knopf, `@for` kennst du aus AB 02. Als `track` dient der neue Stand: Jeder Knopf einer Karte hat einen anderen.
-- `(click)="statusChange.emit(move.to)"` ist ein Event-Binding wie `(change)` in AB 02. Beim Klick schickt die Karte den neuen Stand über ihren Ausgang ab.
+- `@switch (ticket().status) { @case (…) { … } }` ist das `switch` mit `case` aus Java. Angular zeigt den Block, dessen Wert zum aktuellen Stand des Tickets passt. Ein Ticket in „Offen“ bekommt einen Knopf, eines in „In Arbeit“ zwei, eines in „Erledigt“ einen.
+- `(click)="statusChange.emit('in Arbeit')"` ist ein Event-Binding wie `(change)` in AB 02. Beim Klick schickt die Karte den neuen Stand über ihren Ausgang ab. Schreibst du `'Offen'` mit großem O, meldet der Compiler einen Fehler, denn das ist kein `Status`.
 - `<footer>` ist der Fußbereich der Karte, `<button>` ein Knopf. `type="button"` sagt dem Browser, dass der Knopf nichts abschickt.
 
 <Task id="t2-ab03-a1-css">**Kopiere** den folgenden Code ans Ende von `ticket-card.css`:</Task>
@@ -542,7 +533,7 @@ export class TicketBoard {
 
 `visible` ist ein Feld mit einem `computed`. Es wird einmal berechnet und von allen drei Aufrufen von `ticketsOf` benutzt, bis sich `tickets` oder `urgentOnly` ändert. Der Timer aus dem Experiment ist weg.
 
-<Task id="t2-ab03-a5-card">Auch in der Karte sind `urgent`, `priorityText`, `assignee` und `moves` abgeleitete Werte: Sie hängen alle am Signal `ticket()`. **Schreibe** sie als `computed`-Werte um. Im Template der Karte ändert sich nichts.</Task>
+<Task id="t2-ab03-a5-card">Auch in der Karte sind `urgent`, `priorityText`, und `assignee` abgeleitete Werte: Sie hängen alle am Signal `ticket()`. **Schreibe** sie als `computed`-Werte um. Im Template der Karte ändert sich nichts.</Task>
 
 <details>
 <summary>Lösung: ticket-card.ts</summary>
@@ -552,16 +543,6 @@ import { Component, computed, input, output } from '@angular/core';
 import { assigneeName, isUrgent } from '../ticket';
 import type { Status, Ticket } from '../ticket';
 import { PRIORITY_LABEL } from '../ticket-labels';
-
-/** Wohin ein Ticket von seinem Stand aus wechseln kann, und wie der Knopf heißt. */
-const MOVES: Record<Status, { to: Status; label: string }[]> = {
-  offen: [{ to: 'in Arbeit', label: 'In Arbeit →' }],
-  'in Arbeit': [
-    { to: 'offen', label: '← Offen' },
-    { to: 'erledigt', label: 'Erledigt →' },
-  ],
-  erledigt: [{ to: 'in Arbeit', label: '← In Arbeit' }],
-};
 
 @Component({
   imports: [],
@@ -576,7 +557,6 @@ export class TicketCard {
   protected readonly urgent = computed(() => isUrgent(this.ticket()));
   protected readonly priorityText = computed(() => PRIORITY_LABEL[this.ticket().priority]);
   protected readonly assignee = computed(() => assigneeName(this.ticket()));
-  protected readonly moves = computed(() => MOVES[this.ticket().status]);
 }
 ```
 

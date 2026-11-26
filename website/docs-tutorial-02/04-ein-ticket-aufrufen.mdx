@@ -253,22 +253,12 @@ Auf jeder Karte soll ein Link „Öffnen“ zur Ansicht des Tickets führen.
 
 <Task id="t2-ab04-a3-class">**Ergänze** in `ticket-card.ts` die hervorgehobenen Zeilen, auch die Importe.</Task>
 
-```ts title="src/app/ticket-card/ticket-card.ts" {2,18}
+```ts title="src/app/ticket-card/ticket-card.ts" {2,8}
 import { Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { assigneeName, isUrgent } from '../ticket';
 import type { Status, Ticket } from '../ticket';
 import { PRIORITY_LABEL } from '../ticket-labels';
-
-/** Wohin ein Ticket von seinem Stand aus wechseln kann, und wie der Knopf heißt. */
-const MOVES: Record<Status, { to: Status; label: string }[]> = {
-  offen: [{ to: 'in Arbeit', label: 'In Arbeit →' }],
-  'in Arbeit': [
-    { to: 'offen', label: '← Offen' },
-    { to: 'erledigt', label: 'Erledigt →' },
-  ],
-  erledigt: [{ to: 'in Arbeit', label: '← In Arbeit' }],
-};
 
 @Component({
   imports: [RouterLink],
@@ -283,7 +273,6 @@ export class TicketCard {
   protected readonly urgent = computed(() => isUrgent(this.ticket()));
   protected readonly priorityText = computed(() => PRIORITY_LABEL[this.ticket().priority]);
   protected readonly assignee = computed(() => assigneeName(this.ticket()));
-  protected readonly moves = computed(() => MOVES[this.ticket().status]);
 }
 ```
 
@@ -307,8 +296,17 @@ export class TicketCard {
 
   <footer class="actions">
     <a class="btn btn-ghost" [routerLink]="['/tickets', ticket().id]">Öffnen</a>
-    @for (move of moves(); track move.to) {
-      <button type="button" class="btn" (click)="statusChange.emit(move.to)">{{ move.label }}</button>
+    @switch (ticket().status) {
+      @case ('offen') {
+        <button type="button" class="btn" (click)="statusChange.emit('in Arbeit')">In Arbeit →</button>
+      }
+      @case ('in Arbeit') {
+        <button type="button" class="btn" (click)="statusChange.emit('offen')">← Offen</button>
+        <button type="button" class="btn" (click)="statusChange.emit('erledigt')">Erledigt →</button>
+      }
+      @case ('erledigt') {
+        <button type="button" class="btn" (click)="statusChange.emit('in Arbeit')">← In Arbeit</button>
+      }
     }
   </footer>
 </article>

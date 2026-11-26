@@ -15,8 +15,17 @@
 
   <footer class="actions">
     <a class="btn btn-ghost" [routerLink]="['/tickets', ticket().id]">Öffnen</a>
-    @for (move of moves(); track move.to) {
-      <button type="button" class="btn" (click)="statusChange.emit(move.to)">{{ move.label }}</button>
+    @switch (ticket().status) {
+      @case ('offen') {
+        <button type="button" class="btn" (click)="statusChange.emit('in Arbeit')">In Arbeit →</button>
+      }
+      @case ('in Arbeit') {
+        <button type="button" class="btn" (click)="statusChange.emit('offen')">← Offen</button>
+        <button type="button" class="btn" (click)="statusChange.emit('erledigt')">Erledigt →</button>
+      }
+      @case ('erledigt') {
+        <button type="button" class="btn" (click)="statusChange.emit('in Arbeit')">← In Arbeit</button>
+      }
     }
   </footer>
 </article>

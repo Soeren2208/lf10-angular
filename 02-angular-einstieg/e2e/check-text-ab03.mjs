@@ -71,7 +71,6 @@ cardTsMethods = cut(
     '  protected readonly urgent = computed(() => isUrgent(this.ticket()));',
     '  protected readonly priorityText = computed(() => PRIORITY_LABEL[this.ticket().priority]);',
     '  protected readonly assignee = computed(() => assigneeName(this.ticket()));',
-    '  protected readonly moves = computed(() => MOVES[this.ticket().status]);',
   ].join('\n'),
   [
     '  protected urgent(): boolean {',
@@ -84,10 +83,6 @@ cardTsMethods = cut(
     '',
     '  protected assignee(): string {',
     '    return assigneeName(this.ticket());',
-    '  }',
-    '',
-    '  protected moves(): { to: Status; label: string }[] {',
-    '    return MOVES[this.ticket().status];',
     '  }',
   ].join('\n'),
 );
