@@ -267,22 +267,40 @@ store.onChange(showTickets);   // „Ruf showTickets auf, wenn sich etwas änder
 
 *Etwa 20 Minuten.*
 
-Der Speicher soll sich merken, **wer** informiert werden will. Dazu dient eine Menge von Funktionen (`Set`):
+Der Speicher soll Änderungen melden. Dafür baust du ihn in vier kleinen Schritten um. Zu jedem Schritt gibt es Code zum Abtippen und darunter die Erklärung.
+
+#### Schritt 1: Die Menge der Zuhörer
+
+Der Speicher muss sich merken, **wer** informiert werden will. Das sind **Funktionen**, die er später aufruft.
+
+Neu ist dabei: In TypeScript ist eine Funktion ein Wert wie eine Zahl oder ein Text. Du kannst sie in einer Variablen ablegen oder in eine Liste legen, und wer sie hat, kann sie später aufrufen. Das kennst du schon von `filter`, dem du eine Funktion übergeben hast. Ein Beispiel mit etwas anderem:
+
+```ts
+const greetEnglish = () => console.log('Hello');
+const greetGerman = () => console.log('Hallo');
+
+const greetings = [greetEnglish, greetGerman];   // zwei Funktionen in einer Liste
+
+for (const greet of greetings) {
+  greet();   // ruft jede gespeicherte Funktion auf: erst Hello, dann Hallo
+}
+```
+
+Der Speicher legt seine Funktionen in einer **Menge** (`Set`) ab statt in einer Liste:
 
 ```ts
 private readonly listeners = new Set<Listener>();
 ```
 
-`Listener` ist der Typ einer Funktion, die die neue Liste entgegennimmt und nichts zurückgibt. Er steht schon in der Datei. Ein `Set` ist eine Menge ohne Doppelte, mit den Methoden `add`, `delete` und der Möglichkeit, sie mit `for (const x of set)` zu durchlaufen.
+- `Set<Listener>` ist eine Menge von Funktionen vom Typ `Listener`. Der Typ steht schon in der Datei: eine Funktion, die die neue Liste bekommt und nichts zurückgibt.
+- Ein `Set` enthält jedes Element nur einmal. Mit `add` kommt etwas hinein, mit `delete` geht es wieder heraus, und mit `for (const x of set)` gehst du alle durch.
+- `readonly` steht hier, weil die Menge selbst nie ersetzt wird, nur ihr **Inhalt** ändert sich. Bei `tickets` war es anders: Dort wird die Liste bei jeder Änderung durch eine neue ersetzt.
 
-<Task id="ts-ab03-a4-field">Füge das Feld `listeners` am Anfang der Klasse ein.</Task>
+<Task id="ts-ab03-a4-field">Schreibe die Zeile ab und setze sie an den Anfang der Klasse. `npm run check` meldet nichts Neues.</Task>
 
-<Task id="ts-ab03-a4-notify">Schreibe die private Methode `notify()`: Sie ruft **jeden** angemeldeten Listener mit der aktuellen Liste auf.</Task>
+#### Schritt 2: Alle benachrichtigen
 
-<details>
-<summary>Lösung: notify</summary>
-
-```ts title="src/ticket-store.ts"
+```ts
 private notify(): void {
   for (const listener of this.listeners) {
     listener(this.tickets);
@@ -290,9 +308,15 @@ private notify(): void {
 }
 ```
 
-</details>
+- `for (const listener of this.listeners)` geht alle angemeldeten Funktionen durch.
+- `listener(this.tickets)` **ruft** die Funktion auf und gibt ihr die aktuelle Liste mit. So erfährt jeder Zuhörer, wie die Liste jetzt aussieht.
+- `private` heißt: Nur der Speicher selbst ruft `notify` auf. Von außen soll niemand eine Meldung auslösen.
 
-`onChange` soll als Ergebnis eine **Funktion** liefern, mit der man sich wieder abmeldet. Eine Funktion, die eine Funktion zurückgibt, ist neu. Hier ein Beispiel mit etwas anderem:
+<Task id="ts-ab03-a4-notify">Schreibe die Methode `notify()` ab.</Task>
+
+#### Schritt 3: Anmelden und wieder abmelden
+
+`onChange` macht zwei Dinge: Es merkt sich die Funktion, und es liefert als Ergebnis **eine Funktion zum Abmelden**. Eine Funktion, die eine Funktion zurückgibt, ist neu. Hier ein Beispiel mit etwas anderem:
 
 ```ts
 function makeGreeter(greeting: string): () => string {
@@ -303,14 +327,9 @@ const hello = makeGreeter('Hallo');
 hello();   // 'Hallo, Welt!'
 ```
 
-Der Rückgabetyp `() => string` heißt: eine Funktion ohne Parameter, die einen Text liefert. Die zurückgegebene Funktion „erinnert sich“ an `greeting`, auch nachdem `makeGreeter` längst beendet ist. Man nennt das eine **Closure**.
+Der Rückgabetyp `() => string` heißt: eine Funktion ohne Parameter, die einen Text liefert. Die zurückgegebene Funktion „erinnert sich“ an `greeting`, auch nachdem `makeGreeter` längst beendet ist. Man nennt das eine **Closure**. Damit sieht `onChange` so aus:
 
-<Task id="ts-ab03-a4-onchange">Schreibe `onChange(listener)`: Die Methode merkt sich den Listener. Als Ergebnis liefert sie eine **Funktion**, die ihn wieder entfernt (`delete`). Der Rückgabetyp ist `() => void`, eine Funktion ohne Parameter, die nichts zurückgibt.</Task>
-
-<details>
-<summary>Lösung: onChange</summary>
-
-```ts title="src/ticket-store.ts"
+```ts
 onChange(listener: Listener): () => void {
   this.listeners.add(listener);
   return () => {
@@ -319,9 +338,41 @@ onChange(listener: Listener): () => void {
 }
 ```
 
-</details>
+- `this.listeners.add(listener)` merkt sich die Funktion des Zuhörers.
+- `return () => { … }` gibt eine **neue Funktion** zurück. Sie erinnert sich an `listener`, genau wie `hello` an `greeting`.
+- Wer sich abmelden will, ruft diese Funktion auf: `const unsubscribe = store.onChange(…);` und später `unsubscribe();`. Sie entfernt den Zuhörer mit `delete` wieder aus der Menge.
+- `() => void` im Rückgabetyp heißt: eine Funktion ohne Parameter, die nichts zurückgibt.
 
-<Task id="ts-ab03-a4-call">Rufe `this.notify()` am **Ende** von `add`, von `setStatus` (nach der Änderung, nicht bei einer unbekannten Nummer) und von `replaceAll` auf.</Task>
+<Task id="ts-ab03-a4-onchange">Schreibe die Methode `onChange` ab.</Task>
+
+#### Schritt 4: Beim Ändern melden
+
+Bis jetzt meldet der Speicher noch nichts. Jede Methode, die die Liste ändert, ruft **danach** `notify()` auf:
+
+```ts
+add(ticket: Ticket): void {
+  this.tickets = [...this.tickets, ticket];
+  this.notify();
+}
+
+setStatus(id: number, status: Status): void {
+  if (!this.tickets.some((ticket) => ticket.id === id)) {
+    return;
+  }
+  this.tickets = withStatus(this.tickets, id, status);
+  this.notify();
+}
+
+replaceAll(tickets: readonly Ticket[]): void {
+  this.tickets = [...tickets];
+  this.notify();
+}
+```
+
+- `notify()` steht **nach** der Änderung. Die Zuhörer sollen die neue Liste sehen, nicht die alte.
+- In `setStatus` steht es hinter dem `return`: Gibt es die Nummer nicht, hat sich nichts geändert, also gibt es nichts zu melden.
+
+<Task id="ts-ab03-a4-call">Ergänze in `add`, `setStatus` und `replaceAll` die Zeile `this.notify();`.</Task>
 
 <Task id="ts-ab03-a4-test">Starte `npm run test:ab03`. Die fünf Tests `C2 TicketStore: Änderungen melden` werden grün.</Task>
 
