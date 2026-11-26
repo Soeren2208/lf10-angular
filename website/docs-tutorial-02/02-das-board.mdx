@@ -68,7 +68,7 @@ Das Board ist eine neue Komponente. Sie setzt die Karten ein, die du in AB 01 ge
 
 <Task id="t2-ab02-a1-generate">Lege mit der Angular-CLI die Komponente `ticket-board` an, wie in AB 01 die Karte.</Task>
 
-<Task id="t2-ab02-a1-app">Die App soll jetzt nicht mehr die Karten zeigen, sondern das Board. **Schreibe** `app.ts` und `app.html` so um, dass sie `app-ticket-board` einsetzen, und entferne die drei Karten samt Beispieldaten und Import aus der App.</Task>
+<Task id="t2-ab02-a1-app">Die App soll jetzt nicht mehr die Karten zeigen, sondern das Board. **Schreibe** `app.ts` und `app.html` so um, dass sie `app-ticket-board` einsetzen, und entferne die drei Karten samt Beispieldaten aus der App. Die App kennt die Karte nicht mehr: Streiche auch den Import von `TicketCard` und den Eintrag in `imports`. Dort steht stattdessen `TicketBoard`. Bleibt `TicketCard` dort stehen, meldet der Compiler `NG8113: TicketCard is not used within the template of App`.</Task>
 
 <Task id="t2-ab02-a1-css">**Kopiere** den folgenden Code in `src/app/app.css` und ersetze dabei den gesamten Inhalt. Die Klasse für die drei Karten untereinander entfällt.</Task>
 
